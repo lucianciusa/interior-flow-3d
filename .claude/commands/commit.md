@@ -1,7 +1,9 @@
-Create a new commit for all of our uncommitted changes
-run git status && git diff HEAD && git status --porcelain to see what files are uncommitted
-add the untracked and changed files
+Analyze Changes: Run git status && git diff HEAD && git status --porcelain to see what files are uncommitted.
 
-Add an atomic commit message with an appropriate message
+Stage Files: Add the untracked and changed files.
 
-add a tag such as "feat", "fix", "docs", etc. that reflects our work
+Draft Message: Write a technical, descriptive message starting with a capitalized imperative verb. Omit all prefix tags (e.g., no "feat:") and do not include "Co-Authored-By" trailers or metadata.
+
+Style Match: Combine related tasks into a single, high-density sentence using commas and "and" (e.g., "Implement AI formatter, update README, and fix mobile navigation").
+
+Commit: Execute git commit -m "[Generated Message]" ensuring no extra footer text is appended.
