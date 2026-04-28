@@ -5,7 +5,7 @@
     "footprint": {"w": 2.10, "d": 0.95, "h": 0.85},
     "clearance": {"front": 0.70, "sides": 0.10, "back": 0.05},
     "allowedSlotKinds": ["wall"],
-    "model": "/models/sofa_3seat.glb"
+    "model": "primitive:sofa_3seat"
   },
   {
     "id": "armchair",
@@ -13,7 +13,7 @@
     "footprint": {"w": 0.90, "d": 0.90, "h": 0.85},
     "clearance": {"front": 0.50, "sides": 0.15, "back": 0.05},
     "allowedSlotKinds": ["wall", "corner"],
-    "model": "/models/armchair.glb"
+    "model": "primitive:armchair"
   },
   {
     "id": "coffee_table",
@@ -21,7 +21,7 @@
     "footprint": {"w": 1.20, "d": 0.60, "h": 0.45},
     "clearance": {"front": 0.30, "sides": 0.20, "back": 0.20},
     "allowedSlotKinds": ["floor"],
-    "model": "/models/coffee_table.glb"
+    "model": "primitive:coffee_table"
   },
   {
     "id": "tv_stand",
@@ -29,7 +29,7 @@
     "footprint": {"w": 1.60, "d": 0.45, "h": 0.55},
     "clearance": {"front": 0.50, "sides": 0.10, "back": 0.05},
     "allowedSlotKinds": ["wall"],
-    "model": "/models/tv_stand.glb"
+    "model": "primitive:tv_stand"
   },
   {
     "id": "bookshelf",
@@ -37,7 +37,7 @@
     "footprint": {"w": 0.80, "d": 0.35, "h": 1.80},
     "clearance": {"front": 0.30, "sides": 0.05, "back": 0.05},
     "allowedSlotKinds": ["wall"],
-    "model": "/models/bookshelf.glb"
+    "model": "primitive:bookshelf"
   },
   {
     "id": "corner_shelf",
@@ -53,7 +53,7 @@
     "footprint": {"w": 0.35, "d": 0.35, "h": 1.60},
     "clearance": {"front": 0.30, "sides": 0.10, "back": 0.10},
     "allowedSlotKinds": ["wall", "corner"],
-    "model": "/models/floor_lamp.glb"
+    "model": "primitive:floor_lamp"
   },
   {
     "id": "rug",
@@ -61,7 +61,7 @@
     "footprint": {"w": 2.40, "d": 1.60, "h": 0.02},
     "clearance": {"front": 0.00, "sides": 0.00, "back": 0.00},
     "allowedSlotKinds": ["floor"],
-    "model": "/models/rug.glb"
+    "model": "primitive:rug"
   },
   {
     "id": "side_table",
@@ -77,6 +77,6 @@
     "footprint": {"w": 0.60, "d": 0.60, "h": 1.60},
     "clearance": {"front": 0.20, "sides": 0.10, "back": 0.10},
     "allowedSlotKinds": ["corner", "wall"],
-    "model": "/models/plant_large.glb"
+    "model": "primitive:plant_large"
   }
 ]

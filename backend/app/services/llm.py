@@ -106,6 +106,17 @@ def _add_correction(
     ]
 
 
+def _prepare_schema(obj: Any) -> Any:
+    """Recursively set additionalProperties: false for OpenAI strict mode."""
+    if isinstance(obj, dict):
+        if obj.get("type") == "object":
+            obj["additionalProperties"] = False
+        return {k: _prepare_schema(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_prepare_schema(i) for i in obj]
+    return obj
+
+
 async def generate(
     req: GenerateLayoutRequest,
     settings: Settings,
@@ -116,7 +127,7 @@ async def generate(
         azure_endpoint=settings.AZURE_OPENAI_ENDPOINT,
         api_version=settings.AZURE_OPENAI_API_VERSION,
     )
-    schema = LayoutLLM.model_json_schema()
+    schema = _prepare_schema(LayoutLLM.model_json_schema())
     messages = _build_messages(req, catalog_items)
 
     for attempt in (1, 2):

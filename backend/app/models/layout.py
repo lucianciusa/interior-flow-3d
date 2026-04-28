@@ -47,8 +47,8 @@ class LayoutItemLLM(BaseModel):
 
     catalogId: str
     slot: SlotId
-    facing: Facing = "auto"
-    rationale: str | None = Field(default=None, max_length=140)
+    facing: Facing
+    rationale: str = Field(max_length=140)
 
 
 class Palette(BaseModel):
@@ -58,13 +58,21 @@ class Palette(BaseModel):
     hex: str = Field(pattern=r"^#[0-9a-fA-F]{6}$")
 
 
+class PaletteMap(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    wall: Palette
+    floor: Palette
+    accent: Palette
+
+
 class LayoutLLM(BaseModel):
     """Raw LLM output, pre-resolution."""
 
     model_config = ConfigDict(extra="forbid")
 
     style: Style
-    palette: dict[Literal["wall", "floor", "accent"], Palette]
+    palette: PaletteMap
     items: list[LayoutItemLLM] = Field(min_length=3, max_length=10)
     designExplanation: str = Field(min_length=80, max_length=600)
 
@@ -84,7 +92,7 @@ class Layout(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     style: Style
-    palette: dict[Literal["wall", "floor", "accent"], Palette]
+    palette: PaletteMap
     items: list[ResolvedItem]
     designExplanation: str
     seed: int | None = None
