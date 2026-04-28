@@ -1,0 +1,43 @@
+# Node / Next.js / Vercel
+node_modules/
+.next/
+.vercel/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# uv
+.uv-cache/
+
+# Env files (lockfiles kept; secrets never committed)
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/settings.shared.json
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
+
+# Build artifacts
+dist/
+build/
+*.log

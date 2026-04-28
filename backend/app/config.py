@@ -1,0 +1,28 @@
+from functools import lru_cache
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=(".env", ".env.local"), extra="ignore")
+
+    AZURE_OPENAI_ENDPOINT: str = ""
+    AZURE_OPENAI_KEY: str = ""
+    AZURE_OPENAI_DEPLOYMENT: str = "gpt-4o"
+    AZURE_OPENAI_API_VERSION: str = "2024-10-21"
+
+    SUPABASE_URL: str = ""
+    SUPABASE_JWKS_URL: str = ""
+    SUPABASE_ANON_KEY: str = ""
+
+    # Comma-separated origins, e.g. "http://localhost:3000,https://example.com"
+    CORS_ORIGINS: str = ""
+    LOG_LEVEL: str = "info"
+
+    def cors_origins_list(self) -> list[str]:
+        return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
+
+
+@lru_cache(maxsize=1)
+def get_settings() -> Settings:
+    return Settings()

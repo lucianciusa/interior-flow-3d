@@ -1,0 +1,1 @@
+-- Seed data placeholder. Phase 0 has nothing to seed; catalog is shipped as JSON inside the backend.
