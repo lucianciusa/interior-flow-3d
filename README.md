@@ -50,7 +50,7 @@ See `.env.example` files in `backend/` and `frontend/`. Backend reads Azure Open
 | Var | Purpose |
 |-----|---------|
 | `AZURE_OPENAI_ENDPOINT` / `_KEY` / `_DEPLOYMENT` | LLM client |
-| `SUPABASE_URL` | PostgREST base |
+| `SUPABASE_URL` | Supabase project URL |
 | `SUPABASE_JWKS_URL` | JWT verify key set (typically `<URL>/auth/v1/.well-known/jwks.json`) |
 | `SUPABASE_ANON_KEY` | Forwarded to PostgREST as `apikey` |
 | `CORS_ORIGINS` | Comma-separated origins allowed by FastAPI |

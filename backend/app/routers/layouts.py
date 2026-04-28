@@ -57,8 +57,7 @@ async def get_layout(
         raise HTTPException(status_code=404, detail="layout not found") from e
     except SupabaseError as e:
         raise HTTPException(status_code=502, detail=str(e)) from e
-    if "rooms" in row:
-        row["room"] = row.pop("rooms")
+
     return LayoutRecord.model_validate(row)
 
 

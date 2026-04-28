@@ -35,6 +35,7 @@ VALID_LAYOUT = {
 def _layout_row(layout_id: str = "layout-1") -> dict:
     return {
         "id": layout_id,
+        "user_id": "user-1",
         "room_id": "room-1",
         "style": "minimal",
         "seed": 42,
@@ -76,6 +77,7 @@ def test_list_layouts_happy_path(
     summaries = [
         {
             "id": "layout-1",
+            "user_id": "user-1",
             "room_id": "room-1",
             "style": "minimal",
             "seed": 42,

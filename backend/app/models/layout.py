@@ -110,6 +110,7 @@ class LayoutSummary(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: str
+    user_id: str
     room_id: str
     style: Style
     seed: int | None = None
@@ -127,4 +128,4 @@ class RoomDims(BaseModel):
 
 class LayoutRecord(LayoutSummary):
     layout: Layout
-    room: RoomDims
+    rooms: RoomDims

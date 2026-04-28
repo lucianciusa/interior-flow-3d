@@ -27,6 +27,7 @@ def test_create_room_happy_path(
 ) -> None:
     inserted = {
         "id": "room-1",
+        "user_id": "user-1",
         "name": VALID_ROOM["name"],
         "room_type": "living_room",
         "width_m": 5.0,
@@ -66,6 +67,7 @@ def test_list_rooms_happy_path(
     rows = [
         {
             "id": "room-1",
+            "user_id": "user-1",
             "name": "Living",
             "room_type": "living_room",
             "width_m": 5.0,

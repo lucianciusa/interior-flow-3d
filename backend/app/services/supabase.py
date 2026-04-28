@@ -16,9 +16,9 @@ class SupabaseNotFound(SupabaseError):
     """Row not found, or hidden by RLS."""
 
 
-_LAYOUT_SUMMARY_COLS = "id,room_id,style,seed,thumbnail_url,created_at"
+_LAYOUT_SUMMARY_COLS = "id,user_id,room_id,style,seed,thumbnail_url,created_at"
 _LAYOUT_FULL_COLS = (
-    "id,room_id,style,seed,thumbnail_url,created_at,layout,rooms(width_m,length_m,height_m)"
+    "id,user_id,room_id,style,seed,thumbnail_url,created_at,layout,rooms(width_m,length_m,height_m)"
 )
 
 
@@ -31,7 +31,7 @@ class SupabaseRest:
 
     def __init__(self, settings: Settings, user_jwt: str) -> None:
         self._client = httpx.AsyncClient(
-            base_url=f"{settings.SUPABASE_URL}/rest/v1",
+            base_url=f"{settings.SUPABASE_URL.rstrip('/')}/rest/v1/",
             headers={
                 "apikey": settings.SUPABASE_ANON_KEY,
                 "authorization": f"Bearer {user_jwt}",
@@ -59,17 +59,17 @@ class SupabaseRest:
         return rows[0]
 
     async def insert_room(self, row: dict[str, Any]) -> dict[str, Any]:
-        r = await self._client.post("/rooms", json=row)
+        r = await self._client.post("rooms", json=row)
         r.raise_for_status()
         return self._one(r.json())
 
     async def list_rooms(self) -> list[dict[str, Any]]:
-        r = await self._client.get("/rooms", params={"select": "*", "order": "created_at.desc"})
+        r = await self._client.get("rooms", params={"select": "*", "order": "created_at.desc"})
         r.raise_for_status()
         return list(r.json())
 
     async def insert_layout(self, row: dict[str, Any]) -> dict[str, Any]:
-        r = await self._client.post("/layouts", json=row)
+        r = await self._client.post("layouts", json=row)
         if r.status_code == 409:
             raise SupabaseError(f"conflict: {r.text}")
         r.raise_for_status()
@@ -77,7 +77,7 @@ class SupabaseRest:
 
     async def list_layouts(self) -> list[dict[str, Any]]:
         r = await self._client.get(
-            "/layouts",
+            "layouts",
             params={"select": _LAYOUT_SUMMARY_COLS, "order": "created_at.desc"},
         )
         r.raise_for_status()
@@ -85,7 +85,7 @@ class SupabaseRest:
 
     async def get_layout(self, layout_id: str) -> dict[str, Any]:
         r = await self._client.get(
-            "/layouts",
+            "layouts",
             params={"select": _LAYOUT_FULL_COLS, "id": f"eq.{layout_id}", "limit": "1"},
         )
         if r.status_code == 404:
@@ -94,7 +94,7 @@ class SupabaseRest:
         return self._one(r.json())
 
     async def delete_layout(self, layout_id: str) -> None:
-        r = await self._client.delete("/layouts", params={"id": f"eq.{layout_id}"})
+        r = await self._client.delete("layouts", params={"id": f"eq.{layout_id}"})
         if r.status_code == 404:
             raise SupabaseNotFound(layout_id)
         r.raise_for_status()

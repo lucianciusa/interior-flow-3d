@@ -84,6 +84,7 @@ export type RoomCreate = {
 
 export type RoomRecord = {
   id: string;
+  user_id: string;
   name: string;
   room_type: string;
   width_m: number;
@@ -94,6 +95,7 @@ export type RoomRecord = {
 
 export type LayoutSummary = {
   id: string;
+  user_id: string;
   room_id: string;
   style: Style;
   seed: number | null;
@@ -103,7 +105,7 @@ export type LayoutSummary = {
 
 export type LayoutRecord = LayoutSummary & {
   layout: Layout;
-  room: {
+  rooms: {
     width_m: number;
     length_m: number;
     height_m: number;

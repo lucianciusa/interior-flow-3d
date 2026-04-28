@@ -35,16 +35,19 @@ def require_user(
         raise HTTPException(status_code=401, detail="missing bearer token")
     token = auth.removeprefix("Bearer ").strip()
     try:
-        signing_key = _jwks(settings).get_signing_key_from_jwt(token).key
+        jwks_client = _jwks(settings)
+        signing_key = jwks_client.get_signing_key_from_jwt(token).key
         claims = jwt.decode(
             token,
             signing_key,
-            algorithms=["RS256"],
+            algorithms=["RS256", "ES256"],
             audience="authenticated",
             options={"require": ["exp", "sub"]},
         )
     except jwt.PyJWTError as e:
         raise HTTPException(status_code=401, detail="invalid token") from e
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="authentication error") from e
     return AuthUser(id=claims["sub"], email=claims.get("email"), jwt=token)
 
 

@@ -17,6 +17,7 @@ class RoomRecord(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: str
+    user_id: str
     name: str
     room_type: str
     width_m: float

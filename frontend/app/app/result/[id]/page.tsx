@@ -88,7 +88,7 @@ export default function SavedLayoutPage() {
   return (
     <ResultView
       layout={data.layout}
-      dims={data.room}
+      dims={data.rooms}
       style={data.layout.style}
       preferences={[]}
     />
