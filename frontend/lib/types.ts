@@ -73,3 +73,44 @@ export type RoomDims = {
   length_m: number;
   height_m: number;
 };
+
+export type RoomCreate = {
+  name: string;
+  roomType: "living_room";
+  width_m: number;
+  length_m: number;
+  height_m: number;
+};
+
+export type RoomRecord = {
+  id: string;
+  name: string;
+  room_type: string;
+  width_m: number;
+  length_m: number;
+  height_m: number;
+  created_at: string;
+};
+
+export type LayoutSummary = {
+  id: string;
+  room_id: string;
+  style: Style;
+  seed: number | null;
+  thumbnail_url: string | null;
+  created_at: string;
+};
+
+export type LayoutRecord = LayoutSummary & {
+  layout: Layout;
+  room: {
+    width_m: number;
+    length_m: number;
+    height_m: number;
+  };
+};
+
+export type LayoutCreate = {
+  roomId: string;
+  layout: Layout;
+};

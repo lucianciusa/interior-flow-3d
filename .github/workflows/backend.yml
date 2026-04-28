@@ -26,7 +26,41 @@ jobs:
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run mypy app
-      - run: uv run pytest -q
+      - run: uv run pytest -q --ignore=tests/test_rls_cross_user.py
+
+  rls-integration:
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    needs: ci
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      INTERIOR_FLOW_API_URL: ${{ secrets.INTERIOR_FLOW_API_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      SUPABASE_TEST_USER_A_EMAIL: ${{ secrets.SUPABASE_TEST_USER_A_EMAIL }}
+      SUPABASE_TEST_USER_A_PASSWORD: ${{ secrets.SUPABASE_TEST_USER_A_PASSWORD }}
+      SUPABASE_TEST_USER_B_EMAIL: ${{ secrets.SUPABASE_TEST_USER_B_EMAIL }}
+      SUPABASE_TEST_USER_B_PASSWORD: ${{ secrets.SUPABASE_TEST_USER_B_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      - name: Mint test user JWTs from Supabase
+        run: |
+          mint() {
+            curl -s -X POST "$SUPABASE_URL/auth/v1/token?grant_type=password" \
+              -H "apikey: $SUPABASE_ANON_KEY" \
+              -H "content-type: application/json" \
+              -d "{\"email\":\"$1\",\"password\":\"$2\"}" \
+              | python -c "import sys,json;print(json.load(sys.stdin)['access_token'])"
+          }
+          echo "SUPABASE_TEST_USER_A_JWT=$(mint "$SUPABASE_TEST_USER_A_EMAIL" "$SUPABASE_TEST_USER_A_PASSWORD")" >> "$GITHUB_ENV"
+          echo "SUPABASE_TEST_USER_B_JWT=$(mint "$SUPABASE_TEST_USER_B_EMAIL" "$SUPABASE_TEST_USER_B_PASSWORD")" >> "$GITHUB_ENV"
+      - run: uv run pytest tests/test_rls_cross_user.py -v
 
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'

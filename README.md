@@ -45,6 +45,35 @@ supabase db reset                         # applies migrations/0001_init.sql
 
 See `.env.example` files in `backend/` and `frontend/`. Backend reads Azure OpenAI + Supabase JWKS configuration; frontend reads Supabase public keys + the FastAPI base URL. Names are documented in `.claude/PRD.md` §9.
 
+### Backend
+
+| Var | Purpose |
+|-----|---------|
+| `AZURE_OPENAI_ENDPOINT` / `_KEY` / `_DEPLOYMENT` | LLM client |
+| `SUPABASE_URL` | PostgREST base |
+| `SUPABASE_JWKS_URL` | JWT verify key set (typically `<URL>/auth/v1/.well-known/jwks.json`) |
+| `SUPABASE_ANON_KEY` | Forwarded to PostgREST as `apikey` |
+| `CORS_ORIGINS` | Comma-separated origins allowed by FastAPI |
+
+### Frontend
+
+| Var | Purpose |
+|-----|---------|
+| `NEXT_PUBLIC_API_BASE_URL` | FastAPI base URL |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anon key |
+
+## Supabase setup
+
+1. Create a Supabase project; copy URL + anon + JWKS URL into `backend/.env` and `frontend/.env.local`.
+2. Apply migrations: `supabase db push` (or `supabase db reset` against a local stack).
+3. Enable email magic link + Google providers in **Auth → Providers**.
+4. Add redirect URLs to the Auth allow-list:
+   - `http://localhost:3000/app`
+   - `https://<your-prod-domain>/app`
+   - Vercel preview pattern (if used): `https://<project>-*.vercel.app/app`
+5. For the cross-user RLS test, create two test users under **Auth → Users** and capture their access tokens (sign in via the frontend once, then read `supabase.auth.getSession().data.session.access_token`).
+
 ## Deployment
 
 - **Frontend** → Vercel via `.github/workflows/frontend.yml`
@@ -64,6 +93,10 @@ infra/      Azure Bicep (Container Apps + Key Vault)
 .agents/    Implementation plans
 ```
 
+## Demo seeds
+
+Reproducible seed values for stage demos: see [`docs/demo-seeds.md`](docs/demo-seeds.md). Use `?seed=<value>` on `/app` to pre-fill the wizard.
+
 ## Phase status
 
-Phase 0 (scaffolding) complete. Phase 1 (catalog + slot resolver + R3F components) next. See `.agents/plans/` for plans.
+Phase 0–3 complete (scaffolding, catalog + R3F viewer, LLM + wizard, auth + persistence + polish). MVP feature-complete per `.claude/PRD.md` §11.

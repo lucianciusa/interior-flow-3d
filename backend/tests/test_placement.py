@@ -51,7 +51,12 @@ def _llm(items: list[LayoutItemLLM]) -> LayoutLLM:
 
 
 def _item(catalog_id: str, slot: str, facing: str = "auto") -> LayoutItemLLM:
-    return LayoutItemLLM(catalogId=catalog_id, slot=slot, facing=facing)
+    return LayoutItemLLM(
+        catalogId=catalog_id,
+        slot=slot,
+        facing=facing,
+        rationale=f"placed {catalog_id} at {slot}",
+    )
 
 
 # ── SLOT_KINDS completeness ───────────────────────────────────────────────────

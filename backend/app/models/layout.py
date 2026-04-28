@@ -97,3 +97,34 @@ class Layout(BaseModel):
     designExplanation: str
     seed: int | None = None
     warnings: list[str] = Field(default_factory=list)
+
+
+class LayoutCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    roomId: str
+    layout: Layout
+
+
+class LayoutSummary(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    room_id: str
+    style: Style
+    seed: int | None = None
+    thumbnail_url: str | None = None
+    created_at: str
+
+
+class RoomDims(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    width_m: float
+    length_m: float
+    height_m: float
+
+
+class LayoutRecord(LayoutSummary):
+    layout: Layout
+    room: RoomDims

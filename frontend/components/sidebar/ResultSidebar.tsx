@@ -8,8 +8,10 @@ type ResultSidebarProps = {
   layout: Layout;
   style: Style;
   preferences: Preference[];
-  onRegenerate: () => void;
-  onAdjust: () => void;
+  onRegenerate?: () => void;
+  onAdjust?: () => void;
+  onSave?: () => void;
+  saveState?: "idle" | "saving" | "saved";
 };
 
 const STYLE_LABELS: Record<Style, string> = {
@@ -30,6 +32,8 @@ export default function ResultSidebar({
   preferences,
   onRegenerate,
   onAdjust,
+  onSave,
+  saveState = "idle",
 }: ResultSidebarProps) {
   return (
     <aside className="flex h-full flex-col gap-6 overflow-y-auto p-4">
@@ -77,28 +81,38 @@ export default function ResultSidebar({
 
       {/* Action buttons */}
       <div className="mt-auto flex flex-col gap-2 pt-2">
-        <button
-          type="button"
-          onClick={onRegenerate}
-          className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50"
-        >
-          Regenerate
-        </button>
-        <button
-          type="button"
-          onClick={onAdjust}
-          className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50"
-        >
-          Adjust preferences
-        </button>
-        <button
-          type="button"
-          disabled
-          title="Save requires login — coming soon"
-          className="cursor-not-allowed rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white opacity-50"
-        >
-          Save
-        </button>
+        {onRegenerate && (
+          <button
+            type="button"
+            onClick={onRegenerate}
+            className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50"
+          >
+            Regenerate
+          </button>
+        )}
+        {onAdjust && (
+          <button
+            type="button"
+            onClick={onAdjust}
+            className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50"
+          >
+            Adjust preferences
+          </button>
+        )}
+        {onSave && (
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={saveState === "saving" || saveState === "saved"}
+            className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 disabled:opacity-50"
+          >
+            {saveState === "saving"
+              ? "Saving…"
+              : saveState === "saved"
+                ? "Saved"
+                : "Save"}
+          </button>
+        )}
       </div>
     </aside>
   );

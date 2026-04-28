@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.routers import catalog, generate
+from app.routers import catalog, generate, layouts, rooms
 
 
 def create_app() -> FastAPI:
@@ -24,9 +24,10 @@ def create_app() -> FastAPI:
 
     app.include_router(catalog.router)
     app.include_router(generate.router)
+    app.include_router(rooms.router)
+    app.include_router(layouts.router)
 
     return app
 
 
 app = create_app()
- 
