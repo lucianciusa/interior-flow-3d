@@ -1,0 +1,82 @@
+[
+  {
+    "id": "sofa_3seat",
+    "name": "3-seat sofa",
+    "footprint": {"w": 2.10, "d": 0.95, "h": 0.85},
+    "clearance": {"front": 0.70, "sides": 0.10, "back": 0.05},
+    "allowedSlotKinds": ["wall"],
+    "model": "/models/sofa_3seat.glb"
+  },
+  {
+    "id": "armchair",
+    "name": "Armchair",
+    "footprint": {"w": 0.90, "d": 0.90, "h": 0.85},
+    "clearance": {"front": 0.50, "sides": 0.15, "back": 0.05},
+    "allowedSlotKinds": ["wall", "corner"],
+    "model": "/models/armchair.glb"
+  },
+  {
+    "id": "coffee_table",
+    "name": "Coffee table",
+    "footprint": {"w": 1.20, "d": 0.60, "h": 0.45},
+    "clearance": {"front": 0.30, "sides": 0.20, "back": 0.20},
+    "allowedSlotKinds": ["floor"],
+    "model": "/models/coffee_table.glb"
+  },
+  {
+    "id": "tv_stand",
+    "name": "TV stand",
+    "footprint": {"w": 1.60, "d": 0.45, "h": 0.55},
+    "clearance": {"front": 0.50, "sides": 0.10, "back": 0.05},
+    "allowedSlotKinds": ["wall"],
+    "model": "/models/tv_stand.glb"
+  },
+  {
+    "id": "bookshelf",
+    "name": "Bookshelf",
+    "footprint": {"w": 0.80, "d": 0.35, "h": 1.80},
+    "clearance": {"front": 0.30, "sides": 0.05, "back": 0.05},
+    "allowedSlotKinds": ["wall"],
+    "model": "/models/bookshelf.glb"
+  },
+  {
+    "id": "corner_shelf",
+    "name": "Corner shelf",
+    "footprint": {"w": 0.50, "d": 0.50, "h": 1.50},
+    "clearance": {"front": 0.20, "sides": 0.05, "back": 0.05},
+    "allowedSlotKinds": ["corner"],
+    "model": "primitive:corner_shelf"
+  },
+  {
+    "id": "floor_lamp",
+    "name": "Floor lamp",
+    "footprint": {"w": 0.35, "d": 0.35, "h": 1.60},
+    "clearance": {"front": 0.30, "sides": 0.10, "back": 0.10},
+    "allowedSlotKinds": ["wall", "corner"],
+    "model": "/models/floor_lamp.glb"
+  },
+  {
+    "id": "rug",
+    "name": "Area rug",
+    "footprint": {"w": 2.40, "d": 1.60, "h": 0.02},
+    "clearance": {"front": 0.00, "sides": 0.00, "back": 0.00},
+    "allowedSlotKinds": ["floor"],
+    "model": "/models/rug.glb"
+  },
+  {
+    "id": "side_table",
+    "name": "Side table",
+    "footprint": {"w": 0.50, "d": 0.50, "h": 0.55},
+    "clearance": {"front": 0.10, "sides": 0.10, "back": 0.05},
+    "allowedSlotKinds": ["wall", "corner"],
+    "model": "primitive:side_table"
+  },
+  {
+    "id": "plant_large",
+    "name": "Large plant",
+    "footprint": {"w": 0.60, "d": 0.60, "h": 1.60},
+    "clearance": {"front": 0.20, "sides": 0.10, "back": 0.10},
+    "allowedSlotKinds": ["corner", "wall"],
+    "model": "/models/plant_large.glb"
+  }
+]

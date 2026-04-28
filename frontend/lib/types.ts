@@ -1,2 +1,75 @@
-// TS types mirroring backend/app/models/*. Populated in Phase 1.
-export {};
+// TS types mirroring backend/app/models/*
+
+export type Style = "scandinavian" | "minimal" | "industrial";
+export type Preference = "more_seating" | "more_open_space" | "more_storage";
+export type SlotId =
+  | "north_wall_left"
+  | "north_wall_center"
+  | "north_wall_right"
+  | "east_wall_left"
+  | "east_wall_center"
+  | "east_wall_right"
+  | "south_wall_left"
+  | "south_wall_center"
+  | "south_wall_right"
+  | "west_wall_left"
+  | "west_wall_center"
+  | "west_wall_right"
+  | "corner_NE"
+  | "corner_NW"
+  | "corner_SE"
+  | "corner_SW"
+  | "center"
+  | "center_front"
+  | "entry";
+export type Facing = "auto" | "north" | "south" | "east" | "west" | "center";
+
+export type Palette = { name: string; hex: string };
+export type PaletteMap = { wall: Palette; floor: Palette; accent: Palette };
+export type Footprint = { w: number; d: number; h: number };
+
+export type CatalogItem = {
+  id: string;
+  name: string;
+  footprint: Footprint;
+  clearance: { front: number; sides: number; back: number };
+  allowedSlotKinds: string[];
+  model: string;
+};
+export type CatalogResponse = { items: CatalogItem[] };
+
+export type ResolvedItem = {
+  catalogId: string;
+  slot: SlotId;
+  facing: Facing;
+  rationale?: string | null;
+  position: [number, number, number];
+  rotation_y: number;
+  footprint: Footprint;
+  model: string;
+};
+
+export type Layout = {
+  style: Style;
+  palette: PaletteMap;
+  items: ResolvedItem[];
+  designExplanation: string;
+  seed?: number | null;
+  warnings: string[];
+};
+
+export type GenerateRequest = {
+  roomType: "living_room";
+  width_m: number;
+  length_m: number;
+  height_m: number;
+  style: Style;
+  preferences: Preference[];
+  seed?: number;
+};
+
+export type RoomDims = {
+  width_m: number;
+  length_m: number;
+  height_m: number;
+};

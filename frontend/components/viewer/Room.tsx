@@ -1,0 +1,52 @@
+"use client";
+
+import { useMemo } from "react";
+import { DoubleSide } from "three";
+
+import type { PaletteMap, RoomDims } from "@/lib/types";
+
+type RoomProps = {
+  dims: RoomDims;
+  palette: PaletteMap;
+};
+
+export default function Room({ dims, palette }: RoomProps) {
+  const { width_m: w, length_m: roomL, height_m: h } = dims;
+
+  const wallColor = useMemo(() => palette.wall.hex, [palette.wall.hex]);
+  const floorColor = useMemo(() => palette.floor.hex, [palette.floor.hex]);
+
+  return (
+    <group>
+      {/* Floor */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[w, roomL]} />
+        <meshStandardMaterial color={floorColor} />
+      </mesh>
+
+      {/* North wall (back, -Z face) */}
+      <mesh position={[0, h / 2, -roomL / 2]} receiveShadow>
+        <planeGeometry args={[w, h]} />
+        <meshStandardMaterial color={wallColor} side={DoubleSide} />
+      </mesh>
+
+      {/* South wall (+Z face) */}
+      <mesh position={[0, h / 2, roomL / 2]} rotation={[0, Math.PI, 0]} receiveShadow>
+        <planeGeometry args={[w, h]} />
+        <meshStandardMaterial color={wallColor} side={DoubleSide} />
+      </mesh>
+
+      {/* East wall (+X face) */}
+      <mesh position={[w / 2, h / 2, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
+        <planeGeometry args={[roomL, h]} />
+        <meshStandardMaterial color={wallColor} side={DoubleSide} />
+      </mesh>
+
+      {/* West wall (-X face) */}
+      <mesh position={[-w / 2, h / 2, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
+        <planeGeometry args={[roomL, h]} />
+        <meshStandardMaterial color={wallColor} side={DoubleSide} />
+      </mesh>
+    </group>
+  );
+}

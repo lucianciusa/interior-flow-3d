@@ -1,3 +1,5 @@
+import type { CatalogResponse } from "@/lib/types";
+
 const API = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 export class ApiError extends Error {
@@ -19,3 +21,9 @@ export async function authedFetch<T>(path: string, init?: RequestInit): Promise<
 }
 
 export const fetchHealth = () => authedFetch<{ status: string }>("/healthz");
+
+export const catalogQuery = () => ({
+  queryKey: ["catalog"] as const,
+  queryFn: () => authedFetch<CatalogResponse>("/catalog"),
+  staleTime: 60 * 60 * 1000,
+});
