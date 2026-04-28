@@ -1,4 +1,5 @@
-import type { CatalogResponse } from "@/lib/types";
+import type { CatalogResponse, Layout, GenerateRequest } from "@/lib/types";
+import { useMutation } from "@tanstack/react-query";
 
 const API = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
@@ -27,3 +28,13 @@ export const catalogQuery = () => ({
   queryFn: () => authedFetch<CatalogResponse>("/catalog"),
   staleTime: 60 * 60 * 1000,
 });
+
+export function useGenerateLayout() {
+  return useMutation({
+    mutationFn: (body: GenerateRequest) =>
+      authedFetch<Layout>("/generate-layout", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+  });
+}
