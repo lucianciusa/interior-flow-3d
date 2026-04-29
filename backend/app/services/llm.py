@@ -124,10 +124,13 @@ def _add_correction(
 
 
 def _prepare_schema(obj: Any) -> Any:
-    """Recursively set additionalProperties: false for OpenAI strict mode."""
+    """Recursively prepare schema for OpenAI strict mode."""
     if isinstance(obj, dict):
         if obj.get("type") == "object":
             obj["additionalProperties"] = False
+            # OpenAI strict mode requires ALL properties to be in 'required'
+            if "properties" in obj:
+                obj["required"] = list(obj["properties"].keys())
         return {k: _prepare_schema(v) for k, v in obj.items()}
     if isinstance(obj, list):
         return [_prepare_schema(i) for i in obj]

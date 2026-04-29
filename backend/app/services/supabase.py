@@ -60,22 +60,28 @@ class SupabaseRest:
         await self._client.aclose()
 
     @staticmethod
-    def _one(rows: list[dict[str, Any]]) -> dict[str, Any]:
-        if not rows:
-            raise SupabaseNotFound("no rows")
-        return rows[0]
+    async def _handle_response(self, r: httpx.Response) -> httpx.Response:
+        try:
+            r.raise_for_status()
+            return r
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 404:
+                raise SupabaseNotFound(str(e)) from e
+            if e.response.status_code == 409:
+                raise SupabaseConflict(str(e)) from e
+            raise SupabaseError(str(e)) from e
 
     # ── rooms ───────────────────────────────────────────────────────────────
     async def insert_room(self, row: dict[str, Any]) -> dict[str, Any]:
         r = await self._client.post("rooms", json=row)
-        r.raise_for_status()
+        await self._handle_response(r)
         return self._one(r.json())
 
     async def list_rooms(self) -> list[dict[str, Any]]:
         r = await self._client.get(
             "rooms", params={"select": _ROOM_COLS, "order": "created_at.desc"}
         )
-        r.raise_for_status()
+        await self._handle_response(r)
         return list(r.json())
 
     async def list_rooms_for_project(self, project_id: str) -> list[dict[str, Any]]:
@@ -87,21 +93,17 @@ class SupabaseRest:
                 "order": "created_at.desc",
             },
         )
-        r.raise_for_status()
+        await self._handle_response(r)
         return list(r.json())
 
     async def update_room(self, room_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         r = await self._client.patch("rooms", params={"id": f"eq.{room_id}"}, json=payload)
-        if r.status_code == 404:
-            raise SupabaseNotFound(room_id)
-        r.raise_for_status()
+        await self._handle_response(r)
         return self._one(r.json())
 
     async def delete_room(self, room_id: str) -> None:
         r = await self._client.delete("rooms", params={"id": f"eq.{room_id}"})
-        if r.status_code == 404:
-            raise SupabaseNotFound(room_id)
-        r.raise_for_status()
+        await self._handle_response(r)
         rows = r.json() if r.text else []
         if not rows:
             raise SupabaseNotFound(room_id)
@@ -109,9 +111,7 @@ class SupabaseRest:
     # ── layouts ─────────────────────────────────────────────────────────────
     async def insert_layout(self, row: dict[str, Any]) -> dict[str, Any]:
         r = await self._client.post("layouts", json=row)
-        if r.status_code == 409:
-            raise SupabaseConflict(r.text)
-        r.raise_for_status()
+        await self._handle_response(r)
         return self._one(r.json())
 
     async def list_layouts(self) -> list[dict[str, Any]]:
@@ -119,7 +119,7 @@ class SupabaseRest:
             "layouts",
             params={"select": _LAYOUT_SUMMARY_COLS, "order": "created_at.desc"},
         )
-        r.raise_for_status()
+        await self._handle_response(r)
         return list(r.json())
 
     async def list_layouts_for_room(self, room_id: str) -> list[dict[str, Any]]:
@@ -131,7 +131,7 @@ class SupabaseRest:
                 "order": "created_at.desc",
             },
         )
-        r.raise_for_status()
+        await self._handle_response(r)
         return list(r.json())
 
     async def get_layout(self, layout_id: str) -> dict[str, Any]:
@@ -139,9 +139,7 @@ class SupabaseRest:
             "layouts",
             params={"select": _LAYOUT_FULL_COLS, "id": f"eq.{layout_id}", "limit": "1"},
         )
-        if r.status_code == 404:
-            raise SupabaseNotFound(layout_id)
-        r.raise_for_status()
+        await self._handle_response(r)
         return self._one(r.json())
 
     async def update_layout(self, layout_id: str, payload: dict[str, Any]) -> dict[str, Any]:
@@ -150,11 +148,7 @@ class SupabaseRest:
             params={"id": f"eq.{layout_id}", "select": _LAYOUT_FULL_COLS},
             json=payload,
         )
-        if r.status_code == 404:
-            raise SupabaseNotFound(layout_id)
-        if r.status_code == 409:
-            raise SupabaseConflict(r.text)
-        r.raise_for_status()
+        await self._handle_response(r)
         return self._one(r.json())
 
     async def unset_other_primaries(self, room_id: str, except_layout_id: str | None) -> None:
@@ -162,15 +156,11 @@ class SupabaseRest:
         if except_layout_id is not None:
             params["id"] = f"neq.{except_layout_id}"
         r = await self._client.patch("layouts", params=params, json={"is_primary": False})
-        if r.status_code in (404, 200, 204, 201):
-            return
-        r.raise_for_status()
+        await self._handle_response(r)
 
     async def delete_layout(self, layout_id: str) -> None:
         r = await self._client.delete("layouts", params={"id": f"eq.{layout_id}"})
-        if r.status_code == 404:
-            raise SupabaseNotFound(layout_id)
-        r.raise_for_status()
+        await self._handle_response(r)
         rows = r.json() if r.text else []
         if not rows:
             raise SupabaseNotFound(layout_id)
@@ -178,14 +168,14 @@ class SupabaseRest:
     # ── projects ────────────────────────────────────────────────────────────
     async def insert_project(self, row: dict[str, Any]) -> dict[str, Any]:
         r = await self._client.post("projects", json=row)
-        r.raise_for_status()
+        await self._handle_response(r)
         return self._one(r.json())
 
     async def list_projects(self) -> list[dict[str, Any]]:
         r = await self._client.get(
             "projects", params={"select": _PROJECT_COLS, "order": "created_at.desc"}
         )
-        r.raise_for_status()
+        await self._handle_response(r)
         return list(r.json())
 
     async def get_project(self, project_id: str) -> dict[str, Any]:
@@ -193,23 +183,17 @@ class SupabaseRest:
             "projects",
             params={"select": _PROJECT_COLS, "id": f"eq.{project_id}", "limit": "1"},
         )
-        if r.status_code == 404:
-            raise SupabaseNotFound(project_id)
-        r.raise_for_status()
+        await self._handle_response(r)
         return self._one(r.json())
 
     async def update_project(self, project_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         r = await self._client.patch("projects", params={"id": f"eq.{project_id}"}, json=payload)
-        if r.status_code == 404:
-            raise SupabaseNotFound(project_id)
-        r.raise_for_status()
+        await self._handle_response(r)
         return self._one(r.json())
 
     async def delete_project(self, project_id: str) -> None:
         r = await self._client.delete("projects", params={"id": f"eq.{project_id}"})
-        if r.status_code == 404:
-            raise SupabaseNotFound(project_id)
-        r.raise_for_status()
+        await self._handle_response(r)
         rows = r.json() if r.text else []
         if not rows:
             raise SupabaseNotFound(project_id)
