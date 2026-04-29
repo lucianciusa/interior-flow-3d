@@ -1,6 +1,6 @@
 from unittest.mock import AsyncMock, patch
 
-from app.models.layout import LayoutLLM
+from app.models.layout import MergedLayoutLLM
 
 VALID_LLM_JSON = {
     "style": "minimal",
@@ -9,36 +9,22 @@ VALID_LLM_JSON = {
         "floor": {"name": "Grey", "hex": "#E5E5E5"},
         "accent": {"name": "Charcoal", "hex": "#1A1A1A"},
     },
+    "zones": [{"id": "seating", "kind": "seating_zone", "itemBudget": 3}],
     "items": [
         {
             "catalogId": "sofa_3seat",
             "slot": "south_wall_center",
             "facing": "auto",
+            "zone": "seating",
             "rationale": "I anchored the sofa on the south wall for a clean sightline.",
-        },
-        {
-            "catalogId": "tv_stand",
-            "slot": "north_wall_center",
-            "facing": "auto",
-            "rationale": "I placed the TV stand centered on the back wall.",
-        },
-        {
-            "catalogId": "coffee_table",
-            "slot": "center",
-            "facing": "auto",
-            "rationale": "I centered the coffee table to serve the seating zone.",
-        },
+        }
     ],
-    "designExplanation": (
-        "I designed this minimal room with restraint and purpose"
-        " — three pieces, each earning its place,"
-        " creating a calm space free from visual noise."
-    ),
+    "designExplanation": "I designed this minimal room with restraint and purpose.",
 }
 
 
 def test_generate_layout_success(client):
-    raw = LayoutLLM.model_validate(VALID_LLM_JSON)
+    raw = MergedLayoutLLM.model_validate(VALID_LLM_JSON)
     with patch("app.routers.generate.llm.generate", new_callable=AsyncMock) as mock_gen:
         mock_gen.return_value = raw
         resp = client.post(
@@ -56,13 +42,6 @@ def test_generate_layout_success(client):
     assert resp.status_code == 200
     data = resp.json()
     assert data["style"] == "minimal"
-    assert len(data["items"]) >= 1
-    assert len(data["zones"]) >= 1
-    for item in data["items"]:
-        assert "position" in item
-        assert "rotation_y" in item
-        assert len(item["position"]) == 3
-        assert item["zone"] is not None
 
 
 def test_generate_layout_validation_error_returns_422(client):

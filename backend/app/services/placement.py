@@ -1,8 +1,15 @@
 import math
 
 from app.models.catalog import CatalogItem
-from app.models.layout import GenerateLayoutRequest, Layout, LayoutItemLLM, LayoutLLM, ResolvedItem
+from app.models.layout import (
+    GenerateLayoutRequest,
+    Layout,
+    LayoutItemLLM,
+    MergedLayoutLLM,
+    ResolvedItem,
+)
 from app.models.room_type import RoomTypeProfile
+from app.models.style_profile import StyleProfile
 from app.services.slot_resolver import Footprint, RoomDims, resolve_slot
 
 DROP_PRIORITY: dict[str, int] = {
@@ -114,6 +121,7 @@ def _try_place(
     room: RoomDims,
     catalog_item: CatalogItem,
     placed: list[ResolvedItem],
+    margin: float,
 ) -> ResolvedItem | None:
     """Attempt to resolve slot and check AABB. Returns ResolvedItem or None on collision."""
     fp = Footprint(
@@ -137,16 +145,17 @@ def _try_place(
         pair = frozenset({candidate.catalogId, existing.catalogId})
         if pair in COOCCUPY_ALLOW and candidate.slot == existing.slot:
             continue
-        if _aabb_overlap(candidate, existing):
+        if _aabb_overlap(candidate, existing, margin=margin):
             return None
     return candidate
 
 
 def resolve(
-    llm: LayoutLLM,
+    llm: MergedLayoutLLM,
     request: GenerateLayoutRequest,
     catalog: list[CatalogItem],
     profile: RoomTypeProfile,
+    style_prof: StyleProfile,
 ) -> Layout:
     catalog_map: dict[str, CatalogItem] = {item.id: item for item in catalog}
     warnings: list[str] = []
@@ -186,6 +195,7 @@ def resolve(
     )
     placed: list[ResolvedItem] = []
     occupied: dict[str, str] = {}  # slot → catalogId
+    margin = style_prof.wall_flush_tolerance
 
     for item in valid:
         slot = item.slot
@@ -201,7 +211,7 @@ def resolve(
                 nudged = False
                 if prefix:
                     for t_alt in _NUDGE_T:
-                        result = _try_place(item, slot, t_alt, room, catalog_item, placed)
+                        result = _try_place(item, slot, t_alt, room, catalog_item, placed, margin)
                         if result is not None:
                             placed.append(result)
                             # Don't mark occupied with original slot (it's a nudge)
@@ -223,7 +233,7 @@ def resolve(
                             f"Dropped {existing_id!r}: replaced by higher-priority "
                             f"{item.catalogId!r} in slot {slot!r}"
                         )
-                        result = _try_place(item, slot, None, room, catalog_item, placed)
+                        result = _try_place(item, slot, None, room, catalog_item, placed, margin)
                         if result is not None:
                             placed.append(result)
                             occupied[slot] = item.catalogId
@@ -235,7 +245,7 @@ def resolve(
                 continue
 
         # Step 5–6: resolve + AABB check
-        result = _try_place(item, slot, None, room, catalog_item, placed)
+        result = _try_place(item, slot, None, room, catalog_item, placed, margin)
         if result is not None:
             placed.append(result)
             occupied[slot] = item.catalogId
@@ -245,7 +255,7 @@ def resolve(
             nudged = False
             if prefix:
                 for t_alt in _NUDGE_T:
-                    result = _try_place(item, slot, t_alt, room, catalog_item, placed)
+                    result = _try_place(item, slot, t_alt, room, catalog_item, placed, margin)
                     if result is not None:
                         placed.append(result)
                         nudged = True

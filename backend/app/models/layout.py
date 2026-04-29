@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.models.catalog import RoomType
 
-Style = Literal["scandinavian", "minimal", "industrial"]
+Style = Literal["scandinavian", "minimal", "industrial", "japandi", "mid_century"]
 Preference = Literal["more_seating", "more_open_space", "more_storage"]
 SlotId = Literal[
     "north_wall_left",
@@ -80,16 +80,32 @@ class PaletteMap(BaseModel):
     accent: Palette
 
 
-class LayoutLLM(BaseModel):
-    """Raw LLM output, pre-resolution."""
-
+class Pass1LLM(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     style: Style
     palette: PaletteMap
     zones: list[Zone] = Field(default_factory=list, max_length=4)
-    items: list[LayoutItemLLM] = Field(min_length=3, max_length=12)
+    styleEmphasis: str = Field(min_length=10, max_length=140)
     designExplanation: str = Field(min_length=80, max_length=600)
+
+
+class Pass2ZoneLLM(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    items: list[LayoutItemLLM] = Field(min_length=1, max_length=10)
+
+
+class MergedLayoutLLM(BaseModel):
+    """Synthetic object assembling Pass 1 and Pass 2 results for placement.py."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    style: Style
+    palette: PaletteMap
+    zones: list[Zone]
+    items: list[LayoutItemLLM]
+    designExplanation: str
 
 
 class ResolvedItem(LayoutItemLLM):

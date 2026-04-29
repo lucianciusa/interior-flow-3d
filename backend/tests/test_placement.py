@@ -6,10 +6,12 @@ from app.models.catalog import CatalogItem
 from app.models.layout import (
     GenerateLayoutRequest,
     LayoutItemLLM,
-    LayoutLLM,
+    MergedLayoutLLM,
     Palette,
+    Zone,
 )
 from app.services.placement import SLOT_KINDS, _aabb_overlap, resolve
+from app.services.style_profiles import get_profile
 
 # ── Shared fixtures ───────────────────────────────────────────────────────────
 
@@ -38,10 +40,11 @@ SMALL_REQ = GenerateLayoutRequest(
 )
 
 
-def _llm(items: list[LayoutItemLLM]) -> LayoutLLM:
-    return LayoutLLM(
+def _llm(items: list[LayoutItemLLM]) -> MergedLayoutLLM:
+    return MergedLayoutLLM(
         style="scandinavian",
         palette=_PALETTE,
+        zones=[Zone(id="z1", kind="seating_zone", itemBudget=6)],
         items=items,
         designExplanation=(
             "I arranged this scandinavian living room to maximize openness and "
@@ -79,7 +82,7 @@ def test_happy_path_three_items(catalog_items: list[CatalogItem], living_profile
             _item("rug", "center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile, get_profile(STD_REQ.style))
     assert len(layout.items) == 3
     assert layout.warnings == []
     for item in layout.items:
@@ -101,7 +104,7 @@ def test_no_aabb_overlap(catalog_items: list[CatalogItem], living_profile) -> No
             _item("rug", "center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile, get_profile(STD_REQ.style))
     placed = layout.items
     for i, a in enumerate(placed):
         for b in placed[i + 1 :]:
@@ -125,7 +128,7 @@ def test_cooccupancy_rug_coffee_table(catalog_items: list[CatalogItem], living_p
             _item("coffee_table", "center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile, get_profile(STD_REQ.style))
     ids = {item.catalogId for item in layout.items}
     assert "rug" in ids
     assert "coffee_table" in ids
@@ -146,7 +149,7 @@ def test_slot_exclusivity_drops_lower_priority(
             _item("bookshelf", "north_wall_left"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile, get_profile(STD_REQ.style))
     ids = [item.catalogId for item in layout.items]
     assert "sofa_3seat" in ids
     assert "tv_stand" not in ids
@@ -165,7 +168,7 @@ def test_wrong_slot_kind_dropped(catalog_items: list[CatalogItem], living_profil
             _item("sofa_3seat", "corner_NE"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile, get_profile(STD_REQ.style))
     ids = {item.catalogId for item in layout.items}
     assert "sofa_3seat" not in ids
     assert any("not accepted" in w or "not allowed" in w for w in layout.warnings)
@@ -182,7 +185,7 @@ def test_unknown_catalog_id(catalog_items: list[CatalogItem], living_profile) ->
             _item("bookshelf", "north_wall_left"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile, get_profile(STD_REQ.style))
     ids = {item.catalogId for item in layout.items}
     assert "ghost_chair" not in ids
     assert any("Unknown" in w for w in layout.warnings)
@@ -203,7 +206,7 @@ def test_drop_priority_floor_lamp_before_plant(
             _item("plant_large", "corner_NE"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile, get_profile(STD_REQ.style))
     ids = {item.catalogId for item in layout.items}
     assert "floor_lamp" in ids
     assert "plant_large" not in ids
@@ -221,7 +224,7 @@ def test_wall_items_face_inward(catalog_items: list[CatalogItem], living_profile
             _item("armchair", "west_wall_center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile, get_profile(STD_REQ.style))
     item_map = {item.catalogId: item for item in layout.items}
 
     # south_wall → rotation_y ≈ π (faces north/-Z)
@@ -251,7 +254,7 @@ def test_all_result_catalog_ids_valid(
             _item("rug", "center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile, get_profile(STD_REQ.style))
     for item in layout.items:
         assert item.catalogId in catalog_map
 
@@ -267,7 +270,7 @@ def test_warnings_is_list_on_success(catalog_items: list[CatalogItem], living_pr
             _item("rug", "center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile, get_profile(STD_REQ.style))
     assert isinstance(layout.warnings, list)
 
 
@@ -291,7 +294,7 @@ def test_seed_propagated(catalog_items: list[CatalogItem], living_profile) -> No
             _item("rug", "center"),
         ]
     )
-    layout = resolve(llm, req, catalog_items, living_profile)
+    layout = resolve(llm, req, catalog_items, living_profile, get_profile(req.style))
     assert layout.seed == 42
 
 
@@ -306,7 +309,7 @@ def test_resolved_item_fields(catalog_items: list[CatalogItem], living_profile) 
             _item("rug", "center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile, get_profile(STD_REQ.style))
     for item in layout.items:
         assert len(item.position) == 3
         assert isinstance(item.rotation_y, float)

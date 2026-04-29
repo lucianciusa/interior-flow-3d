@@ -1,0 +1,47 @@
+[
+  {
+    "id": "scandinavian",
+    "density": 0.5,
+    "symmetry_bias": 0.3,
+    "min_clear_floor_pct": 0.6,
+    "allowed_zone_count": 3,
+    "wall_flush_tolerance": 0.05,
+    "palette_hints": ["light wood", "white", "muted sage", "soft grey"]
+  },
+  {
+    "id": "minimal",
+    "density": 0.2,
+    "symmetry_bias": 0.8,
+    "min_clear_floor_pct": 0.8,
+    "allowed_zone_count": 2,
+    "wall_flush_tolerance": 0.02,
+    "palette_hints": ["white", "black", "monochrome", "cool grey"]
+  },
+  {
+    "id": "industrial",
+    "density": 0.7,
+    "symmetry_bias": 0.4,
+    "min_clear_floor_pct": 0.5,
+    "allowed_zone_count": 4,
+    "wall_flush_tolerance": 0.10,
+    "palette_hints": ["exposed brick", "matte black", "warm wood", "leather"]
+  },
+  {
+    "id": "japandi",
+    "density": 0.3,
+    "symmetry_bias": 0.5,
+    "min_clear_floor_pct": 0.7,
+    "allowed_zone_count": 3,
+    "wall_flush_tolerance": 0.03,
+    "palette_hints": ["bamboo", "stone", "beige", "charcoal"]
+  },
+  {
+    "id": "mid_century",
+    "density": 0.6,
+    "symmetry_bias": 0.6,
+    "min_clear_floor_pct": 0.5,
+    "allowed_zone_count": 4,
+    "wall_flush_tolerance": 0.08,
+    "palette_hints": ["teak", "mustard yellow", "teal", "walnut"]
+  }
+]

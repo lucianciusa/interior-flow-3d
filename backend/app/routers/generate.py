@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.config import Settings, get_settings
 from app.models.layout import GenerateLayoutRequest, Layout
 from app.routers.catalog import _load_catalog
-from app.services import llm, placement, room_types, zones
+from app.services import llm, placement, room_types, style_profiles, zones
 
 router = APIRouter(prefix="/generate-layout", tags=["generate"])
 
@@ -37,12 +37,17 @@ async def generate_layout(
         )
 
     try:
-        raw = await llm.generate(body, settings, catalog_items, profile)
+        style_prof = style_profiles.get_profile(body.style)
+    except KeyError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+
+    try:
+        raw = await llm.generate(body, settings, catalog_items, profile, style_prof)
     except llm.LLMValidationError as e:
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e)) from e
     except llm.LLMUpstreamError as e:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e)) from e
 
-    layout = placement.resolve(raw, body, catalog_items, profile)
+    layout = placement.resolve(raw, body, catalog_items, profile, style_prof)
     layout = zones.stamp_default_zone(layout, profile)
     return layout.model_copy(update={"catalogVersion": settings.CATALOG_VERSION or "v1.phase6"})

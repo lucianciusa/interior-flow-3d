@@ -16,7 +16,9 @@ STYLES = ["scandinavian", "minimal", "industrial"]
 
 # Tag-compatible LLM fixtures per room type. Use only ids known to be in the
 # catalog and slots known to be in each room's instance set.
-_FIXTURES: dict[str, list[dict]] = {
+from typing import Any
+
+_FIXTURES: dict[str, list[dict[str, Any]]] = {
     "living_room": [
         {
             "catalogId": "sofa_3seat",
@@ -88,12 +90,15 @@ _ROOM_DIMS = {
 }
 
 
-def _llm_payload(rt: str, style: str) -> dict:
+def _llm_payload(rt: str, style: str) -> dict[str, Any]:
+    items = _FIXTURES[rt].copy()
+    for item in items:
+        item["zone"] = "zone1"
     return {
         "style": style,
         "palette": _PALETTE,
-        "zones": [],
-        "items": _FIXTURES[rt],
+        "zones": [{"id": "zone1", "kind": "default", "itemBudget": len(items)}],
+        "items": items,
         "designExplanation": (
             f"I shaped this {style} {rt.replace('_', ' ')} around its anchor piece "
             "while leaving room for breathing space and natural circulation."
@@ -103,9 +108,9 @@ def _llm_payload(rt: str, style: str) -> dict:
 
 @pytest.mark.parametrize("rt,style", list(itertools.product(ROOM_TYPES, STYLES)))
 def test_combo_resolves_cleanly(client, rt: str, style: str) -> None:
-    from app.models.layout import LayoutLLM
+    from app.models.layout import MergedLayoutLLM
 
-    raw = LayoutLLM.model_validate(_llm_payload(rt, style))
+    raw = MergedLayoutLLM.model_validate(_llm_payload(rt, style))
     w, length = _ROOM_DIMS[rt]
     with patch("app.routers.generate.llm.generate", new_callable=AsyncMock) as mock_gen:
         mock_gen.return_value = raw
