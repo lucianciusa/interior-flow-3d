@@ -2,6 +2,8 @@
 
 import LayoutCard from "@/components/layouts/LayoutCard";
 import type { LayoutSummary } from "@/lib/types";
+import { EmptyState } from "@/components/ui/empty-state";
+import { EmptyLayoutsIllustration } from "@/components/ui/illustrations/EmptyLayouts";
 
 type Props = {
   layouts: LayoutSummary[];
@@ -20,9 +22,11 @@ export default function LayoutVariantGrid({
 }: Props) {
   if (layouts.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-neutral-300 p-8 text-center">
-        <p className="text-sm text-neutral-500">No layouts yet for this room.</p>
-      </div>
+      <EmptyState
+        illustration={<EmptyLayoutsIllustration />}
+        title="No layouts yet"
+        description="Generate your first 3D layout to see it here."
+      />
     );
   }
   return (

@@ -41,35 +41,35 @@ export default function LayoutCard({
       className={cn(
         "relative overflow-hidden rounded-xl border transition",
         isCompareSelected
-          ? "border-neutral-900 ring-2 ring-neutral-900"
-          : "border-neutral-200 hover:border-neutral-400 hover:shadow-sm",
+          ? "border-primary ring-2 ring-primary"
+          : "border-border hover:border-ring hover:shadow-md",
       )}
     >
       <Link href={`/app/projects/${projectId}/rooms/${roomId}/layouts/${layout.id}`}>
-        <div className="aspect-[3/2] w-full bg-gradient-to-br from-neutral-100 to-neutral-200" />
+        <div className="aspect-[3/2] w-full bg-gradient-to-br from-muted to-muted/50" />
       </Link>
       <div className="flex items-start justify-between gap-2 p-3">
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-medium">{layout.name}</div>
-          <div className="text-xs text-neutral-500">
+          <div className="truncate text-sm font-medium text-foreground">{layout.name}</div>
+          <div className="text-xs text-muted-foreground">
             {STYLE_LABELS[layout.style] ?? layout.style}
           </div>
         </div>
         <div className="flex flex-col items-end gap-1">
           {layout.is_primary ? (
-            <span className="rounded-full bg-neutral-900 px-2 py-0.5 text-[10px] font-medium uppercase text-white">
+            <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-medium uppercase text-primary-foreground">
               Primary
             </span>
           ) : (
             <button
               type="button"
               onClick={setPrimary}
-              className="rounded-full border border-neutral-300 px-2 py-0.5 text-[10px] text-neutral-600 hover:bg-neutral-50"
+              className="rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground hover:bg-muted transition-colors"
             >
               Set primary
             </button>
           )}
-          <label className="flex items-center gap-1 text-[10px] text-neutral-500">
+          <label className="flex items-center gap-1 text-[10px] text-muted-foreground">
             <input
               type="checkbox"
               checked={isCompareSelected}

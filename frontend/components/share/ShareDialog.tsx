@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import { useRevokeShare, useShareLayout } from "@/lib/api";
 import type { ShareTokenResponse } from "@/lib/types";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   open: boolean;
@@ -28,14 +29,7 @@ export default function ShareDialog({ open, onOpenChange, layoutId }: Props) {
     setToken(null);
     setCopied(false);
     setError(null);
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onOpenChange(false);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onOpenChange]);
-
-  if (!open) return null;
+  }, [open]);
 
   const create = async () => {
     setError(null);
@@ -69,71 +63,55 @@ export default function ShareDialog({ open, onOpenChange, layoutId }: Props) {
   };
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onOpenChange(false);
-      }}
-    >
-      <div className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-6 shadow-xl">
-        <h2 className="text-lg font-semibold">Share this layout</h2>
-        <p className="mt-1 text-sm text-neutral-600">
-          Anyone with the link can view (read-only). You can revoke it any time.
-        </p>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Share this layout</DialogTitle>
+          <DialogDescription>
+            Anyone with the link can view (read-only). You can revoke it any time.
+          </DialogDescription>
+        </DialogHeader>
 
-        {!token && (
-          <button
-            type="button"
-            onClick={create}
-            disabled={share.isPending}
-            className="mt-4 w-full rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-          >
-            {share.isPending ? "Generating…" : "Create share link"}
-          </button>
-        )}
-
-        {token && (
-          <div className="mt-4 space-y-3">
-            <div className="flex gap-2">
-              <input
-                readOnly
-                value={token.url}
-                className="flex-1 rounded-lg border border-neutral-300 px-3 py-2 text-xs"
-              />
-              <button
-                type="button"
-                onClick={copy}
-                className="rounded-lg bg-neutral-900 px-3 py-2 text-xs font-medium text-white"
-              >
-                {copied ? "Copied" : "Copy"}
-              </button>
-            </div>
-            <p className="text-xs text-neutral-500">
-              Expires {fmtDate(token.expires_at)}
-            </p>
-            <button
-              type="button"
-              onClick={doRevoke}
-              disabled={revoke.isPending}
-              className="text-xs text-red-600 hover:text-red-700 disabled:opacity-50"
+        <div className="py-2">
+          {!token && (
+            <Button
+              onClick={create}
+              disabled={share.isPending}
+              className="w-full"
             >
-              {revoke.isPending ? "Revoking…" : "Revoke link"}
-            </button>
-          </div>
-        )}
+              {share.isPending ? "Generating…" : "Create share link"}
+            </Button>
+          )}
 
-        {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
+          {token && (
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <input
+                  readOnly
+                  value={token.url}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                <Button onClick={copy} variant="secondary">
+                  {copied ? "Copied" : "Copy"}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Expires {fmtDate(token.expires_at)}
+              </p>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={doRevoke}
+                disabled={revoke.isPending}
+              >
+                {revoke.isPending ? "Revoking…" : "Revoke link"}
+              </Button>
+            </div>
+          )}
 
-        <button
-          type="button"
-          onClick={() => onOpenChange(false)}
-          className="mt-4 w-full text-xs text-neutral-500 hover:text-neutral-700"
-        >
-          Close
-        </button>
-      </div>
-    </div>
+          {error && <p className="mt-3 text-xs text-destructive">{error}</p>}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

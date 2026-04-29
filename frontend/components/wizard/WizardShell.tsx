@@ -139,7 +139,7 @@ export default function WizardShell() {
           saveState={saveState}
         />
         {saveError && (
-          <div className="fixed bottom-4 right-4 z-50 rounded-lg bg-red-600 px-4 py-2 text-sm text-white shadow-lg">
+          <div className="fixed bottom-4 right-4 z-50 rounded-lg bg-destructive px-4 py-2 text-sm text-primary-foreground shadow-lg">
             {saveError}
           </div>
         )}
@@ -154,9 +154,9 @@ export default function WizardShell() {
 
   if (phase === "generating") {
     return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-neutral-200 border-t-neutral-900" />
-        <p className="text-sm text-neutral-500">Designing your room&hellip;</p>
+      <div className="flex h-full flex-col items-center justify-center gap-4">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-primary" />
+        <p className="text-sm text-muted-foreground">Designing your room&hellip;</p>
       </div>
     );
   }
@@ -164,19 +164,19 @@ export default function WizardShell() {
   const stepIndex = PHASE_INDEX[phase] ?? 0;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-6">
+    <div className="flex min-h-[80vh] flex-col items-center justify-center p-6">
       <div className="w-full max-w-2xl">
         <div className="mb-8">
-          <div className="mb-2 flex justify-between text-xs text-neutral-400">
+          <div className="mb-2 flex justify-between text-xs text-muted-foreground">
             {PHASE_LABELS.map((label, i) => (
-              <span key={label} className={i <= stepIndex ? "text-neutral-900" : ""}>
+              <span key={label} className={i <= stepIndex ? "text-foreground font-medium" : ""}>
                 {label}
               </span>
             ))}
           </div>
-          <div className="h-1 w-full overflow-hidden rounded-full bg-neutral-100">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full rounded-full bg-neutral-900 transition-all"
+              className="h-full rounded-full bg-primary transition-all"
               style={{ width: `${((stepIndex + 1) / 3) * 100}%` }}
             />
           </div>

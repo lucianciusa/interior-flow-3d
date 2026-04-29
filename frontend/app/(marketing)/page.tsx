@@ -1,60 +1,40 @@
 import Link from "next/link";
 
-const FEATURES = [
-  {
-    title: "Pick a style",
-    body: "Scandinavian, Minimal, or Industrial — three palettes, one click.",
-  },
-  {
-    title: "Pick preferences",
-    body: "More seating, more open space, or more storage — tell us what matters.",
-  },
-  {
-    title: "See it in 3D",
-    body: "Rotate, inspect each piece, and save layouts you love.",
-  },
-];
+import MarketingHero from "@/components/marketing/MarketingHero";
+import HowItWorks from "@/components/marketing/HowItWorks";
+import WhatsIncluded from "@/components/marketing/WhatsIncluded";
+import PricingTeaser from "@/components/marketing/PricingTeaser";
+import { Button } from "@/components/ui/button";
 
 export default function MarketingPage() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col px-6 py-24">
-      <section className="flex flex-col items-start gap-6">
-        <h1 className="text-5xl font-semibold tracking-tight">
-          Design a living room <br className="hidden sm:block" />in 30 seconds.
+    <main className="mx-auto flex min-h-screen max-w-6xl flex-col px-6 py-16">
+      {/* Hero section */}
+      <section className="flex flex-col items-center gap-8 text-center">
+        <h1 className="max-w-2xl text-5xl font-bold tracking-tight font-display text-foreground sm:text-6xl">
+          Design any room{" "}
+          <span className="bg-gradient-to-r from-primary to-muted-foreground bg-clip-text text-transparent">
+            in 30 seconds
+          </span>
         </h1>
-        <p className="max-w-xl text-lg text-neutral-600">
-          Interior Flow 3D turns room dimensions and a style into a 3D living-room
-          layout you can rotate, inspect, and save.
+        <p className="max-w-xl text-lg text-muted-foreground">
+          Interior Flow 3D turns room dimensions and a style into a 3D layout
+          you can rotate, inspect, and save. No design skills needed.
         </p>
-        <Link
-          href="/app"
-          className="inline-flex items-center rounded-md bg-neutral-900 px-5 py-3 text-sm font-medium text-white hover:bg-neutral-800"
-        >
-          Generate a layout
-        </Link>
+        <Button asChild size="lg">
+          <Link href="/app/new">Try it free, no signup</Link>
+        </Button>
       </section>
 
-      <section className="mt-16 aspect-video w-full overflow-hidden rounded-xl border border-neutral-200 bg-gradient-to-br from-neutral-100 to-neutral-50">
-        <div className="flex h-full items-center justify-center text-sm text-neutral-400">
-          Hero preview
-        </div>
-      </section>
+      {/* 3D hero */}
+      <div className="mt-12">
+        <MarketingHero />
+      </div>
 
-      <section className="mt-16 grid gap-6 sm:grid-cols-3">
-        {FEATURES.map((f) => (
-          <div
-            key={f.title}
-            className="rounded-lg border border-neutral-200 p-5"
-          >
-            <h3 className="text-sm font-semibold">{f.title}</h3>
-            <p className="mt-1 text-sm text-neutral-600">{f.body}</p>
-          </div>
-        ))}
-      </section>
-
-      <footer className="mt-24 text-xs text-neutral-400">
-        Anonymous Generate. Login required to Save.
-      </footer>
+      {/* Below-fold sections */}
+      <HowItWorks />
+      <WhatsIncluded />
+      <PricingTeaser />
     </main>
   );
 }

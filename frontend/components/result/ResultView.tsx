@@ -7,6 +7,8 @@ import ResultSidebar from "@/components/sidebar/ResultSidebar";
 import SwapPopover from "@/components/swap/SwapPopover";
 import CameraPresets from "@/components/viewer/CameraPresets";
 import ItemPopover from "@/components/viewer/ItemPopover";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useViewerStore } from "@/lib/stores/viewer";
 import type { Layout, Preference, RoomDims, Style } from "@/lib/types";
 
@@ -53,16 +55,19 @@ export default function ResultView({
 
   const showSwap = mode === "saved" && layoutId;
 
+  // Shared route renders sidebar inline, app route uses shell's inspector space
+  const isInline = mode === "shared";
+
   return (
-    <div className="flex h-screen">
+    <div className="flex h-full">
       <div className="relative flex-1">
         <div className="absolute left-4 top-4 z-10">
           <CameraPresets />
         </div>
         <Suspense
           fallback={
-            <div className="flex h-full items-center justify-center text-neutral-400">
-              Loading 3D scene&hellip;
+            <div className="flex h-full items-center justify-center">
+              <Skeleton className="h-[60vh] w-[80%] rounded-xl" />
             </div>
           }
         >
@@ -71,13 +76,13 @@ export default function ResultView({
         <ItemPopover />
         {showSwap && selected && (
           <>
-            <button
-              type="button"
+            <Button
+              size="sm"
               onClick={() => setSwapOpen((v) => !v)}
-              className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white"
+              className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2"
             >
               {swapOpen ? "Hide replacements" : "Replace this item"}
-            </button>
+            </Button>
             {swapOpen && layoutId && (
               <SwapPopover
                 item={selected}
@@ -88,8 +93,24 @@ export default function ResultView({
           </>
         )}
       </div>
-      {mode !== "shared" && (
-        <div className="w-80 shrink-0 border-l border-neutral-200">
+      {isInline && (
+        <div className="w-80 shrink-0 border-l border-border">
+          <ResultSidebar
+            layout={layout}
+            style={style}
+            preferences={preferences}
+            mode={mode}
+            onRegenerate={onRegenerate}
+            onAdjust={onAdjust}
+            onSave={onSave}
+            onShare={onShare}
+            onCompare={onCompare}
+            saveState={saveState}
+          />
+        </div>
+      )}
+      {!isInline && (
+        <div className="hidden lg:flex w-80 shrink-0 border-l border-border">
           <ResultSidebar
             layout={layout}
             style={style}

@@ -49,10 +49,10 @@ export default function CameraPresets({ className }: CameraPresetsProps) {
           type="button"
           onClick={() => setPreset(p.id)}
           className={cn(
-            "rounded px-3 py-1 text-sm font-medium transition",
+            "rounded px-3 py-1 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             preset === p.id
-              ? "bg-neutral-900 text-white"
-              : "bg-white/80 text-neutral-700 hover:bg-white",
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "bg-background/80 text-foreground hover:bg-background shadow-sm border border-border backdrop-blur-sm",
           )}
         >
           {p.label}

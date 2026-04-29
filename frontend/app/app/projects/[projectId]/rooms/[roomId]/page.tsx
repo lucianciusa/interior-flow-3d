@@ -6,6 +6,8 @@ import { useState } from "react";
 
 import CompareOverlay from "@/components/compare/CompareOverlay";
 import LayoutVariantGrid from "@/components/layouts/LayoutVariantGrid";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useGetProject,
   useListRoomsForProject,
@@ -35,24 +37,35 @@ export default function RoomPage() {
 
   if (!ready) {
     return (
-      <div className="flex h-screen items-center justify-center text-sm text-neutral-400">
-        Loading…
+      <div className="flex h-full items-center justify-center">
+        <div className="space-y-4 w-full max-w-md">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-72" />
+        </div>
       </div>
     );
   }
   if (!session) {
     return (
-      <main className="flex min-h-screen items-center justify-center p-6">
-        <Link href="/app" className="text-sm underline">
+      <div className="flex min-h-[50vh] items-center justify-center p-6">
+        <Link href="/app" className="text-sm underline text-muted-foreground hover:text-foreground">
           Sign in
         </Link>
-      </main>
+      </div>
     );
   }
 
   if (rooms.isLoading || layouts.isLoading) {
     return (
-      <main className="mx-auto max-w-5xl p-6 text-sm text-neutral-500">Loading…</main>
+      <div className="space-y-4">
+        <Skeleton className="h-6 w-24" />
+        <Skeleton className="h-8 w-64" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2].map((i) => (
+            <Skeleton key={i} className="h-48 rounded-xl" />
+          ))}
+        </div>
+      </div>
     );
   }
 
@@ -74,37 +87,31 @@ export default function RoomPage() {
   };
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl p-6">
-      <div className="mb-2 text-xs text-neutral-500">
-        <Link href="/app" className="hover:text-neutral-900">
+    <div className="w-full">
+      <div className="mb-2 text-xs text-muted-foreground">
+        <Link href="/app" className="hover:text-foreground transition-colors">
           Projects
         </Link>{" "}
         /{" "}
-        <Link href={`/app/projects/${projectId}`} className="hover:text-neutral-900">
+        <Link href={`/app/projects/${projectId}`} className="hover:text-foreground transition-colors">
           {project.data?.name ?? "…"}
         </Link>{" "}
         / {room?.name ?? "Room"}
       </div>
 
       <div className="mb-6 flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold">{room?.name ?? "Room"}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight font-display text-foreground">
+          {room?.name ?? "Room"}
+        </h1>
         <div className="flex gap-2">
           {compareIds.length === 2 && (
-            <button
-              type="button"
-              onClick={() => setCompareOpen(true)}
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium hover:bg-neutral-50"
-            >
+            <Button variant="outline" size="sm" onClick={() => setCompareOpen(true)}>
               Compare (2)
-            </button>
+            </Button>
           )}
-          <button
-            type="button"
-            onClick={startNewLayout}
-            className="rounded-lg bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white"
-          >
+          <Button size="sm" onClick={startNewLayout}>
             + New layout
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -128,6 +135,6 @@ export default function RoomPage() {
           onClose={() => setCompareOpen(false)}
         />
       )}
-    </main>
+    </div>
   );
 }

@@ -1,19 +1,16 @@
 "use client";
 
+import { EmptyState } from "@/components/ui/empty-state";
+import { EmptyProjectsIllustration } from "@/components/ui/illustrations/EmptyProjects";
+import { Button } from "@/components/ui/button";
+
 export default function EmptyProjects({ onCreate }: { onCreate: () => void }) {
   return (
-    <div className="rounded-xl border border-dashed border-neutral-300 p-12 text-center">
-      <h2 className="text-lg font-medium">No projects yet</h2>
-      <p className="mt-2 text-sm text-neutral-500">
-        A project groups your rooms and layout variants.
-      </p>
-      <button
-        type="button"
-        onClick={onCreate}
-        className="mt-4 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white"
-      >
-        Create your first project
-      </button>
-    </div>
+    <EmptyState
+      illustration={<EmptyProjectsIllustration />}
+      title="No projects yet"
+      description="A project groups your rooms and layout variants. Create one to get started, or pick a template below."
+      cta={<Button onClick={onCreate}>Create your first project</Button>}
+    />
   );
 }

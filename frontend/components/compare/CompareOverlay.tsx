@@ -31,12 +31,12 @@ export default function CompareOverlay({ aId, bId, dims, onClose }: Props) {
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-40 flex flex-col bg-black"
+      className="fixed inset-0 z-40 flex flex-col bg-black text-white"
     >
       <CompareToolbar t={t} onChange={setT} onClose={onClose} />
       <div className="relative flex-1">
         {!ready && (
-          <div className="flex h-full items-center justify-center text-sm text-neutral-300">
+          <div className="flex h-full items-center justify-center text-sm text-white/60">
             Loading both layouts…
           </div>
         )}

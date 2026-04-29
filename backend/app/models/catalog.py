@@ -26,6 +26,7 @@ class CatalogItem(BaseModel):
     clearance: Clearance
     allowedSlotKinds: list[str]
     model: str
+    is_premium: bool = False
 
 
 class CatalogResponse(BaseModel):

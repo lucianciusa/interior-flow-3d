@@ -20,6 +20,7 @@ import type {
   RoomRecord,
   ShareTokenResponse,
   SwapRequest,
+  TemplatesResponse,
 } from "@/lib/types";
 
 const API = process.env.NEXT_PUBLIC_API_BASE_URL!;
@@ -64,6 +65,16 @@ export const catalogQuery = () => ({
   staleTime: 60 * 60 * 1000,
 });
 
+export const templatesQuery = () => ({
+  queryKey: ["templates"] as const,
+  queryFn: () => publicFetch<TemplatesResponse>("/templates"),
+  staleTime: 60 * 60 * 1000,
+});
+
+export function useListTemplates() {
+  return useQuery(templatesQuery());
+}
+
 export function useGenerateLayout() {
   return useMutation({
     mutationFn: (body: GenerateRequest) =>
@@ -71,6 +82,14 @@ export function useGenerateLayout() {
         method: "POST",
         body: JSON.stringify(body),
       }),
+    onSuccess: () => {
+      // Increment presentational quota counter for anonymous users
+      const session = useAuthStore.getState().session;
+      if (!session) {
+        const { useQuotaStore } = require("@/lib/stores/quota");
+        useQuotaStore.getState().increment();
+      }
+    },
   });
 }
 

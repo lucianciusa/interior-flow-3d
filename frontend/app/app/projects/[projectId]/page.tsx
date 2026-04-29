@@ -6,6 +6,10 @@ import { useState } from "react";
 
 import NewRoomDialog from "@/components/rooms/NewRoomDialog";
 import RoomCard from "@/components/rooms/RoomCard";
+import { EmptyState } from "@/components/ui/empty-state";
+import { EmptyRoomsIllustration } from "@/components/ui/illustrations/EmptyRooms";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useGetProject,
   useListRoomsForProject,
@@ -29,36 +33,45 @@ export default function ProjectPage() {
 
   if (!ready) {
     return (
-      <div className="flex h-screen items-center justify-center text-sm text-neutral-400">
-        Loading…
+      <div className="flex h-full items-center justify-center">
+        <div className="space-y-4 w-full max-w-md">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-72" />
+        </div>
       </div>
     );
   }
   if (!session) {
     return (
-      <main className="flex min-h-screen items-center justify-center p-6">
-        <Link href="/app" className="text-sm underline">
+      <div className="flex min-h-[50vh] items-center justify-center p-6">
+        <Link href="/app" className="text-sm underline text-muted-foreground hover:text-foreground">
           Sign in
         </Link>
-      </main>
+      </div>
     );
   }
 
   if (project.isLoading || rooms.isLoading) {
     return (
-      <main className="mx-auto max-w-5xl p-6 text-sm text-neutral-500">
-        Loading project…
-      </main>
+      <div className="space-y-4">
+        <Skeleton className="h-6 w-24" />
+        <Skeleton className="h-8 w-64" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-40 rounded-xl" />
+          ))}
+        </div>
+      </div>
     );
   }
   if (project.isError || !project.data) {
     return (
-      <main className="mx-auto max-w-5xl p-6">
-        <p className="text-sm text-red-600">Project not found.</p>
-        <Link href="/app" className="text-sm underline">
+      <div>
+        <p className="text-sm text-destructive">Project not found.</p>
+        <Link href="/app" className="text-sm underline text-muted-foreground hover:text-foreground">
           Back to projects
         </Link>
-      </main>
+      </div>
     );
   }
 
@@ -80,9 +93,9 @@ export default function ProjectPage() {
   };
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl p-6">
-      <div className="mb-2 text-xs text-neutral-500">
-        <Link href="/app" className="hover:text-neutral-900">
+    <div className="w-full">
+      <div className="mb-2 text-xs text-muted-foreground">
+        <Link href="/app" className="hover:text-foreground transition-colors">
           Projects
         </Link>{" "}
         / {project.data.name}
@@ -98,37 +111,29 @@ export default function ProjectPage() {
               if (e.key === "Escape") setEditing(false);
             }}
             autoFocus
-            className="flex-1 rounded-lg border border-neutral-300 px-3 py-2 text-2xl font-semibold focus:outline-none focus:ring-2 focus:ring-neutral-900"
+            className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-2xl font-semibold font-display text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           />
         ) : (
           <h1
-            className="text-2xl font-semibold cursor-text"
+            className="text-2xl font-semibold tracking-tight font-display text-foreground cursor-text"
             onClick={startRename}
             title="Click to rename"
           >
             {project.data.name}
           </h1>
         )}
-        <button
-          type="button"
-          onClick={() => setNewRoomOpen(true)}
-          className="rounded-lg bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white"
-        >
+        <Button size="sm" onClick={() => setNewRoomOpen(true)}>
           + New room
-        </button>
+        </Button>
       </div>
 
       {rooms.data && rooms.data.length === 0 && (
-        <div className="rounded-lg border border-dashed border-neutral-300 p-8 text-center">
-          <p className="text-sm text-neutral-500">No rooms yet.</p>
-          <button
-            type="button"
-            onClick={() => setNewRoomOpen(true)}
-            className="mt-3 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white"
-          >
-            Add a room
-          </button>
-        </div>
+        <EmptyState
+          illustration={<EmptyRoomsIllustration />}
+          title="No rooms yet"
+          description="Add your first room to start designing layouts."
+          cta={<Button onClick={() => setNewRoomOpen(true)}>Add a room</Button>}
+        />
       )}
 
       {rooms.data && rooms.data.length > 0 && (
@@ -144,6 +149,6 @@ export default function ProjectPage() {
         onOpenChange={setNewRoomOpen}
         projectId={projectId ?? ""}
       />
-    </main>
+    </div>
   );
 }

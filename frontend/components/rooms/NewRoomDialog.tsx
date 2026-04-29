@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
 import { useCreateRoom } from "@/lib/api";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   open: boolean;
@@ -22,15 +23,8 @@ export default function NewRoomDialog({ open, onOpenChange, projectId }: Props) 
   useEffect(() => {
     if (!open) return;
     setError(null);
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onOpenChange(false);
-    };
-    document.addEventListener("keydown", onKey);
-    inputRef.current?.focus();
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onOpenChange]);
-
-  if (!open) return null;
+    setTimeout(() => inputRef.current?.focus(), 50);
+  }, [open]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,105 +43,105 @@ export default function NewRoomDialog({ open, onOpenChange, projectId }: Props) 
   };
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onOpenChange(false);
-      }}
-    >
-      <form
-        onSubmit={submit}
-        className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-6 shadow-xl"
-      >
-        <h2 className="text-lg font-semibold">New room</h2>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <form onSubmit={submit}>
+          <DialogHeader>
+            <DialogTitle>New room</DialogTitle>
+          </DialogHeader>
 
-        <label htmlFor="room-name" className="mt-4 block text-xs font-medium">
-          Name
-        </label>
-        <input
-          ref={inputRef}
-          id="room-name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={80}
-          className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
-          required
-        />
+          <div className="py-4 space-y-4">
+            <div>
+              <label htmlFor="room-name" className="block text-xs font-medium text-foreground">
+                Name
+              </label>
+              <input
+                ref={inputRef}
+                id="room-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                maxLength={80}
+                className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                required
+              />
+            </div>
 
-        <label htmlFor="room-type" className="mt-3 block text-xs font-medium">
-          Type
-        </label>
-        <select
-          id="room-type"
-          value="living_room"
-          disabled
-          className="mt-1 w-full rounded-lg border border-neutral-300 bg-neutral-50 px-3 py-2 text-sm"
-        >
-          <option value="living_room">Living room</option>
-        </select>
-        <p className="mt-1 text-xs text-neutral-400">
-          More room types arrive in Phase 6.
-        </p>
+            <div>
+              <label htmlFor="room-type" className="block text-xs font-medium text-foreground">
+                Type
+              </label>
+              <select
+                id="room-type"
+                value="living_room"
+                disabled
+                className="mt-1 flex h-9 w-full items-center justify-between rounded-md border border-input bg-muted px-3 py-2 text-sm shadow-sm opacity-50 cursor-not-allowed"
+              >
+                <option value="living_room">Living room</option>
+              </select>
+              <p className="mt-1 text-xs text-muted-foreground">
+                More room types arrive in Phase 6.
+              </p>
+            </div>
 
-        <div className="mt-3 grid grid-cols-3 gap-3">
-          <label className="text-xs font-medium">
-            Width (m)
-            <input
-              type="number"
-              step="0.1"
-              min={2}
-              max={12}
-              value={width}
-              onChange={(e) => setWidth(Number(e.target.value))}
-              className="mt-1 w-full rounded-lg border border-neutral-300 px-2 py-1.5 text-sm"
-            />
-          </label>
-          <label className="text-xs font-medium">
-            Length (m)
-            <input
-              type="number"
-              step="0.1"
-              min={2}
-              max={12}
-              value={length}
-              onChange={(e) => setLength(Number(e.target.value))}
-              className="mt-1 w-full rounded-lg border border-neutral-300 px-2 py-1.5 text-sm"
-            />
-          </label>
-          <label className="text-xs font-medium">
-            Height (m)
-            <input
-              type="number"
-              step="0.1"
-              min={2.2}
-              max={4}
-              value={height}
-              onChange={(e) => setHeight(Number(e.target.value))}
-              className="mt-1 w-full rounded-lg border border-neutral-300 px-2 py-1.5 text-sm"
-            />
-          </label>
-        </div>
+            <div className="grid grid-cols-3 gap-3">
+              <label className="text-xs font-medium text-foreground">
+                Width (m)
+                <input
+                  type="number"
+                  step="0.1"
+                  min={2}
+                  max={12}
+                  value={width}
+                  onChange={(e) => setWidth(Number(e.target.value))}
+                  className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                />
+              </label>
+              <label className="text-xs font-medium text-foreground">
+                Length (m)
+                <input
+                  type="number"
+                  step="0.1"
+                  min={2}
+                  max={12}
+                  value={length}
+                  onChange={(e) => setLength(Number(e.target.value))}
+                  className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                />
+              </label>
+              <label className="text-xs font-medium text-foreground">
+                Height (m)
+                <input
+                  type="number"
+                  step="0.1"
+                  min={2.2}
+                  max={4}
+                  value={height}
+                  onChange={(e) => setHeight(Number(e.target.value))}
+                  className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                />
+              </label>
+            </div>
 
-        {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
-        <div className="mt-4 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={() => onOpenChange(false)}
-            className="rounded-lg px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={create.isPending}
-            className="rounded-lg bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
-          >
-            {create.isPending ? "Creating…" : "Create"}
-          </button>
-        </div>
-      </form>
-    </div>
+            {error && <p className="text-xs text-destructive">{error}</p>}
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={create.isPending}
+            >
+              {create.isPending ? "Creating…" : "Create"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.routers import catalog, generate, layouts, projects, rooms, share, swap
+from app.routers import catalog, generate, layouts, projects, rooms, share, swap, templates
 
 
 def create_app() -> FastAPI:
@@ -29,6 +29,7 @@ def create_app() -> FastAPI:
     app.include_router(layouts.router)
     app.include_router(swap.router)
     app.include_router(share.router)
+    app.include_router(templates.router)
 
     return app
 

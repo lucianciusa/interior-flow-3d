@@ -1,5 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import type { Style } from "@/lib/types";
 
 type StyleStepProps = {
@@ -43,8 +44,8 @@ export default function StyleStep({ value, onChange, onNext, onBack }: StyleStep
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-xl font-semibold">Choose a style</h2>
-        <p className="mt-1 text-sm text-neutral-500">
+        <h2 className="text-xl font-semibold tracking-tight font-display text-foreground">Choose a style</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
           The AI will honour this aesthetic throughout.
         </p>
       </div>
@@ -61,21 +62,21 @@ export default function StyleStep({ value, onChange, onNext, onBack }: StyleStep
             aria-checked={value === s.id}
             onClick={() => onChange(s.id)}
             className={cn(
-              "flex flex-col overflow-hidden rounded-xl border-2 text-left transition",
+              "flex flex-col overflow-hidden rounded-xl border-2 text-left transition bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               value === s.id
-                ? "border-neutral-900 ring-2 ring-neutral-900/20"
-                : "border-neutral-200 hover:border-neutral-400",
+                ? "border-primary ring-2 ring-primary/20"
+                : "border-border hover:border-ring",
             )}
           >
             <div className={cn("h-28 w-full bg-gradient-to-br", s.gradient)} />
             <div className="p-3">
-              <p className="font-semibold">{s.label}</p>
-              <p className="mt-0.5 text-xs text-neutral-500">{s.tagline}</p>
+              <p className="font-semibold text-foreground">{s.label}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">{s.tagline}</p>
               <div className="mt-2 flex gap-1">
                 {s.swatches.map((hex) => (
                   <span
                     key={hex}
-                    className="h-4 w-4 rounded-full border border-neutral-200"
+                    className="h-4 w-4 rounded-full border border-border shadow-sm"
                     style={{ backgroundColor: hex }}
                   />
                 ))}
@@ -84,22 +85,13 @@ export default function StyleStep({ value, onChange, onNext, onBack }: StyleStep
           </button>
         ))}
       </div>
-      <div className="flex justify-between">
-        <button
-          type="button"
-          onClick={onBack}
-          className="text-sm text-neutral-500 hover:text-neutral-800"
-        >
+      <div className="flex justify-between items-center mt-2">
+        <Button variant="ghost" onClick={onBack}>
           Back
-        </button>
-        <button
-          type="button"
-          onClick={onNext}
-          disabled={!value}
-          className="rounded-lg bg-neutral-900 px-6 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-40"
-        >
+        </Button>
+        <Button onClick={onNext} disabled={!value}>
           Next
-        </button>
+        </Button>
       </div>
     </div>
   );

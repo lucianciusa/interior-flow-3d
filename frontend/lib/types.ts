@@ -35,6 +35,7 @@ export type CatalogItem = {
   clearance: { front: number; sides: number; back: number };
   allowedSlotKinds: string[];
   model: string;
+  is_premium?: boolean;
 };
 export type CatalogResponse = { items: CatalogItem[] };
 
@@ -178,4 +179,23 @@ export type ConversionResponse = {
 export type SwapRequest = {
   catalogId: string;
   replacementId: string;
+};
+
+export type TemplateDims = {
+  width_m: number;
+  length_m: number;
+  height_m: number;
+};
+
+export type Template = {
+  id: string;
+  name: string;
+  room_type: string;
+  style: string;
+  dims: TemplateDims;
+  thumbnail_url: string | null;
+};
+
+export type TemplatesResponse = {
+  items: Template[];
 };

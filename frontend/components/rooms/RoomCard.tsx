@@ -14,12 +14,14 @@ export default function RoomCard({
   return (
     <Link
       href={`/app/projects/${projectId}/rooms/${room.id}`}
-      className="block overflow-hidden rounded-xl border border-neutral-200 transition hover:border-neutral-400 hover:shadow-sm"
+      className="group block overflow-hidden rounded-xl border border-border transition hover:border-ring hover:shadow-md"
     >
-      <div className="aspect-[3/2] w-full bg-gradient-to-br from-neutral-100 to-neutral-200" />
+      <div className="aspect-[3/2] w-full bg-gradient-to-br from-muted to-muted/50" />
       <div className="p-4">
-        <div className="text-sm font-medium">{room.name}</div>
-        <div className="text-xs text-neutral-500">
+        <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+          {room.name}
+        </div>
+        <div className="text-xs text-muted-foreground">
           {room.width_m.toFixed(1)} × {room.length_m.toFixed(1)} m
           {" · "}
           {room.room_type.replace(/_/g, " ")}

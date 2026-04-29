@@ -1,0 +1,26 @@
+[
+  {
+    "id": "tmpl_scandinavian_living",
+    "name": "Scandinavian Living Room",
+    "room_type": "living_room",
+    "style": "scandinavian",
+    "dims": {"width_m": 4.0, "length_m": 5.0, "height_m": 2.6},
+    "thumbnail_url": null
+  },
+  {
+    "id": "tmpl_minimal_living",
+    "name": "Minimal Living Room",
+    "room_type": "living_room",
+    "style": "minimal",
+    "dims": {"width_m": 3.5, "length_m": 4.5, "height_m": 2.6},
+    "thumbnail_url": null
+  },
+  {
+    "id": "tmpl_industrial_living",
+    "name": "Industrial Living Room",
+    "room_type": "living_room",
+    "style": "industrial",
+    "dims": {"width_m": 5.0, "length_m": 6.0, "height_m": 2.8},
+    "thumbnail_url": null
+  }
+]

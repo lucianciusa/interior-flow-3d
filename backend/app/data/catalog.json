@@ -21,7 +21,8 @@
     "footprint": {"w": 1.20, "d": 0.60, "h": 0.45},
     "clearance": {"front": 0.30, "sides": 0.20, "back": 0.20},
     "allowedSlotKinds": ["floor"],
-    "model": "primitive:coffee_table"
+    "model": "primitive:coffee_table",
+    "is_premium": true
   },
   {
     "id": "tv_stand",
@@ -37,7 +38,8 @@
     "footprint": {"w": 0.80, "d": 0.35, "h": 1.80},
     "clearance": {"front": 0.30, "sides": 0.05, "back": 0.05},
     "allowedSlotKinds": ["wall"],
-    "model": "primitive:bookshelf"
+    "model": "primitive:bookshelf",
+    "is_premium": true
   },
   {
     "id": "corner_shelf",
@@ -53,7 +55,8 @@
     "footprint": {"w": 0.35, "d": 0.35, "h": 1.60},
     "clearance": {"front": 0.30, "sides": 0.10, "back": 0.10},
     "allowedSlotKinds": ["wall", "corner"],
-    "model": "primitive:floor_lamp"
+    "model": "primitive:floor_lamp",
+    "is_premium": true
   },
   {
     "id": "rug",

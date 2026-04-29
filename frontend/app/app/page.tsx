@@ -8,8 +8,11 @@ import LoginModal from "@/components/auth/LoginModal";
 import EmptyProjects from "@/components/projects/EmptyProjects";
 import NewProjectDialog from "@/components/projects/NewProjectDialog";
 import ProjectGrid from "@/components/projects/ProjectGrid";
+import { TemplateGallery } from "@/components/templates/TemplateGallery";
 import { useConvertAnonLayout, useListProjects } from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { ConversionRequest } from "@/lib/types";
 
 const PENDING_KEY = "pendingAnonLayout";
@@ -57,71 +60,75 @@ export default function DashboardPage() {
 
   if (!ready) {
     return (
-      <div className="flex h-screen items-center justify-center text-sm text-neutral-400">
-        Loading…
+      <div className="flex h-full items-center justify-center">
+        <div className="space-y-4 w-full max-w-md">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-72" />
+          <Skeleton className="h-10 w-40" />
+        </div>
       </div>
     );
   }
 
   if (!session) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-6">
+      <div className="flex h-full w-full flex-col items-center justify-center p-6">
         <div className="max-w-md text-center">
-          <h1 className="text-3xl font-semibold">Interior Flow 3D</h1>
-          <p className="mt-2 text-sm text-neutral-600">
+          <h1 className="text-3xl font-semibold tracking-tight font-display text-foreground">
+            Interior Flow 3D
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
             Generate a 3D interior layout in seconds. Sign in to save your work.
           </p>
           <div className="mt-6 flex flex-col items-center gap-3">
-            <Link
-              href="/app/new"
-              className="rounded-lg bg-neutral-900 px-5 py-2 text-sm font-medium text-white"
-            >
-              Try without signing in
-            </Link>
+            <Button asChild>
+              <Link href="/app/new">Try without signing in</Link>
+            </Button>
             <button
               type="button"
               onClick={() => setLoginOpen(true)}
-              className="text-sm text-neutral-600 hover:text-neutral-900"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Sign in
             </button>
           </div>
         </div>
         <LoginModal open={loginOpen} onOpenChange={setLoginOpen} />
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl p-6">
+    <div className="w-full">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Projects</h1>
+        <h1 className="text-2xl font-semibold tracking-tight font-display text-foreground">
+          Projects
+        </h1>
         <div className="flex gap-2">
-          <Link
-            href="/app/new"
-            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium hover:bg-neutral-50"
-          >
-            Quick generate
-          </Link>
-          <button
-            type="button"
-            onClick={() => setNewOpen(true)}
-            className="rounded-lg bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white"
-          >
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/app/new">Quick generate</Link>
+          </Button>
+          <Button size="sm" onClick={() => setNewOpen(true)}>
             + New project
-          </button>
+          </Button>
         </div>
       </div>
 
       {convertError && (
-        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">
+        <div className="mb-4 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-2 text-sm text-destructive">
           Could not save your generated layout: {convertError}
         </div>
       )}
 
-      {isLoading && <p className="text-sm text-neutral-500">Loading…</p>}
+      {isLoading && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-48 rounded-xl" />
+          ))}
+        </div>
+      )}
       {isError && (
-        <p className="text-sm text-red-600">
+        <p className="text-sm text-destructive">
           Could not load projects: {error instanceof Error ? error.message : "error"}
         </p>
       )}
@@ -132,7 +139,9 @@ export default function DashboardPage() {
         <ProjectGrid projects={data} />
       )}
 
+      <TemplateGallery />
+
       <NewProjectDialog open={newOpen} onOpenChange={setNewOpen} />
-    </main>
+    </div>
   );
 }
