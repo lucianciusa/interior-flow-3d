@@ -42,7 +42,7 @@ def _layout_row(layout_id: str = "layout-1") -> dict:
         "thumbnail_url": None,
         "created_at": "2026-04-28T00:00:00+00:00",
         "layout": VALID_LAYOUT,
-        "rooms": {"width_m": 5.0, "length_m": 6.0, "height_m": 2.6},
+        "rooms": {"width_m": 5.0, "length_m": 6.0, "height_m": 2.6, "room_type": "living_room"},
     }
 
 

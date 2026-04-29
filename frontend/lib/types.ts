@@ -1,5 +1,7 @@
 // TS types mirroring backend/app/models/*
 
+export type RoomType = "living_room" | "bedroom" | "dining_room" | "home_office";
+
 export type Style = "scandinavian" | "minimal" | "industrial";
 export type Preference = "more_seating" | "more_open_space" | "more_storage";
 export type SlotId =
@@ -21,19 +23,30 @@ export type SlotId =
   | "corner_SW"
   | "center"
   | "center_front"
-  | "entry";
+  | "entry"
+  | "bed_center"
+  | "table_center"
+  | "desk_anchor";
 export type Facing = "auto" | "north" | "south" | "east" | "west" | "center";
 
 export type Palette = { name: string; hex: string };
 export type PaletteMap = { wall: Palette; floor: Palette; accent: Palette };
 export type Footprint = { w: number; d: number; h: number };
 
+export type PlacementSpec = {
+  surfaces: string[];
+  against: string[];
+  exclusive_with: string[];
+};
+
 export type CatalogItem = {
   id: string;
   name: string;
+  tags: string[];
+  room_types: RoomType[];
+  placement: PlacementSpec;
   footprint: Footprint;
   clearance: { front: number; sides: number; back: number };
-  allowedSlotKinds: string[];
   model: string;
   is_premium?: boolean;
 };
@@ -43,6 +56,7 @@ export type ResolvedItem = {
   catalogId: string;
   slot: SlotId;
   facing: Facing;
+  zone?: string | null;
   rationale?: string | null;
   position: [number, number, number];
   rotation_y: number;
@@ -50,9 +64,16 @@ export type ResolvedItem = {
   model: string;
 };
 
+export type Zone = {
+  id: string;
+  kind: string;
+  itemBudget: number;
+};
+
 export type Layout = {
   style: Style;
   palette: PaletteMap;
+  zones?: Zone[];
   items: ResolvedItem[];
   designExplanation: string;
   seed?: number | null;
@@ -61,7 +82,7 @@ export type Layout = {
 };
 
 export type GenerateRequest = {
-  roomType: "living_room";
+  roomType: RoomType;
   width_m: number;
   length_m: number;
   height_m: number;
@@ -78,7 +99,7 @@ export type RoomDims = {
 
 export type RoomCreate = {
   name: string;
-  roomType: "living_room";
+  roomType: RoomType;
   width_m: number;
   length_m: number;
   height_m: number;
@@ -121,6 +142,7 @@ export type LayoutRecord = LayoutSummary & {
     width_m: number;
     length_m: number;
     height_m: number;
+    room_type: RoomType;
   };
 };
 
@@ -198,4 +220,17 @@ export type Template = {
 
 export type TemplatesResponse = {
   items: Template[];
+};
+
+export type RoomTypeProfile = {
+  slot_kinds: string[];
+  slot_instances: string[];
+  slot_accepted_tags: Record<string, string[]>;
+  allowed_zones: string[];
+  default_zone: string;
+  dim_bounds: {
+    width_m: [number, number];
+    length_m: [number, number];
+    height_m: [number, number];
+  };
 };

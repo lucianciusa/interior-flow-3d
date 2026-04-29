@@ -23,7 +23,7 @@ class SupabaseConflict(SupabaseError):
 _LAYOUT_SUMMARY_COLS = "id,user_id,room_id,name,is_primary,style,seed,thumbnail_url,created_at"
 _LAYOUT_FULL_COLS = (
     "id,user_id,room_id,name,is_primary,style,seed,thumbnail_url,created_at,"
-    "layout,rooms(width_m,length_m,height_m)"
+    "layout,rooms(width_m,length_m,height_m,room_type)"
 )
 _PROJECT_COLS = "id,user_id,name,default_style,default_palette,created_at"
 _ROOM_COLS = "id,user_id,project_id,name,room_type,width_m,length_m,height_m,created_at"

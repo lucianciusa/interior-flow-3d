@@ -32,7 +32,7 @@ def _layout_full_row(
             "seed": 42,
             "warnings": [],
         },
-        "rooms": {"width_m": 5.0, "length_m": 6.0, "height_m": 2.6},
+        "rooms": {"width_m": 5.0, "length_m": 6.0, "height_m": 2.6, "room_type": "living_room"},
     }
 
 

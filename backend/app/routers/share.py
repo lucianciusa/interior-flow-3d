@@ -57,5 +57,6 @@ async def get_shared_layout(
             width_m=row["width_m"],
             length_m=row["length_m"],
             height_m=row["height_m"],
+            room_type=row.get("room_type", "living_room"),
         ),
     )

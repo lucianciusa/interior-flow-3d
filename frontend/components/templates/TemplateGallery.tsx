@@ -34,7 +34,7 @@ export function TemplateGallery() {
   const setDims = useWizardStore((s) => s.setDims);
   const setStyle = useWizardStore((s) => s.setStyle);
 
-  const useTemplate = (t: Template) => {
+  const handleUseTemplate = (t: Template) => {
     setDims(t.dims);
     setStyle(t.style as Style);
     router.push("/app/new");
@@ -59,7 +59,7 @@ export function TemplateGallery() {
       </h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {data.items.map((t) => (
-          <TemplateCard key={t.id} template={t} onUse={() => useTemplate(t)} />
+          <TemplateCard key={t.id} template={t} onUse={() => handleUseTemplate(t)} />
         ))}
       </div>
     </section>

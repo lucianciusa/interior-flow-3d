@@ -43,6 +43,7 @@ def _layout_rpc_row() -> dict[str, object]:
         "width_m": 5.0,
         "length_m": 6.0,
         "height_m": 2.6,
+        "room_type": "living_room",
         "layout": {
             "style": "minimal",
             "palette": {
@@ -120,7 +121,7 @@ def test_share_post_creates_token(
             "seed": 1,
             "warnings": [],
         },
-        "rooms": {"width_m": 5.0, "length_m": 6.0, "height_m": 2.6},
+        "rooms": {"width_m": 5.0, "length_m": 6.0, "height_m": 2.6, "room_type": "living_room"},
     }
     with respx.mock(base_url=share_settings.SUPABASE_URL) as mock:
         mock.get("/rest/v1/layouts").mock(return_value=Response(200, json=[layout_row]))

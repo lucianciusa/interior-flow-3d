@@ -10,13 +10,14 @@ import ItemPopover from "@/components/viewer/ItemPopover";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useViewerStore } from "@/lib/stores/viewer";
-import type { Layout, Preference, RoomDims, Style } from "@/lib/types";
+import type { Layout, Preference, RoomDims, RoomType, Style } from "@/lib/types";
 
 const Scene = dynamic(() => import("@/components/viewer/Scene"), { ssr: false });
 
 export type ResultViewMode = "live" | "saved" | "shared";
 
 type ResultViewProps = {
+  roomType: RoomType;
   layout: Layout;
   dims: RoomDims;
   style: Style;
@@ -32,6 +33,7 @@ type ResultViewProps = {
 };
 
 export default function ResultView({
+  roomType,
   layout,
   dims,
   style,
@@ -87,6 +89,7 @@ export default function ResultView({
               <SwapPopover
                 item={selected}
                 layoutId={layoutId}
+                roomType={roomType}
                 onClose={() => setSwapOpen(false)}
               />
             )}

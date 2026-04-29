@@ -4,20 +4,24 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import type { RoomDims } from "@/lib/types";
-
-const schema = z.object({
-  width_m: z.number().min(2).max(12),
-  length_m: z.number().min(2).max(12),
-  height_m: z.number().min(2.2).max(4),
-});
+import type { RoomDims, RoomType } from "@/lib/types";
+import { ROOM_TYPES } from "@/lib/room-types";
 
 type DimensionsStepProps = {
+  roomType: RoomType;
   initial: RoomDims;
   onNext: (dims: RoomDims) => void;
+  onBack: () => void;
 };
 
-export default function DimensionsStep({ initial, onNext }: DimensionsStepProps) {
+export default function DimensionsStep({ roomType, initial, onNext, onBack }: DimensionsStepProps) {
+  const bounds = ROOM_TYPES[roomType].dim_bounds;
+  const schema = z.object({
+    width_m: z.number().min(bounds.width_m[0]).max(bounds.width_m[1]),
+    length_m: z.number().min(bounds.length_m[0]).max(bounds.length_m[1]),
+    height_m: z.number().min(bounds.height_m[0]).max(bounds.height_m[1]),
+  });
+
   const {
     register,
     handleSubmit,
@@ -65,9 +69,14 @@ export default function DimensionsStep({ initial, onNext }: DimensionsStepProps)
           </div>
         ))}
       </div>
-      <Button type="submit" className="self-end">
-        Next
-      </Button>
+      <div className="flex justify-between items-center w-full">
+        <Button type="button" variant="outline" onClick={onBack}>
+          Back
+        </Button>
+        <Button type="submit" className="self-end">
+          Next
+        </Button>
+      </div>
     </form>
   );
 }

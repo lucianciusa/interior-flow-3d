@@ -1,0 +1,158 @@
+import type { RoomType, RoomTypeProfile } from "./types";
+
+export const ROOM_TYPES: Record<RoomType, RoomTypeProfile> = {
+  living_room: {
+    slot_kinds: ["wall", "corner", "floor"],
+    slot_instances: [
+      "north_wall_left", "north_wall_center", "north_wall_right",
+      "east_wall_left", "east_wall_center", "east_wall_right",
+      "south_wall_left", "south_wall_center", "south_wall_right",
+      "west_wall_left", "west_wall_center", "west_wall_right",
+      "corner_NE", "corner_NW", "corner_SE", "corner_SW",
+      "center", "center_front", "entry"
+    ],
+    slot_accepted_tags: {
+      north_wall_left:   ["seating", "media", "storage", "shelf", "accent", "lighting"],
+      north_wall_center: ["seating", "media", "storage", "shelf"],
+      north_wall_right:  ["seating", "media", "storage", "shelf", "accent", "lighting"],
+      east_wall_left:    ["seating", "storage", "shelf", "accent", "lighting"],
+      east_wall_center:  ["seating", "storage", "shelf", "media"],
+      east_wall_right:   ["seating", "storage", "shelf", "accent", "lighting"],
+      south_wall_left:   ["seating", "storage", "shelf", "accent", "lighting"],
+      south_wall_center: ["seating", "storage", "shelf", "media"],
+      south_wall_right:  ["seating", "storage", "shelf", "accent", "lighting"],
+      west_wall_left:    ["seating", "storage", "shelf", "accent", "lighting"],
+      west_wall_center:  ["seating", "storage", "shelf", "media"],
+      west_wall_right:   ["seating", "storage", "shelf", "accent", "lighting"],
+      corner_NE:         ["lighting", "accent", "shelf", "plant", "storage"],
+      corner_NW:         ["lighting", "accent", "shelf", "plant", "storage"],
+      corner_SE:         ["lighting", "accent", "shelf", "plant", "storage"],
+      corner_SW:         ["lighting", "accent", "shelf", "plant", "storage"],
+      center:            ["surface", "rug"],
+      center_front:      ["surface", "rug"],
+      entry:             ["accent", "plant", "storage"]
+    },
+    allowed_zones: ["seating_zone", "media_zone", "reading_nook", "accent_zone"],
+    default_zone: "seating_zone",
+    dim_bounds: {
+      width_m: [3.0, 8.0],
+      length_m: [3.0, 10.0],
+      height_m: [2.2, 3.5]
+    }
+  },
+  bedroom: {
+    slot_kinds: ["wall", "corner", "floor"],
+    slot_instances: [
+      "north_wall_left", "north_wall_center", "north_wall_right",
+      "east_wall_left", "east_wall_center", "east_wall_right",
+      "south_wall_left", "south_wall_center", "south_wall_right",
+      "west_wall_left", "west_wall_center", "west_wall_right",
+      "corner_NE", "corner_NW", "corner_SE", "corner_SW",
+      "bed_center", "entry"
+    ],
+    slot_accepted_tags: {
+      north_wall_left:   ["nightstand", "storage", "shelf", "accent", "lighting"],
+      north_wall_center: ["bed", "storage", "shelf"],
+      north_wall_right:  ["nightstand", "storage", "shelf", "accent", "lighting"],
+      east_wall_left:    ["storage", "shelf", "accent", "lighting", "nightstand"],
+      east_wall_center:  ["storage", "shelf", "bed"],
+      east_wall_right:   ["storage", "shelf", "accent", "lighting", "nightstand"],
+      south_wall_left:   ["storage", "shelf", "accent", "lighting"],
+      south_wall_center: ["storage", "shelf", "media"],
+      south_wall_right:  ["storage", "shelf", "accent", "lighting"],
+      west_wall_left:    ["storage", "shelf", "accent", "lighting", "nightstand"],
+      west_wall_center:  ["storage", "shelf", "bed"],
+      west_wall_right:   ["storage", "shelf", "accent", "lighting", "nightstand"],
+      corner_NE:         ["lighting", "accent", "plant", "storage"],
+      corner_NW:         ["lighting", "accent", "plant", "storage"],
+      corner_SE:         ["lighting", "accent", "plant", "storage"],
+      corner_SW:         ["lighting", "accent", "plant", "storage"],
+      bed_center:        ["bed"],
+      entry:             ["accent", "plant", "storage", "rug"]
+    },
+    allowed_zones: ["sleep_zone", "storage_zone", "reading_nook"],
+    default_zone: "sleep_zone",
+    dim_bounds: {
+      width_m: [2.5, 6.0],
+      length_m: [2.5, 6.0],
+      height_m: [2.2, 3.2]
+    }
+  },
+  dining_room: {
+    slot_kinds: ["wall", "corner", "floor"],
+    slot_instances: [
+      "north_wall_left", "north_wall_center", "north_wall_right",
+      "east_wall_left", "east_wall_center", "east_wall_right",
+      "south_wall_left", "south_wall_center", "south_wall_right",
+      "west_wall_left", "west_wall_center", "west_wall_right",
+      "corner_NE", "corner_NW", "corner_SE", "corner_SW",
+      "table_center", "entry"
+    ],
+    slot_accepted_tags: {
+      north_wall_left:   ["storage", "shelf", "accent", "lighting"],
+      north_wall_center: ["storage", "shelf", "media"],
+      north_wall_right:  ["storage", "shelf", "accent", "lighting"],
+      east_wall_left:    ["storage", "shelf", "accent", "lighting"],
+      east_wall_center:  ["storage", "shelf"],
+      east_wall_right:   ["storage", "shelf", "accent", "lighting"],
+      south_wall_left:   ["storage", "shelf", "accent", "lighting"],
+      south_wall_center: ["storage", "shelf"],
+      south_wall_right:  ["storage", "shelf", "accent", "lighting"],
+      west_wall_left:    ["storage", "shelf", "accent", "lighting"],
+      west_wall_center:  ["storage", "shelf"],
+      west_wall_right:   ["storage", "shelf", "accent", "lighting"],
+      corner_NE:         ["lighting", "accent", "plant", "shelf"],
+      corner_NW:         ["lighting", "accent", "plant", "shelf"],
+      corner_SE:         ["lighting", "accent", "plant", "shelf"],
+      corner_SW:         ["lighting", "accent", "plant", "shelf"],
+      table_center:      ["dining", "surface"],
+      entry:             ["accent", "plant", "rug", "storage"]
+    },
+    allowed_zones: ["dining_zone", "serving_zone", "accent_zone"],
+    default_zone: "dining_zone",
+    dim_bounds: {
+      width_m: [3.0, 6.0],
+      length_m: [3.0, 8.0],
+      height_m: [2.2, 3.5]
+    }
+  },
+  home_office: {
+    slot_kinds: ["wall", "corner", "floor"],
+    slot_instances: [
+      "north_wall_left", "north_wall_center", "north_wall_right",
+      "east_wall_left", "east_wall_center", "east_wall_right",
+      "south_wall_left", "south_wall_center", "south_wall_right",
+      "west_wall_left", "west_wall_center", "west_wall_right",
+      "corner_NE", "corner_NW", "corner_SE", "corner_SW",
+      "desk_anchor", "center", "entry"
+    ],
+    slot_accepted_tags: {
+      north_wall_left:   ["desk", "storage", "shelf", "accent", "lighting"],
+      north_wall_center: ["desk", "storage", "shelf"],
+      north_wall_right:  ["storage", "shelf", "accent", "lighting"],
+      east_wall_left:    ["storage", "shelf", "accent", "lighting"],
+      east_wall_center:  ["storage", "shelf", "desk"],
+      east_wall_right:   ["storage", "shelf", "accent", "lighting"],
+      south_wall_left:   ["storage", "shelf", "accent", "lighting", "seating"],
+      south_wall_center: ["storage", "shelf", "seating"],
+      south_wall_right:  ["storage", "shelf", "accent", "lighting"],
+      west_wall_left:    ["storage", "shelf", "accent", "lighting"],
+      west_wall_center:  ["storage", "shelf", "desk"],
+      west_wall_right:   ["storage", "shelf", "accent", "lighting"],
+      corner_NE:         ["lighting", "accent", "plant", "shelf"],
+      corner_NW:         ["lighting", "accent", "plant", "shelf"],
+      corner_SE:         ["lighting", "accent", "plant", "shelf", "seating"],
+      corner_SW:         ["lighting", "accent", "plant", "shelf", "seating"],
+      desk_anchor:       ["desk"],
+      center:            ["chair", "surface", "rug"],
+      entry:             ["accent", "plant", "rug"]
+    },
+    allowed_zones: ["work_zone", "storage_zone", "reading_nook"],
+    default_zone: "work_zone",
+    dim_bounds: {
+      width_m: [2.2, 5.0],
+      length_m: [2.2, 5.0],
+      height_m: [2.2, 3.2]
+    }
+  }
+};

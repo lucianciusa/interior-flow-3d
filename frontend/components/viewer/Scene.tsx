@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Bounds, OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { Bounds, OrbitControls, PerspectiveCamera, Environment, Instances, Instance, useGLTF } from "@react-three/drei";
 
+import { configureLoaders } from "@/lib/loaders";
 import { CameraController3D } from "@/components/viewer/CameraPresets";
 import Furniture from "@/components/viewer/Furniture";
 import Room from "@/components/viewer/Room";
@@ -15,11 +16,37 @@ type SceneProps = {
 };
 
 export default function Scene({ layout, dims }: SceneProps) {
+  useEffect(() => {
+    layout.items.forEach((item) => {
+      if (!item.model.startsWith("primitive:")) {
+        useGLTF.preload(item.model);
+      }
+    });
+  }, [layout.items]);
+
+  const { instanceGroups, individualItems } = useMemo(() => {
+    const groups: Record<string, typeof layout.items> = {};
+    layout.items.forEach((item) => {
+      if (!item.model.startsWith("primitive:")) {
+        if (!groups[item.model]) groups[item.model] = [];
+        groups[item.model].push(item);
+      }
+    });
+
+    const instanceGroups = Object.entries(groups).filter(([_, items]) => items.length >= 3);
+    const individualItems = layout.items.filter(
+      (item) => item.model.startsWith("primitive:") || groups[item.model].length < 3
+    );
+
+    return { instanceGroups, individualItems };
+  }, [layout]);
+
   return (
     <Canvas
       shadows
       dpr={[1, 2]}
       gl={{ antialias: true, powerPreference: "high-performance" }}
+      onCreated={({ gl }) => configureLoaders(gl)}
       className="h-full w-full"
     >
       <PerspectiveCamera makeDefault position={[6, 5, 6]} fov={45} />
@@ -40,13 +67,46 @@ export default function Scene({ layout, dims }: SceneProps) {
       />
       <CameraController3D />
       <Suspense fallback={null}>
+        {process.env.NEXT_PUBLIC_HDRI_URL && (
+           <Environment files={process.env.NEXT_PUBLIC_HDRI_URL} background={false} />
+        )}
         <Bounds clip observe margin={1.1}>
           <Room dims={dims} palette={layout.palette} />
-          {layout.items.map((item) => (
+          {individualItems.map((item) => (
             <Furniture key={`${item.catalogId}-${item.slot}`} item={item} />
+          ))}
+          {instanceGroups.map(([model, items]) => (
+            <InstanceGroup key={model} model={model} items={items} />
           ))}
         </Bounds>
       </Suspense>
     </Canvas>
+  );
+}
+
+function InstanceGroup({ model, items }: { model: string; items: any[] }) {
+  const { scene } = useGLTF(model);
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone();
+    clone.traverse((obj: any) => {
+      if (obj.isMesh) {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+      }
+    });
+    return clone;
+  }, [scene]);
+  
+  return (
+    <Instances range={items.length}>
+      <primitive object={clonedScene} />
+      {items.map((item, i) => (
+        <Instance
+          key={`${item.catalogId}-${item.slot}`}
+          position={item.position}
+          rotation={[0, item.rotation_y, 0]}
+        />
+      ))}
+    </Instances>
   );
 }

@@ -26,6 +26,7 @@ export default function LayoutVariantGrid({
         illustration={<EmptyLayoutsIllustration />}
         title="No layouts yet"
         description="Generate your first 3D layout to see it here."
+        cta={<></>}
       />
     );
   }

@@ -153,7 +153,7 @@ def test_slot_exclusivity_drops_lower_priority(
     assert any("tv_stand" in w for w in layout.warnings)
 
 
-# ── allowedSlotKinds violation → dropped with warning ────────────────────────
+# ── accepted_tags violation → dropped with warning ────────────────────────
 
 
 def test_wrong_slot_kind_dropped(catalog_items: list[CatalogItem], living_profile) -> None:

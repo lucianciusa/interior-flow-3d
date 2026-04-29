@@ -39,7 +39,7 @@ def _layout_with_sofa() -> dict[str, object]:
             "seed": 1,
             "warnings": [],
         },
-        "rooms": {"width_m": 5.0, "length_m": 6.0, "height_m": 2.6},
+        "rooms": {"width_m": 5.0, "length_m": 6.0, "height_m": 2.6, "room_type": "living_room"},
     }
 
 

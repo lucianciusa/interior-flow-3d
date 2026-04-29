@@ -20,4 +20,7 @@ export const SLOT_LABELS: Record<SlotId, string> = {
   center: "Room center",
   center_front: "Center, toward the front",
   entry: "Near the entryway",
+  bed_center: "Bed center",
+  table_center: "Table center",
+  desk_anchor: "Desk anchor",
 };

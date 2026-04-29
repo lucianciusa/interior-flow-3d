@@ -152,6 +152,7 @@ class RoomDims(BaseModel):
     width_m: float
     length_m: float
     height_m: float
+    room_type: str
 
 
 class LayoutRecord(LayoutSummary):

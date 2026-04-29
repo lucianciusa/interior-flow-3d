@@ -5,26 +5,29 @@ import { useCallback, useRef, useState } from "react";
 
 import LoginModal from "@/components/auth/LoginModal";
 import ResultView from "@/components/result/ResultView";
+import RoomTypeStep from "@/components/wizard/RoomTypeStep";
 import DimensionsStep from "@/components/wizard/DimensionsStep";
 import PreferencesStep from "@/components/wizard/PreferencesStep";
 import StyleStep from "@/components/wizard/StyleStep";
 import { useConvertAnonLayout, useGenerateLayout } from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth";
 import { useWizardStore } from "@/lib/stores/wizard";
-import type { Preference, RoomDims, Style } from "@/lib/types";
+import type { Preference, RoomDims, Style, RoomType } from "@/lib/types";
 
-const PHASE_LABELS = ["Dimensions", "Style", "Preferences"];
-const PHASE_INDEX: Record<string, number> = { step1: 0, step2: 1, step3: 2 };
+const PHASE_LABELS = ["Type", "Dimensions", "Style", "Preferences"];
+const PHASE_INDEX: Record<string, number> = { step0: 0, step1: 1, step2: 2, step3: 3 };
 
 type SaveState = "idle" | "saving" | "saved";
 
 export default function WizardShell() {
   const phase = useWizardStore((s) => s.phase);
+  const roomType = useWizardStore((s) => s.roomType);
   const dims = useWizardStore((s) => s.dims);
   const style = useWizardStore((s) => s.style);
   const preferences = useWizardStore((s) => s.preferences);
   const layout = useWizardStore((s) => s.layout);
   const setPhase = useWizardStore((s) => s.setPhase);
+  const setRoomType = useWizardStore((s) => s.setRoomType);
   const setDims = useWizardStore((s) => s.setDims);
   const setStyle = useWizardStore((s) => s.setStyle);
   const setPreferences = useWizardStore((s) => s.setPreferences);
@@ -49,7 +52,7 @@ export default function WizardShell() {
     setPhase("generating");
     setSaveState("idle");
     generate(
-      { roomType: "living_room", ...dims, style, preferences, seed: useSeed },
+      { roomType, ...dims, style, preferences, seed: useSeed },
       {
         onSuccess: (data) => {
           setLayout(data);
@@ -129,6 +132,7 @@ export default function WizardShell() {
     return (
       <>
         <ResultView
+          roomType={roomType}
           layout={layout}
           dims={dims}
           style={style}
@@ -177,18 +181,27 @@ export default function WizardShell() {
           <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
             <div
               className="h-full rounded-full bg-primary transition-all"
-              style={{ width: `${((stepIndex + 1) / 3) * 100}%` }}
+              style={{ width: `${((stepIndex + 1) / 4) * 100}%` }}
             />
           </div>
         </div>
 
+        {phase === "step0" && (
+          <RoomTypeStep
+            value={roomType}
+            onChange={(rt: RoomType) => setRoomType(rt)}
+            onNext={() => setPhase("step1")}
+          />
+        )}
         {phase === "step1" && (
           <DimensionsStep
+            roomType={roomType}
             initial={dims}
             onNext={(d: RoomDims) => {
               setDims(d);
               setPhase("step2");
             }}
+            onBack={() => setPhase("step0")}
           />
         )}
         {phase === "step2" && (

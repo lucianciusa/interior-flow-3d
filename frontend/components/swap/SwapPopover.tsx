@@ -6,41 +6,31 @@ import { X } from "lucide-react";
 
 import { catalogQuery, useSwapItem } from "@/lib/api";
 import { SLOT_LABELS } from "@/lib/slot-mappings";
-import type { ResolvedItem } from "@/lib/types";
+import { ROOM_TYPES } from "@/lib/room-types";
+import type { ResolvedItem, RoomType } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { LockBadge } from "@/components/ui/lock-badge";
 import { UpgradeModal } from "@/components/ui/upgrade-modal";
 
-const SLOT_KIND_BY_PREFIX: Array<[string, string]> = [
-  ["north_wall_", "wall"],
-  ["south_wall_", "wall"],
-  ["east_wall_", "wall"],
-  ["west_wall_", "wall"],
-  ["corner_", "corner"],
-];
-
-function slotKind(slot: string): string {
-  for (const [prefix, kind] of SLOT_KIND_BY_PREFIX) {
-    if (slot.startsWith(prefix)) return kind;
-  }
-  return "floor";
-}
-
 type Props = {
   item: ResolvedItem;
   layoutId: string;
+  roomType: RoomType;
   onClose: () => void;
 };
 
-export default function SwapPopover({ item, layoutId, onClose }: Props) {
+export default function SwapPopover({ item, layoutId, roomType, onClose }: Props) {
   const catalog = useQuery(catalogQuery());
   const swap = useSwapItem(layoutId);
   const [error, setError] = useState<string | null>(null);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
 
-  const kind = slotKind(item.slot);
+  const acceptedTags = ROOM_TYPES[roomType].slot_accepted_tags[item.slot] || [];
   const candidates = (catalog.data?.items ?? []).filter(
-    (c) => c.id !== item.catalogId && c.allowedSlotKinds.includes(kind),
+    (c) => 
+      c.id !== item.catalogId && 
+      c.room_types.includes(roomType) &&
+      c.tags.some((tag) => acceptedTags.includes(tag))
   );
 
   const doSwap = async (c: any) => {

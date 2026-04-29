@@ -10,7 +10,18 @@ type FurnitureProps = { item: ResolvedItem };
 
 function GltfMesh({ model }: { model: string }) {
   const { scene } = useGLTF(model);
-  return <primitive object={scene.clone()} castShadow />;
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone();
+    clone.traverse((obj: any) => {
+      if (obj.isMesh) {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+      }
+    });
+    return clone;
+  }, [scene]);
+
+  return <primitive object={clonedScene} />;
 }
 
 function PrimitiveMesh({ footprint }: { footprint: ResolvedItem["footprint"] }) {
