@@ -13,6 +13,15 @@ param image string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:lates
 @description('Container target port.')
 param targetPort int = 8000
 
+@description('Key Vault secret URI for SHARE_TOKEN_SECRET (optional).')
+param shareTokenSecretUri string = ''
+
+@description('Key Vault secret URI for SUPABASE_SERVICE_ROLE_KEY (optional).')
+param supabaseServiceRoleSecretUri string = ''
+
+@description('Public base URL for share links (e.g. https://app.example.com).')
+param shareLinkBaseUrl string = ''
+
 resource acaEnv 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: acaEnvName
   location: location
@@ -34,6 +43,22 @@ resource aca 'Microsoft.App/containerApps@2024-03-01' = {
         transport: 'auto'
         allowInsecure: false
       }
+      secrets: concat(
+        empty(shareTokenSecretUri) ? [] : [
+          {
+            name: 'share-token-secret'
+            keyVaultUrl: shareTokenSecretUri
+            identity: 'system'
+          }
+        ],
+        empty(supabaseServiceRoleSecretUri) ? [] : [
+          {
+            name: 'supabase-service-role-key'
+            keyVaultUrl: supabaseServiceRoleSecretUri
+            identity: 'system'
+          }
+        ]
+      )
     }
     template: {
       containers: [
@@ -44,6 +69,26 @@ resource aca 'Microsoft.App/containerApps@2024-03-01' = {
             cpu: json('0.5')
             memory: '1Gi'
           }
+          env: concat(
+            empty(shareTokenSecretUri) ? [] : [
+              {
+                name: 'SHARE_TOKEN_SECRET'
+                secretRef: 'share-token-secret'
+              }
+            ],
+            empty(supabaseServiceRoleSecretUri) ? [] : [
+              {
+                name: 'SUPABASE_SERVICE_ROLE_KEY'
+                secretRef: 'supabase-service-role-key'
+              }
+            ],
+            empty(shareLinkBaseUrl) ? [] : [
+              {
+                name: 'SHARE_LINK_BASE_URL'
+                value: shareLinkBaseUrl
+              }
+            ]
+          )
         }
       ]
       scale: {

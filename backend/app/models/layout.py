@@ -97,13 +97,23 @@ class Layout(BaseModel):
     designExplanation: str
     seed: int | None = None
     warnings: list[str] = Field(default_factory=list)
+    catalogVersion: str | None = None
 
 
 class LayoutCreate(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     roomId: str
+    name: str | None = Field(default=None, min_length=1, max_length=80)
+    is_primary: bool = False
     layout: Layout
+
+
+class LayoutPatch(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    name: str | None = Field(default=None, min_length=1, max_length=80)
+    is_primary: bool | None = None
 
 
 class LayoutSummary(BaseModel):
@@ -112,6 +122,8 @@ class LayoutSummary(BaseModel):
     id: str
     user_id: str
     room_id: str
+    name: str = "Untitled"
+    is_primary: bool = False
     style: Style
     seed: int | None = None
     thumbnail_url: str | None = None
@@ -129,3 +141,10 @@ class RoomDims(BaseModel):
 class LayoutRecord(LayoutSummary):
     layout: Layout
     rooms: RoomDims
+
+
+class SwapRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    catalogId: str
+    replacementId: str

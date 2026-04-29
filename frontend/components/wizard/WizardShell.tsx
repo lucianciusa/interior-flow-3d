@@ -8,7 +8,7 @@ import ResultView from "@/components/result/ResultView";
 import DimensionsStep from "@/components/wizard/DimensionsStep";
 import PreferencesStep from "@/components/wizard/PreferencesStep";
 import StyleStep from "@/components/wizard/StyleStep";
-import { useCreateRoom, useGenerateLayout, useSaveLayout } from "@/lib/api";
+import { useConvertAnonLayout, useGenerateLayout } from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth";
 import { useWizardStore } from "@/lib/stores/wizard";
 import type { Preference, RoomDims, Style } from "@/lib/types";
@@ -35,8 +35,7 @@ export default function WizardShell() {
   const router = useRouter();
 
   const { mutate: generate, isPending } = useGenerateLayout();
-  const { mutateAsync: createRoom } = useCreateRoom();
-  const { mutateAsync: saveLayout } = useSaveLayout();
+  const { mutateAsync: convertAnon } = useConvertAnonLayout();
 
   const [loginOpen, setLoginOpen] = useState(false);
   const [saveState, setSaveState] = useState<SaveState>("idle");
@@ -76,23 +75,38 @@ export default function WizardShell() {
     setSaveState("saving");
     setSaveError(null);
     try {
-      const room = await createRoom({
-        name: "Living room",
-        roomType: "living_room",
+      const result = await convertAnon({
+        projectName: "My first project",
+        roomName: "Living room",
         ...dims,
+        layout,
       });
-      const saved = await saveLayout({ roomId: room.id, layout });
       setSaveState("saved");
-      router.push(`/app/result/${saved.id}`);
+      router.push(
+        `/app/projects/${result.project_id}/rooms/${result.room_id}/layouts/${result.layout_id}`,
+      );
     } catch (e) {
       setSaveState("idle");
       setSaveError(e instanceof Error ? e.message : "save failed");
     }
-  }, [layout, style, dims, createRoom, saveLayout, router]);
+  }, [layout, style, dims, convertAnon, router]);
 
   const handleSave = () => {
     if (!layout || !style) return;
     if (!session) {
+      try {
+        window.sessionStorage.setItem(
+          "pendingAnonLayout",
+          JSON.stringify({
+            projectName: "My first project",
+            roomName: "Living room",
+            ...dims,
+            layout,
+          }),
+        );
+      } catch {
+        // sessionStorage unavailable — fall back to in-memory ref.
+      }
       pendingSaveRef.current = true;
       setLoginOpen(true);
       return;

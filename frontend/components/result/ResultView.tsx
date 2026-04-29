@@ -1,9 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 import ResultSidebar from "@/components/sidebar/ResultSidebar";
+import SwapPopover from "@/components/swap/SwapPopover";
 import CameraPresets from "@/components/viewer/CameraPresets";
 import ItemPopover from "@/components/viewer/ItemPopover";
 import { useViewerStore } from "@/lib/stores/viewer";
@@ -11,14 +12,20 @@ import type { Layout, Preference, RoomDims, Style } from "@/lib/types";
 
 const Scene = dynamic(() => import("@/components/viewer/Scene"), { ssr: false });
 
+export type ResultViewMode = "live" | "saved" | "shared";
+
 type ResultViewProps = {
   layout: Layout;
   dims: RoomDims;
   style: Style;
   preferences: Preference[];
+  mode?: ResultViewMode;
+  layoutId?: string | null;
   onRegenerate?: () => void;
   onAdjust?: () => void;
   onSave?: () => void;
+  onShare?: () => void;
+  onCompare?: () => void;
   saveState?: "idle" | "saving" | "saved";
 };
 
@@ -27,16 +34,24 @@ export default function ResultView({
   dims,
   style,
   preferences,
+  mode = "live",
+  layoutId = null,
   onRegenerate,
   onAdjust,
   onSave,
+  onShare,
+  onCompare,
   saveState,
 }: ResultViewProps) {
-  const clearSelection = useViewerStore((s) => s.setSelectedItem);
+  const selected = useViewerStore((s) => s.selectedItem);
+  const setSelected = useViewerStore((s) => s.setSelectedItem);
+  const [swapOpen, setSwapOpen] = useState(false);
 
   useEffect(() => {
-    clearSelection(null);
-  }, [clearSelection]);
+    setSelected(null);
+  }, [setSelected]);
+
+  const showSwap = mode === "saved" && layoutId;
 
   return (
     <div className="flex h-screen">
@@ -54,18 +69,41 @@ export default function ResultView({
           <Scene layout={layout} dims={dims} />
         </Suspense>
         <ItemPopover />
+        {showSwap && selected && (
+          <>
+            <button
+              type="button"
+              onClick={() => setSwapOpen((v) => !v)}
+              className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white"
+            >
+              {swapOpen ? "Hide replacements" : "Replace this item"}
+            </button>
+            {swapOpen && layoutId && (
+              <SwapPopover
+                item={selected}
+                layoutId={layoutId}
+                onClose={() => setSwapOpen(false)}
+              />
+            )}
+          </>
+        )}
       </div>
-      <div className="w-80 shrink-0 border-l border-neutral-200">
-        <ResultSidebar
-          layout={layout}
-          style={style}
-          preferences={preferences}
-          onRegenerate={onRegenerate}
-          onAdjust={onAdjust}
-          onSave={onSave}
-          saveState={saveState}
-        />
-      </div>
+      {mode !== "shared" && (
+        <div className="w-80 shrink-0 border-l border-neutral-200">
+          <ResultSidebar
+            layout={layout}
+            style={style}
+            preferences={preferences}
+            mode={mode}
+            onRegenerate={onRegenerate}
+            onAdjust={onAdjust}
+            onSave={onSave}
+            onShare={onShare}
+            onCompare={onCompare}
+            saveState={saveState}
+          />
+        </div>
+      )}
     </div>
   );
 }

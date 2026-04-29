@@ -14,6 +14,13 @@ class Settings(BaseSettings):
     SUPABASE_URL: str = ""
     SUPABASE_JWKS_URL: str = ""
     SUPABASE_ANON_KEY: str = ""
+    SUPABASE_SERVICE_ROLE_KEY: str = ""
+
+    SHARE_TOKEN_SECRET: str = ""
+    SHARE_LINK_BASE_URL: str = ""
+    SHARE_TOKEN_TTL_DAYS: int = 30
+
+    CATALOG_VERSION: str = "v1.mvp"
 
     # Comma-separated origins, e.g. "http://localhost:3000,https://example.com"
     CORS_ORIGINS: str = ""

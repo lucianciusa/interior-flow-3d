@@ -56,6 +56,7 @@ export type Layout = {
   designExplanation: string;
   seed?: number | null;
   warnings: string[];
+  catalogVersion?: string | null;
 };
 
 export type GenerateRequest = {
@@ -82,9 +83,17 @@ export type RoomCreate = {
   height_m: number;
 };
 
+export type RoomPatch = {
+  name?: string;
+  width_m?: number;
+  length_m?: number;
+  height_m?: number;
+};
+
 export type RoomRecord = {
   id: string;
   user_id: string;
+  project_id: string;
   name: string;
   room_type: string;
   width_m: number;
@@ -97,6 +106,8 @@ export type LayoutSummary = {
   id: string;
   user_id: string;
   room_id: string;
+  name: string;
+  is_primary: boolean;
   style: Style;
   seed: number | null;
   thumbnail_url: string | null;
@@ -114,5 +125,57 @@ export type LayoutRecord = LayoutSummary & {
 
 export type LayoutCreate = {
   roomId: string;
+  name?: string;
+  is_primary?: boolean;
   layout: Layout;
+};
+
+export type LayoutPatch = {
+  name?: string;
+  is_primary?: boolean;
+};
+
+export type ProjectCreate = {
+  name: string;
+  default_style?: string | null;
+};
+
+export type ProjectPatch = {
+  name?: string;
+  default_style?: string | null;
+};
+
+export type ProjectRecord = {
+  id: string;
+  user_id: string;
+  name: string;
+  default_style: string | null;
+  default_palette: Record<string, unknown> | null;
+  created_at: string;
+};
+
+export type ShareTokenResponse = {
+  token: string;
+  url: string;
+  expires_at: string;
+};
+
+export type ConversionRequest = {
+  projectName: string;
+  roomName: string;
+  width_m: number;
+  length_m: number;
+  height_m: number;
+  layout: Layout;
+};
+
+export type ConversionResponse = {
+  project_id: string;
+  room_id: string;
+  layout_id: string;
+};
+
+export type SwapRequest = {
+  catalogId: string;
+  replacementId: string;
 };

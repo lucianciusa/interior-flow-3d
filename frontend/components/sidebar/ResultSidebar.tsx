@@ -3,14 +3,18 @@ import { SLOT_LABELS } from "@/lib/slot-mappings";
 import PaletteBlock from "@/components/sidebar/PaletteBlock";
 import ExplanationBlock from "@/components/sidebar/ExplanationBlock";
 import type { Layout, Style, Preference } from "@/lib/types";
+import type { ResultViewMode } from "@/components/result/ResultView";
 
 type ResultSidebarProps = {
   layout: Layout;
   style: Style;
   preferences: Preference[];
+  mode?: ResultViewMode;
   onRegenerate?: () => void;
   onAdjust?: () => void;
   onSave?: () => void;
+  onShare?: () => void;
+  onCompare?: () => void;
   saveState?: "idle" | "saving" | "saved";
 };
 
@@ -30,25 +34,31 @@ export default function ResultSidebar({
   layout,
   style,
   preferences,
+  mode = "live",
   onRegenerate,
   onAdjust,
   onSave,
+  onShare,
+  onCompare,
   saveState = "idle",
 }: ResultSidebarProps) {
+  const showRegenerate = mode === "live" && onRegenerate;
+  const showAdjust = mode === "live" && onAdjust;
+  const showSave = mode === "live" && onSave;
+  const showShare = mode === "saved" && onShare;
+  const showCompare = mode === "saved" && onCompare;
+
   return (
     <aside className="flex h-full flex-col gap-6 overflow-y-auto p-4">
-      {/* Input chips */}
       <div className="flex flex-wrap gap-2">
-        {[STYLE_LABELS[style], ...preferences.map((p) => PREF_LABELS[p])].map(
-          (label) => (
-            <span
-              key={label}
-              className="rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-neutral-700"
-            >
-              {label}
-            </span>
-          ),
-        )}
+        {[STYLE_LABELS[style], ...preferences.map((p) => PREF_LABELS[p])].map((label) => (
+          <span
+            key={label}
+            className="rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-neutral-700"
+          >
+            {label}
+          </span>
+        ))}
         {layout.warnings.length > 0 && (
           <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
             {layout.warnings.length} warning
@@ -57,7 +67,6 @@ export default function ResultSidebar({
         )}
       </div>
 
-      {/* Item list */}
       <div>
         <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">
           Layout
@@ -68,9 +77,7 @@ export default function ResultSidebar({
               <span className="text-sm font-medium capitalize">
                 {item.catalogId.replace(/_/g, " ")}
               </span>
-              <span className="text-xs text-neutral-400">
-                {SLOT_LABELS[item.slot]}
-              </span>
+              <span className="text-xs text-neutral-400">{SLOT_LABELS[item.slot]}</span>
             </li>
           ))}
         </ul>
@@ -79,9 +86,8 @@ export default function ResultSidebar({
       <PaletteBlock palette={layout.palette} />
       <ExplanationBlock text={layout.designExplanation} />
 
-      {/* Action buttons */}
       <div className="mt-auto flex flex-col gap-2 pt-2">
-        {onRegenerate && (
+        {showRegenerate && (
           <button
             type="button"
             onClick={onRegenerate}
@@ -90,7 +96,7 @@ export default function ResultSidebar({
             Regenerate
           </button>
         )}
-        {onAdjust && (
+        {showAdjust && (
           <button
             type="button"
             onClick={onAdjust}
@@ -99,7 +105,25 @@ export default function ResultSidebar({
             Adjust preferences
           </button>
         )}
-        {onSave && (
+        {showShare && (
+          <button
+            type="button"
+            onClick={onShare}
+            className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50"
+          >
+            Share link
+          </button>
+        )}
+        {showCompare && (
+          <button
+            type="button"
+            onClick={onCompare}
+            className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50"
+          >
+            Compare
+          </button>
+        )}
+        {showSave && (
           <button
             type="button"
             onClick={onSave}

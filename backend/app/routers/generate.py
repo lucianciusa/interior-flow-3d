@@ -20,4 +20,5 @@ async def generate_layout(
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e)) from e
     except llm.LLMUpstreamError as e:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e)) from e
-    return placement.resolve(raw, body, catalog_items)
+    layout = placement.resolve(raw, body, catalog_items)
+    return layout.model_copy(update={"catalogVersion": settings.CATALOG_VERSION or "v1.mvp"})

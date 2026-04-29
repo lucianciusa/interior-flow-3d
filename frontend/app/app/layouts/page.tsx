@@ -1,3 +1,7 @@
+// DEPRECATED (Phase 4): flat "My Layouts" list. The Project → Room → Layout
+// hierarchy at /app and /app/projects/[id]/... is the new entry point.
+// This page is scheduled for deletion in Phase 5.
+
 "use client";
 
 import Link from "next/link";
