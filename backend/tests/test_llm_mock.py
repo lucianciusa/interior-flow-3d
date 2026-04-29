@@ -3,9 +3,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from app.models.catalog import CatalogItem, Clearance, Footprint
+from app.models.catalog import CatalogItem, Clearance, Footprint, PlacementSpec
 from app.models.layout import GenerateLayoutRequest, LayoutLLM
 from app.services.llm import LLMUpstreamError, LLMValidationError, generate
+from app.services.room_types import get_profile
 
 VALID_LLM_RESPONSE = {
     "style": "scandinavian",
@@ -14,23 +15,27 @@ VALID_LLM_RESPONSE = {
         "floor": {"name": "Light Oak", "hex": "#D6BFA0"},
         "accent": {"name": "Sage", "hex": "#A7B79A"},
     },
+    "zones": [],
     "items": [
         {
             "catalogId": "sofa_3seat",
             "slot": "south_wall_center",
             "facing": "auto",
+            "zone": None,
             "rationale": "I placed the sofa to anchor the seating zone.",
         },
         {
             "catalogId": "tv_stand",
             "slot": "north_wall_center",
             "facing": "auto",
+            "zone": None,
             "rationale": "I centered the TV stand on the back wall.",
         },
         {
             "catalogId": "rug",
             "slot": "center",
             "facing": "auto",
+            "zone": None,
             "rationale": "I used a rug to ground the seating zone.",
         },
     ],
@@ -41,32 +46,43 @@ VALID_LLM_RESPONSE = {
     ),
 }
 
+
+def _ci(
+    cid: str,
+    name: str,
+    tags: list[str],
+    rooms: list[str],
+    surfaces: list[str],
+    fp: tuple[float, float, float],
+) -> CatalogItem:
+    return CatalogItem(
+        id=cid,
+        name=name,
+        tags=tags,
+        room_types=rooms,  # type: ignore[arg-type]
+        placement=PlacementSpec(surfaces=surfaces, against=[], exclusive_with=[]),  # type: ignore[arg-type]
+        footprint=Footprint(w=fp[0], d=fp[1], h=fp[2]),
+        clearance=Clearance(front=0.5, sides=0.1, back=0.05),
+        model=f"primitive:{cid}",
+    )
+
+
 CATALOG_ITEMS = [
-    CatalogItem(
-        id="sofa_3seat",
-        name="3-seat sofa",
-        footprint=Footprint(w=2.10, d=0.95, h=0.85),
-        clearance=Clearance(front=0.70, sides=0.10, back=0.05),
-        allowedSlotKinds=["wall"],
-        model="/models/sofa_3seat.glb",
+    _ci(
+        "sofa_3seat",
+        "3-seat sofa",
+        ["seating", "upholstered", "large"],
+        ["living_room"],
+        ["wall"],
+        (2.10, 0.95, 0.85),
     ),
-    CatalogItem(
-        id="tv_stand",
-        name="TV stand",
-        footprint=Footprint(w=1.60, d=0.45, h=0.55),
-        clearance=Clearance(front=0.50, sides=0.10, back=0.05),
-        allowedSlotKinds=["wall"],
-        model="/models/tv_stand.glb",
+    _ci(
+        "tv_stand", "TV stand", ["media", "storage"], ["living_room"], ["wall"], (1.60, 0.45, 0.55)
     ),
-    CatalogItem(
-        id="rug",
-        name="Area rug",
-        footprint=Footprint(w=2.40, d=1.60, h=0.02),
-        clearance=Clearance(front=0.0, sides=0.0, back=0.0),
-        allowedSlotKinds=["floor"],
-        model="/models/rug.glb",
-    ),
+    _ci("rug", "Area rug", ["rug"], ["living_room"], ["floor"], (2.40, 1.60, 0.02)),
 ]
+
+LIVING_PROFILE = get_profile("living_room")
 
 STD_REQUEST = GenerateLayoutRequest(
     roomType="living_room",
@@ -109,7 +125,7 @@ async def test_generate_happy_path(mock_settings):
     with patch("app.services.llm.AsyncAzureOpenAI") as MockClient:
         instance = MockClient.return_value
         instance.chat.completions.create = AsyncMock(return_value=_make_mock_response(raw))
-        result = await generate(STD_REQUEST, mock_settings, CATALOG_ITEMS)
+        result = await generate(STD_REQUEST, mock_settings, CATALOG_ITEMS, LIVING_PROFILE)
     assert isinstance(result, LayoutLLM)
     assert result.style == "scandinavian"
     assert len(result.items) == 3
@@ -131,7 +147,7 @@ async def test_generate_retry_on_invalid_json(mock_settings):
     with patch("app.services.llm.AsyncAzureOpenAI") as MockClient:
         instance = MockClient.return_value
         instance.chat.completions.create = AsyncMock(side_effect=side_effect)
-        result = await generate(STD_REQUEST, mock_settings, CATALOG_ITEMS)
+        result = await generate(STD_REQUEST, mock_settings, CATALOG_ITEMS, LIVING_PROFILE)
     assert call_count == 2
     assert isinstance(result, LayoutLLM)
 
@@ -145,7 +161,7 @@ async def test_generate_raises_validation_error_after_two_failures(
         instance = MockClient.return_value
         instance.chat.completions.create = AsyncMock(return_value=_make_mock_response(bad_json))
         with pytest.raises(LLMValidationError):
-            await generate(STD_REQUEST, mock_settings, CATALOG_ITEMS)
+            await generate(STD_REQUEST, mock_settings, CATALOG_ITEMS, LIVING_PROFILE)
 
 
 @pytest.mark.asyncio
@@ -162,13 +178,13 @@ async def test_generate_raises_upstream_error(mock_settings):
             )
         )
         with pytest.raises(LLMUpstreamError):
-            await generate(STD_REQUEST, mock_settings, CATALOG_ITEMS)
+            await generate(STD_REQUEST, mock_settings, CATALOG_ITEMS, LIVING_PROFILE)
 
 
 def test_build_messages_contains_catalog_ids(mock_settings):
     from app.services.llm import _build_messages
 
-    msgs = _build_messages(STD_REQUEST, CATALOG_ITEMS)
+    msgs = _build_messages(STD_REQUEST, CATALOG_ITEMS, LIVING_PROFILE)
     user_content = msgs[1]["content"]
     assert "sofa_3seat" in user_content
     assert "tv_stand" in user_content
@@ -180,7 +196,15 @@ def test_build_messages_contains_catalog_ids(mock_settings):
 def test_build_messages_does_not_include_footprints(mock_settings):
     from app.services.llm import _build_messages
 
-    msgs = _build_messages(STD_REQUEST, CATALOG_ITEMS)
+    msgs = _build_messages(STD_REQUEST, CATALOG_ITEMS, LIVING_PROFILE)
     user_content = msgs[1]["content"]
-    assert "footprint" not in user_content
-    assert "clearance" not in user_content
+    assert '"footprint"' not in user_content
+    assert '"clearance"' not in user_content
+
+
+def test_build_messages_uses_room_type_in_user_msg(mock_settings):
+    from app.services.llm import _build_messages
+
+    msgs = _build_messages(STD_REQUEST, CATALOG_ITEMS, LIVING_PROFILE)
+    user_content = msgs[1]["content"]
+    assert "living room" in user_content

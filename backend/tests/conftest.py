@@ -43,6 +43,34 @@ def catalog_map(catalog_items: list[CatalogItem]) -> dict[str, CatalogItem]:
     return {item.id: item for item in catalog_items}
 
 
+@pytest.fixture
+def living_profile():  # type: ignore[no-untyped-def]
+    from app.services.room_types import get_profile
+
+    return get_profile("living_room")
+
+
+@pytest.fixture
+def bedroom_profile():  # type: ignore[no-untyped-def]
+    from app.services.room_types import get_profile
+
+    return get_profile("bedroom")
+
+
+@pytest.fixture
+def dining_profile():  # type: ignore[no-untyped-def]
+    from app.services.room_types import get_profile
+
+    return get_profile("dining_room")
+
+
+@pytest.fixture
+def office_profile():  # type: ignore[no-untyped-def]
+    from app.services.room_types import get_profile
+
+    return get_profile("home_office")
+
+
 @pytest.fixture(scope="session")
 def _rsa_keypair() -> tuple[bytes, Any]:
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)

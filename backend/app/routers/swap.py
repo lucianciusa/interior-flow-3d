@@ -1,8 +1,8 @@
 """Item swap endpoint.
 
-Phase 4 implementation against the MVP catalog (``allowedSlotKinds`` field).
-Phase 6 will rewrite this for the tag-based catalog — re-test then.
-See ``.agents/plans/phase-4-product-hierarchy.md`` and PRD §12.
+Phase 6: tag-based catalog. Replacement is accepted iff some room-type profile
+declares the target slot AND the replacement's tags intersect that slot's
+accepted tags.
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -13,6 +13,7 @@ from app.models.catalog import CatalogItem
 from app.models.layout import Layout, LayoutRecord, ResolvedItem, SwapRequest
 from app.routers.catalog import _load_catalog
 from app.services import placement
+from app.services.room_types import all_profiles
 from app.services.slot_resolver import Footprint, RoomDims, resolve_slot
 from app.services.supabase import SupabaseError, SupabaseNotFound, SupabaseRest
 
@@ -41,6 +42,7 @@ def _build_resolved(
         catalogId=replacement.id,
         slot=target.slot,
         facing=target.facing,
+        zone=target.zone,
         rationale=target.rationale,
         position=transform.position,
         rotation_y=transform.rotation_y,
@@ -74,7 +76,18 @@ async def swap_item(
 
             target = current.items[target_idx]
             slot_kind = placement.SLOT_KINDS.get(target.slot)
-            if slot_kind is None or slot_kind not in replacement.allowedSlotKinds:
+            if slot_kind is None:
+                raise HTTPException(status_code=409, detail="slot_kind_mismatch")
+            tags = set(replacement.tags)
+            compatible = False
+            for profile in all_profiles().values():
+                if target.slot not in profile.slot_instances:
+                    continue
+                accepted = set(profile.slot_accepted_tags.get(target.slot, []))
+                if tags & accepted:
+                    compatible = True
+                    break
+            if not compatible:
                 raise HTTPException(status_code=409, detail="slot_kind_mismatch")
 
             new_item = _build_resolved(target, replacement, row["rooms"])

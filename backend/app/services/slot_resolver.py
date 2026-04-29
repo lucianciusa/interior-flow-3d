@@ -108,6 +108,19 @@ def _slot_position(
     if slot == "entry":
         return (0.0, y, room_l * 0.4), math.pi
 
+    if slot == "bed_center":
+        # Headboard against north wall, bed extends into room
+        return (0.0, y, -(room_l / 2 - fp.d / 2 - 0.05)), 0.0
+
+    if slot == "table_center":
+        return (0.0, y, 0.0), math.pi
+
+    if slot == "desk_anchor":
+        # Against north wall, offset toward east third
+        x = room_w / 6
+        z = -(room_l / 2 - fp.d / 2 - 0.07)
+        return (x, y, z), 0.0
+
     raise ValueError(f"Unknown slot: {slot!r}")
 
 

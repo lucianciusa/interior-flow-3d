@@ -9,6 +9,8 @@ from pydantic import ValidationError
 from app.config import Settings
 from app.models.catalog import CatalogItem
 from app.models.layout import GenerateLayoutRequest, LayoutLLM
+from app.models.room_type import RoomTypeProfile
+from app.services.catalog_filter import filter_catalog
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +37,7 @@ class LLMUpstreamError(LLMError): ...
 def _build_messages(
     req: GenerateLayoutRequest,
     catalog_items: list[CatalogItem],
+    profile: RoomTypeProfile,
 ) -> list[dict[str, Any]]:
     prefs_str = (
         ", ".join(p.replace("_", " ") for p in req.preferences)
@@ -42,34 +45,18 @@ def _build_messages(
         else "none specified"
     )
 
-    catalog_lines = "\n".join(f"  {item.id}: {item.name}" for item in catalog_items)
+    candidates = filter_catalog(catalog_items, req.roomType)
+    catalog_lines = "\n".join(
+        f"  {item.id}: {item.name} (tags: {', '.join(item.tags)})" for item in candidates
+    )
 
-    slots = [
-        "north_wall_left",
-        "north_wall_center",
-        "north_wall_right",
-        "east_wall_left",
-        "east_wall_center",
-        "east_wall_right",
-        "south_wall_left",
-        "south_wall_center",
-        "south_wall_right",
-        "west_wall_left",
-        "west_wall_center",
-        "west_wall_right",
-        "corner_NE",
-        "corner_NW",
-        "corner_SE",
-        "corner_SW",
-        "center",
-        "center_front",
-        "entry",
-    ]
-    slots_str = ", ".join(slots)
+    slots_str = ", ".join(profile.slot_instances)
+    zones_str = ", ".join(profile.allowed_zones)
+    room_label = req.roomType.replace("_", " ")
 
     schema = LayoutLLM.model_json_schema()
 
-    user_message = f"""Design a {req.style} living room.
+    user_message = f"""Design a {req.style} {room_label}.
 
 Room: {req.width_m}m wide x {req.length_m}m long x {req.height_m}m high
 Preferences: {prefs_str}
@@ -77,8 +64,11 @@ Preferences: {prefs_str}
 Available catalog items (use these exact IDs):
 {catalog_lines}
 
-Available slots (use these exact names):
+Available slots (use these exact names; only these are valid for this room type):
   {slots_str}
+
+Available zones (optional; pick from):
+  {zones_str}
 
 Output JSON matching this schema exactly:
 {json.dumps(schema, indent=2)}"""
@@ -121,6 +111,7 @@ async def generate(
     req: GenerateLayoutRequest,
     settings: Settings,
     catalog_items: list[CatalogItem],
+    profile: RoomTypeProfile,
 ) -> LayoutLLM:
     client = AsyncAzureOpenAI(
         api_key=settings.AZURE_OPENAI_KEY,
@@ -128,7 +119,7 @@ async def generate(
         api_version=settings.AZURE_OPENAI_API_VERSION,
     )
     schema = _prepare_schema(LayoutLLM.model_json_schema())
-    messages = _build_messages(req, catalog_items)
+    messages = _build_messages(req, catalog_items, profile)
 
     for attempt in (1, 2):
         try:

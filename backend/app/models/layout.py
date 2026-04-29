@@ -2,6 +2,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.models.catalog import RoomType
+
 Style = Literal["scandinavian", "minimal", "industrial"]
 Preference = Literal["more_seating", "more_open_space", "more_storage"]
 SlotId = Literal[
@@ -24,6 +26,9 @@ SlotId = Literal[
     "center",
     "center_front",
     "entry",
+    "bed_center",
+    "table_center",
+    "desk_anchor",
 ]
 Facing = Literal["auto", "north", "south", "east", "west", "center"]
 
@@ -31,13 +36,21 @@ Facing = Literal["auto", "north", "south", "east", "west", "center"]
 class GenerateLayoutRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    roomType: Literal["living_room"]
+    roomType: RoomType
     width_m: float = Field(ge=2, le=12)
     length_m: float = Field(ge=2, le=12)
     height_m: float = Field(ge=2.2, le=4, default=2.6)
     style: Style
     preferences: list[Preference] = Field(default_factory=list, max_length=2)
     seed: int | None = None
+
+
+class Zone(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    kind: str
+    itemBudget: int = Field(ge=1, le=6)
 
 
 class LayoutItemLLM(BaseModel):
@@ -48,6 +61,7 @@ class LayoutItemLLM(BaseModel):
     catalogId: str
     slot: SlotId
     facing: Facing
+    zone: str | None = None
     rationale: str = Field(max_length=140)
 
 
@@ -73,7 +87,8 @@ class LayoutLLM(BaseModel):
 
     style: Style
     palette: PaletteMap
-    items: list[LayoutItemLLM] = Field(min_length=3, max_length=10)
+    zones: list[Zone] = Field(default_factory=list, max_length=4)
+    items: list[LayoutItemLLM] = Field(min_length=3, max_length=12)
     designExplanation: str = Field(min_length=80, max_length=600)
 
 
@@ -93,6 +108,7 @@ class Layout(BaseModel):
 
     style: Style
     palette: PaletteMap
+    zones: list[Zone] = Field(default_factory=list, max_length=4)
     items: list[ResolvedItem]
     designExplanation: str
     seed: int | None = None

@@ -20,7 +20,8 @@ class Settings(BaseSettings):
     SHARE_LINK_BASE_URL: str = ""
     SHARE_TOKEN_TTL_DAYS: int = 30
 
-    CATALOG_VERSION: str = "v1.mvp"
+    CATALOG_VERSION: str = "v1.phase6"
+    CDN_BASE_URL: str = ""
 
     # Comma-separated origins, e.g. "http://localhost:3000,https://example.com"
     CORS_ORIGINS: str = ""

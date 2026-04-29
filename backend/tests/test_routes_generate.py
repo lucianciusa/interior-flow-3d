@@ -57,10 +57,12 @@ def test_generate_layout_success(client):
     data = resp.json()
     assert data["style"] == "minimal"
     assert len(data["items"]) >= 1
+    assert len(data["zones"]) >= 1
     for item in data["items"]:
         assert "position" in item
         assert "rotation_y" in item
         assert len(item["position"]) == 3
+        assert item["zone"] is not None
 
 
 def test_generate_layout_validation_error_returns_422(client):

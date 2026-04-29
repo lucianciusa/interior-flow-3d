@@ -2,84 +2,417 @@
   {
     "id": "sofa_3seat",
     "name": "3-seat sofa",
+    "tags": ["seating", "upholstered", "large"],
+    "room_types": ["living_room"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
     "footprint": {"w": 2.10, "d": 0.95, "h": 0.85},
     "clearance": {"front": 0.70, "sides": 0.10, "back": 0.05},
-    "allowedSlotKinds": ["wall"],
     "model": "primitive:sofa_3seat"
+  },
+  {
+    "id": "loveseat",
+    "name": "Loveseat",
+    "tags": ["seating", "upholstered"],
+    "room_types": ["living_room"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.50, "d": 0.90, "h": 0.85},
+    "clearance": {"front": 0.60, "sides": 0.10, "back": 0.05},
+    "model": "primitive:loveseat"
+  },
+  {
+    "id": "sectional_sofa",
+    "name": "Sectional sofa",
+    "tags": ["seating", "upholstered", "large"],
+    "room_types": ["living_room"],
+    "placement": {"surfaces": ["wall", "corner"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 2.60, "d": 1.80, "h": 0.85},
+    "clearance": {"front": 0.70, "sides": 0.10, "back": 0.05},
+    "model": "primitive:sectional_sofa",
+    "is_premium": true
   },
   {
     "id": "armchair",
     "name": "Armchair",
+    "tags": ["seating", "upholstered"],
+    "room_types": ["living_room", "bedroom"],
+    "placement": {"surfaces": ["wall", "corner"], "against": ["wall", "none"], "exclusive_with": []},
     "footprint": {"w": 0.90, "d": 0.90, "h": 0.85},
     "clearance": {"front": 0.50, "sides": 0.15, "back": 0.05},
-    "allowedSlotKinds": ["wall", "corner"],
     "model": "primitive:armchair"
+  },
+  {
+    "id": "accent_chair",
+    "name": "Accent chair",
+    "tags": ["seating", "upholstered", "chair"],
+    "room_types": ["living_room", "bedroom", "home_office"],
+    "placement": {"surfaces": ["wall", "corner"], "against": ["wall", "none"], "exclusive_with": []},
+    "footprint": {"w": 0.80, "d": 0.85, "h": 0.85},
+    "clearance": {"front": 0.40, "sides": 0.10, "back": 0.05},
+    "model": "primitive:accent_chair"
+  },
+  {
+    "id": "ottoman",
+    "name": "Ottoman",
+    "tags": ["seating", "upholstered"],
+    "room_types": ["living_room", "bedroom"],
+    "placement": {"surfaces": ["wall", "corner"], "against": ["none"], "exclusive_with": []},
+    "footprint": {"w": 0.60, "d": 0.60, "h": 0.45},
+    "clearance": {"front": 0.20, "sides": 0.10, "back": 0.10},
+    "model": "primitive:ottoman"
   },
   {
     "id": "coffee_table",
     "name": "Coffee table",
+    "tags": ["surface"],
+    "room_types": ["living_room"],
+    "placement": {"surfaces": ["floor"], "against": ["none"], "exclusive_with": []},
     "footprint": {"w": 1.20, "d": 0.60, "h": 0.45},
     "clearance": {"front": 0.30, "sides": 0.20, "back": 0.20},
-    "allowedSlotKinds": ["floor"],
     "model": "primitive:coffee_table",
     "is_premium": true
   },
   {
+    "id": "side_table",
+    "name": "Side table",
+    "tags": ["accent", "surface"],
+    "room_types": ["living_room", "bedroom"],
+    "placement": {"surfaces": ["wall", "corner"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 0.50, "d": 0.50, "h": 0.55},
+    "clearance": {"front": 0.10, "sides": 0.10, "back": 0.05},
+    "model": "primitive:side_table"
+  },
+  {
+    "id": "console_table",
+    "name": "Console table",
+    "tags": ["storage", "surface"],
+    "room_types": ["living_room", "dining_room"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.20, "d": 0.40, "h": 0.80},
+    "clearance": {"front": 0.30, "sides": 0.10, "back": 0.05},
+    "model": "primitive:console_table"
+  },
+  {
     "id": "tv_stand",
     "name": "TV stand",
+    "tags": ["media", "storage"],
+    "room_types": ["living_room", "bedroom"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
     "footprint": {"w": 1.60, "d": 0.45, "h": 0.55},
     "clearance": {"front": 0.50, "sides": 0.10, "back": 0.05},
-    "allowedSlotKinds": ["wall"],
     "model": "primitive:tv_stand"
+  },
+  {
+    "id": "media_console",
+    "name": "Media console",
+    "tags": ["media", "storage"],
+    "room_types": ["living_room", "bedroom"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.80, "d": 0.45, "h": 0.50},
+    "clearance": {"front": 0.50, "sides": 0.10, "back": 0.05},
+    "model": "primitive:media_console"
   },
   {
     "id": "bookshelf",
     "name": "Bookshelf",
+    "tags": ["shelf", "storage", "large"],
+    "room_types": ["living_room", "home_office"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
     "footprint": {"w": 0.80, "d": 0.35, "h": 1.80},
     "clearance": {"front": 0.30, "sides": 0.05, "back": 0.05},
-    "allowedSlotKinds": ["wall"],
     "model": "primitive:bookshelf",
     "is_premium": true
   },
   {
+    "id": "bookshelf_tall",
+    "name": "Tall bookshelf",
+    "tags": ["shelf", "storage", "large"],
+    "room_types": ["home_office", "living_room"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 0.90, "d": 0.40, "h": 2.10},
+    "clearance": {"front": 0.30, "sides": 0.05, "back": 0.05},
+    "model": "primitive:bookshelf_tall"
+  },
+  {
     "id": "corner_shelf",
     "name": "Corner shelf",
+    "tags": ["shelf", "accent"],
+    "room_types": ["living_room", "bedroom", "home_office"],
+    "placement": {"surfaces": ["corner"], "against": ["wall"], "exclusive_with": []},
     "footprint": {"w": 0.50, "d": 0.50, "h": 1.50},
     "clearance": {"front": 0.20, "sides": 0.05, "back": 0.05},
-    "allowedSlotKinds": ["corner"],
     "model": "primitive:corner_shelf"
   },
   {
     "id": "floor_lamp",
     "name": "Floor lamp",
+    "tags": ["lighting", "accent"],
+    "room_types": ["living_room", "bedroom", "dining_room", "home_office"],
+    "placement": {"surfaces": ["wall", "corner"], "against": ["wall", "none"], "exclusive_with": []},
     "footprint": {"w": 0.35, "d": 0.35, "h": 1.60},
     "clearance": {"front": 0.30, "sides": 0.10, "back": 0.10},
-    "allowedSlotKinds": ["wall", "corner"],
     "model": "primitive:floor_lamp",
     "is_premium": true
   },
   {
+    "id": "wall_sconce_pair",
+    "name": "Wall sconce pair",
+    "tags": ["lighting", "accent"],
+    "room_types": ["living_room", "bedroom", "dining_room"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 0.30, "d": 0.20, "h": 0.40},
+    "clearance": {"front": 0.10, "sides": 0.10, "back": 0.05},
+    "model": "primitive:wall_sconce_pair"
+  },
+  {
     "id": "rug",
     "name": "Area rug",
+    "tags": ["rug"],
+    "room_types": ["living_room", "bedroom", "dining_room", "home_office"],
+    "placement": {"surfaces": ["floor"], "against": ["none"], "exclusive_with": []},
     "footprint": {"w": 2.40, "d": 1.60, "h": 0.02},
     "clearance": {"front": 0.00, "sides": 0.00, "back": 0.00},
-    "allowedSlotKinds": ["floor"],
     "model": "primitive:rug"
   },
   {
-    "id": "side_table",
-    "name": "Side table",
-    "footprint": {"w": 0.50, "d": 0.50, "h": 0.55},
-    "clearance": {"front": 0.10, "sides": 0.10, "back": 0.05},
-    "allowedSlotKinds": ["wall", "corner"],
-    "model": "primitive:side_table"
+    "id": "round_rug",
+    "name": "Round rug",
+    "tags": ["rug"],
+    "room_types": ["living_room", "bedroom", "dining_room", "home_office"],
+    "placement": {"surfaces": ["floor"], "against": ["none"], "exclusive_with": []},
+    "footprint": {"w": 1.80, "d": 1.80, "h": 0.02},
+    "clearance": {"front": 0.00, "sides": 0.00, "back": 0.00},
+    "model": "primitive:round_rug"
   },
   {
     "id": "plant_large",
     "name": "Large plant",
+    "tags": ["plant", "accent"],
+    "room_types": ["living_room", "bedroom", "dining_room", "home_office"],
+    "placement": {"surfaces": ["corner", "wall"], "against": ["wall", "none"], "exclusive_with": []},
     "footprint": {"w": 0.60, "d": 0.60, "h": 1.60},
     "clearance": {"front": 0.20, "sides": 0.10, "back": 0.10},
-    "allowedSlotKinds": ["corner", "wall"],
     "model": "primitive:plant_large"
+  },
+  {
+    "id": "small_plant",
+    "name": "Small plant",
+    "tags": ["plant", "accent"],
+    "room_types": ["living_room", "bedroom", "dining_room", "home_office"],
+    "placement": {"surfaces": ["wall", "corner"], "against": ["wall", "none"], "exclusive_with": []},
+    "footprint": {"w": 0.30, "d": 0.30, "h": 0.60},
+    "clearance": {"front": 0.10, "sides": 0.05, "back": 0.05},
+    "model": "primitive:small_plant"
+  },
+  {
+    "id": "floor_mirror",
+    "name": "Floor mirror",
+    "tags": ["accent"],
+    "room_types": ["bedroom", "living_room"],
+    "placement": {"surfaces": ["wall", "corner"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 0.60, "d": 0.10, "h": 1.80},
+    "clearance": {"front": 0.30, "sides": 0.10, "back": 0.05},
+    "model": "primitive:floor_mirror"
+  },
+  {
+    "id": "wall_art_set",
+    "name": "Wall art set",
+    "tags": ["accent"],
+    "room_types": ["living_room", "bedroom", "dining_room", "home_office"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.20, "d": 0.05, "h": 0.80},
+    "clearance": {"front": 0.10, "sides": 0.10, "back": 0.02},
+    "model": "primitive:wall_art_set"
+  },
+  {
+    "id": "bar_cart",
+    "name": "Bar cart",
+    "tags": ["storage", "accent"],
+    "room_types": ["dining_room", "living_room"],
+    "placement": {"surfaces": ["wall", "corner"], "against": ["wall", "none"], "exclusive_with": []},
+    "footprint": {"w": 0.70, "d": 0.45, "h": 0.85},
+    "clearance": {"front": 0.20, "sides": 0.10, "back": 0.05},
+    "model": "primitive:bar_cart"
+  },
+  {
+    "id": "magazine_rack",
+    "name": "Magazine rack",
+    "tags": ["storage", "accent"],
+    "room_types": ["living_room", "home_office"],
+    "placement": {"surfaces": ["wall", "corner"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 0.40, "d": 0.30, "h": 0.55},
+    "clearance": {"front": 0.10, "sides": 0.05, "back": 0.05},
+    "model": "primitive:magazine_rack"
+  },
+  {
+    "id": "bed_double",
+    "name": "Double bed",
+    "tags": ["bed", "large"],
+    "room_types": ["bedroom"],
+    "placement": {"surfaces": ["floor", "wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.50, "d": 2.00, "h": 0.50},
+    "clearance": {"front": 0.60, "sides": 0.50, "back": 0.05},
+    "model": "primitive:bed_double"
+  },
+  {
+    "id": "bed_queen",
+    "name": "Queen bed",
+    "tags": ["bed", "large"],
+    "room_types": ["bedroom"],
+    "placement": {"surfaces": ["floor", "wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.60, "d": 2.10, "h": 0.50},
+    "clearance": {"front": 0.60, "sides": 0.50, "back": 0.05},
+    "model": "primitive:bed_queen",
+    "is_premium": true
+  },
+  {
+    "id": "nightstand",
+    "name": "Nightstand",
+    "tags": ["nightstand", "storage"],
+    "room_types": ["bedroom"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 0.50, "d": 0.40, "h": 0.55},
+    "clearance": {"front": 0.30, "sides": 0.05, "back": 0.05},
+    "model": "primitive:nightstand"
+  },
+  {
+    "id": "dresser",
+    "name": "Dresser",
+    "tags": ["storage", "large"],
+    "room_types": ["bedroom"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.40, "d": 0.50, "h": 0.85},
+    "clearance": {"front": 0.50, "sides": 0.10, "back": 0.05},
+    "model": "primitive:dresser"
+  },
+  {
+    "id": "wardrobe",
+    "name": "Wardrobe",
+    "tags": ["storage", "large"],
+    "room_types": ["bedroom"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.20, "d": 0.60, "h": 2.00},
+    "clearance": {"front": 0.60, "sides": 0.10, "back": 0.05},
+    "model": "primitive:wardrobe"
+  },
+  {
+    "id": "vanity",
+    "name": "Vanity table",
+    "tags": ["storage", "surface"],
+    "room_types": ["bedroom"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.00, "d": 0.45, "h": 0.75},
+    "clearance": {"front": 0.50, "sides": 0.10, "back": 0.05},
+    "model": "primitive:vanity"
+  },
+  {
+    "id": "bedside_lamp",
+    "name": "Bedside lamp",
+    "tags": ["lighting", "accent"],
+    "room_types": ["bedroom"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 0.25, "d": 0.25, "h": 0.45},
+    "clearance": {"front": 0.05, "sides": 0.05, "back": 0.05},
+    "model": "primitive:bedside_lamp"
+  },
+  {
+    "id": "dining_table_4",
+    "name": "Dining table for 4",
+    "tags": ["dining", "surface", "large"],
+    "room_types": ["dining_room"],
+    "placement": {"surfaces": ["floor"], "against": ["none"], "exclusive_with": []},
+    "footprint": {"w": 1.40, "d": 0.90, "h": 0.75},
+    "clearance": {"front": 0.70, "sides": 0.70, "back": 0.70},
+    "model": "primitive:dining_table_4"
+  },
+  {
+    "id": "dining_table_6",
+    "name": "Dining table for 6",
+    "tags": ["dining", "surface", "large"],
+    "room_types": ["dining_room"],
+    "placement": {"surfaces": ["floor"], "against": ["none"], "exclusive_with": []},
+    "footprint": {"w": 2.00, "d": 1.00, "h": 0.75},
+    "clearance": {"front": 0.70, "sides": 0.70, "back": 0.70},
+    "model": "primitive:dining_table_6",
+    "is_premium": true
+  },
+  {
+    "id": "sideboard",
+    "name": "Sideboard",
+    "tags": ["storage", "surface"],
+    "room_types": ["dining_room"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.60, "d": 0.45, "h": 0.85},
+    "clearance": {"front": 0.50, "sides": 0.10, "back": 0.05},
+    "model": "primitive:sideboard"
+  },
+  {
+    "id": "china_cabinet",
+    "name": "China cabinet",
+    "tags": ["storage", "shelf", "large"],
+    "room_types": ["dining_room"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.20, "d": 0.45, "h": 2.00},
+    "clearance": {"front": 0.40, "sides": 0.05, "back": 0.05},
+    "model": "primitive:china_cabinet"
+  },
+  {
+    "id": "desk",
+    "name": "Desk",
+    "tags": ["desk", "surface", "large"],
+    "room_types": ["home_office"],
+    "placement": {"surfaces": ["wall", "floor"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.40, "d": 0.70, "h": 0.75},
+    "clearance": {"front": 0.70, "sides": 0.20, "back": 0.05},
+    "model": "primitive:desk"
+  },
+  {
+    "id": "desk_compact",
+    "name": "Compact desk",
+    "tags": ["desk", "surface"],
+    "room_types": ["home_office", "bedroom"],
+    "placement": {"surfaces": ["wall", "floor"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.10, "d": 0.55, "h": 0.75},
+    "clearance": {"front": 0.60, "sides": 0.10, "back": 0.05},
+    "model": "primitive:desk_compact"
+  },
+  {
+    "id": "office_chair",
+    "name": "Office chair",
+    "tags": ["chair", "seating"],
+    "room_types": ["home_office"],
+    "placement": {"surfaces": ["floor"], "against": ["none"], "exclusive_with": []},
+    "footprint": {"w": 0.65, "d": 0.65, "h": 1.10},
+    "clearance": {"front": 0.30, "sides": 0.20, "back": 0.30},
+    "model": "primitive:office_chair"
+  },
+  {
+    "id": "filing_cabinet",
+    "name": "Filing cabinet",
+    "tags": ["storage"],
+    "room_types": ["home_office"],
+    "placement": {"surfaces": ["wall", "corner"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 0.45, "d": 0.55, "h": 1.10},
+    "clearance": {"front": 0.50, "sides": 0.05, "back": 0.05},
+    "model": "primitive:filing_cabinet"
+  },
+  {
+    "id": "credenza",
+    "name": "Credenza",
+    "tags": ["storage", "surface"],
+    "room_types": ["home_office", "dining_room"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 1.50, "d": 0.45, "h": 0.75},
+    "clearance": {"front": 0.40, "sides": 0.10, "back": 0.05},
+    "model": "primitive:credenza"
+  },
+  {
+    "id": "desk_lamp",
+    "name": "Desk lamp",
+    "tags": ["lighting", "accent"],
+    "room_types": ["home_office", "bedroom"],
+    "placement": {"surfaces": ["wall"], "against": ["wall"], "exclusive_with": []},
+    "footprint": {"w": 0.25, "d": 0.25, "h": 0.50},
+    "clearance": {"front": 0.05, "sides": 0.05, "back": 0.05},
+    "model": "primitive:desk_lamp"
   }
 ]

@@ -62,14 +62,16 @@ def _item(catalog_id: str, slot: str, facing: str = "auto") -> LayoutItemLLM:
 # ── SLOT_KINDS completeness ───────────────────────────────────────────────────
 
 
-def test_slot_kinds_has_19_entries() -> None:
-    assert len(SLOT_KINDS) == 19
+def test_slot_kinds_has_22_entries() -> None:
+    # 12 wall + 4 corner + 6 floor (center, center_front, entry, bed_center,
+    # table_center, desk_anchor) = 22
+    assert len(SLOT_KINDS) == 22
 
 
 # ── Happy path ────────────────────────────────────────────────────────────────
 
 
-def test_happy_path_three_items(catalog_items: list[CatalogItem]) -> None:
+def test_happy_path_three_items(catalog_items: list[CatalogItem], living_profile) -> None:
     llm = _llm(
         [
             _item("sofa_3seat", "south_wall_center"),
@@ -77,7 +79,7 @@ def test_happy_path_three_items(catalog_items: list[CatalogItem]) -> None:
             _item("rug", "center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
     assert len(layout.items) == 3
     assert layout.warnings == []
     for item in layout.items:
@@ -89,7 +91,7 @@ def test_happy_path_three_items(catalog_items: list[CatalogItem]) -> None:
 # ── No AABB overlap in result ─────────────────────────────────────────────────
 
 
-def test_no_aabb_overlap(catalog_items: list[CatalogItem]) -> None:
+def test_no_aabb_overlap(catalog_items: list[CatalogItem], living_profile) -> None:
     llm = _llm(
         [
             _item("sofa_3seat", "south_wall_center"),
@@ -99,7 +101,7 @@ def test_no_aabb_overlap(catalog_items: list[CatalogItem]) -> None:
             _item("rug", "center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
     placed = layout.items
     for i, a in enumerate(placed):
         for b in placed[i + 1 :]:
@@ -114,7 +116,7 @@ def test_no_aabb_overlap(catalog_items: list[CatalogItem]) -> None:
 # ── Co-occupancy: rug + coffee_table share center ────────────────────────────
 
 
-def test_cooccupancy_rug_coffee_table(catalog_items: list[CatalogItem]) -> None:
+def test_cooccupancy_rug_coffee_table(catalog_items: list[CatalogItem], living_profile) -> None:
     llm = _llm(
         [
             _item("sofa_3seat", "south_wall_center"),
@@ -123,7 +125,7 @@ def test_cooccupancy_rug_coffee_table(catalog_items: list[CatalogItem]) -> None:
             _item("coffee_table", "center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
     ids = {item.catalogId for item in layout.items}
     assert "rug" in ids
     assert "coffee_table" in ids
@@ -133,7 +135,9 @@ def test_cooccupancy_rug_coffee_table(catalog_items: list[CatalogItem]) -> None:
 # ── Slot exclusivity: two items at same slot → one dropped ───────────────────
 
 
-def test_slot_exclusivity_drops_lower_priority(catalog_items: list[CatalogItem]) -> None:
+def test_slot_exclusivity_drops_lower_priority(
+    catalog_items: list[CatalogItem], living_profile
+) -> None:
     # sofa (pri 8) and tv_stand (pri 7) both want south_wall_center
     llm = _llm(
         [
@@ -142,7 +146,7 @@ def test_slot_exclusivity_drops_lower_priority(catalog_items: list[CatalogItem])
             _item("bookshelf", "north_wall_left"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
     ids = [item.catalogId for item in layout.items]
     assert "sofa_3seat" in ids
     assert "tv_stand" not in ids
@@ -152,7 +156,7 @@ def test_slot_exclusivity_drops_lower_priority(catalog_items: list[CatalogItem])
 # ── allowedSlotKinds violation → dropped with warning ────────────────────────
 
 
-def test_wrong_slot_kind_dropped(catalog_items: list[CatalogItem]) -> None:
+def test_wrong_slot_kind_dropped(catalog_items: list[CatalogItem], living_profile) -> None:
     # sofa only allows "wall" slots; corner_NE is a "corner" slot
     llm = _llm(
         [
@@ -161,16 +165,16 @@ def test_wrong_slot_kind_dropped(catalog_items: list[CatalogItem]) -> None:
             _item("sofa_3seat", "corner_NE"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
     ids = {item.catalogId for item in layout.items}
     assert "sofa_3seat" not in ids
-    assert any("not allowed" in w for w in layout.warnings)
+    assert any("not accepted" in w or "not allowed" in w for w in layout.warnings)
 
 
 # ── Unknown catalogId → dropped with warning ─────────────────────────────────
 
 
-def test_unknown_catalog_id(catalog_items: list[CatalogItem]) -> None:
+def test_unknown_catalog_id(catalog_items: list[CatalogItem], living_profile) -> None:
     llm = _llm(
         [
             _item("sofa_3seat", "south_wall_center"),
@@ -178,7 +182,7 @@ def test_unknown_catalog_id(catalog_items: list[CatalogItem]) -> None:
             _item("bookshelf", "north_wall_left"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
     ids = {item.catalogId for item in layout.items}
     assert "ghost_chair" not in ids
     assert any("Unknown" in w for w in layout.warnings)
@@ -187,7 +191,9 @@ def test_unknown_catalog_id(catalog_items: list[CatalogItem]) -> None:
 # ── Drop priority ordering ────────────────────────────────────────────────────
 
 
-def test_drop_priority_floor_lamp_before_plant(catalog_items: list[CatalogItem]) -> None:
+def test_drop_priority_floor_lamp_before_plant(
+    catalog_items: list[CatalogItem], living_profile
+) -> None:
     # Both want corner_NE. floor_lamp (pri 3) > plant_large (pri 1).
     # Corner slots have no nudge — lower priority item is dropped.
     llm = _llm(
@@ -197,7 +203,7 @@ def test_drop_priority_floor_lamp_before_plant(catalog_items: list[CatalogItem])
             _item("plant_large", "corner_NE"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
     ids = {item.catalogId for item in layout.items}
     assert "floor_lamp" in ids
     assert "plant_large" not in ids
@@ -206,7 +212,7 @@ def test_drop_priority_floor_lamp_before_plant(catalog_items: list[CatalogItem])
 # ── Wall items face inward ────────────────────────────────────────────────────
 
 
-def test_wall_items_face_inward(catalog_items: list[CatalogItem]) -> None:
+def test_wall_items_face_inward(catalog_items: list[CatalogItem], living_profile) -> None:
     llm = _llm(
         [
             _item("sofa_3seat", "south_wall_center"),
@@ -215,7 +221,7 @@ def test_wall_items_face_inward(catalog_items: list[CatalogItem]) -> None:
             _item("armchair", "west_wall_center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
     item_map = {item.catalogId: item for item in layout.items}
 
     # south_wall → rotation_y ≈ π (faces north/-Z)
@@ -234,6 +240,7 @@ def test_wall_items_face_inward(catalog_items: list[CatalogItem]) -> None:
 def test_all_result_catalog_ids_valid(
     catalog_items: list[CatalogItem],
     catalog_map: dict[str, CatalogItem],
+    living_profile,
 ) -> None:
     llm = _llm(
         [
@@ -244,7 +251,7 @@ def test_all_result_catalog_ids_valid(
             _item("rug", "center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
     for item in layout.items:
         assert item.catalogId in catalog_map
 
@@ -252,7 +259,7 @@ def test_all_result_catalog_ids_valid(
 # ── warnings always a list, even on success ───────────────────────────────────
 
 
-def test_warnings_is_list_on_success(catalog_items: list[CatalogItem]) -> None:
+def test_warnings_is_list_on_success(catalog_items: list[CatalogItem], living_profile) -> None:
     llm = _llm(
         [
             _item("sofa_3seat", "south_wall_center"),
@@ -260,14 +267,14 @@ def test_warnings_is_list_on_success(catalog_items: list[CatalogItem]) -> None:
             _item("rug", "center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
     assert isinstance(layout.warnings, list)
 
 
 # ── Seed propagated from request ─────────────────────────────────────────────
 
 
-def test_seed_propagated(catalog_items: list[CatalogItem]) -> None:
+def test_seed_propagated(catalog_items: list[CatalogItem], living_profile) -> None:
     req = GenerateLayoutRequest(
         roomType="living_room",
         width_m=5.0,
@@ -284,14 +291,14 @@ def test_seed_propagated(catalog_items: list[CatalogItem]) -> None:
             _item("rug", "center"),
         ]
     )
-    layout = resolve(llm, req, catalog_items)
+    layout = resolve(llm, req, catalog_items, living_profile)
     assert layout.seed == 42
 
 
 # ── Resolved items have position, rotation_y, footprint, model ───────────────
 
 
-def test_resolved_item_fields(catalog_items: list[CatalogItem]) -> None:
+def test_resolved_item_fields(catalog_items: list[CatalogItem], living_profile) -> None:
     llm = _llm(
         [
             _item("sofa_3seat", "south_wall_center"),
@@ -299,7 +306,7 @@ def test_resolved_item_fields(catalog_items: list[CatalogItem]) -> None:
             _item("rug", "center"),
         ]
     )
-    layout = resolve(llm, STD_REQ, catalog_items)
+    layout = resolve(llm, STD_REQ, catalog_items, living_profile)
     for item in layout.items:
         assert len(item.position) == 3
         assert isinstance(item.rotation_y, float)
@@ -314,5 +321,6 @@ def test_catalog_endpoint(client) -> None:
     r = client.get("/catalog")
     assert r.status_code == 200
     data = r.json()
-    assert len(data["items"]) == 10
-    assert data["items"][0]["id"] == "sofa_3seat"
+    assert len(data["items"]) >= 30
+    ids = {i["id"] for i in data["items"]}
+    assert "sofa_3seat" in ids

@@ -2,9 +2,11 @@ import math
 
 from app.models.catalog import CatalogItem
 from app.models.layout import GenerateLayoutRequest, Layout, LayoutItemLLM, LayoutLLM, ResolvedItem
+from app.models.room_type import RoomTypeProfile
 from app.services.slot_resolver import Footprint, RoomDims, resolve_slot
 
 DROP_PRIORITY: dict[str, int] = {
+    # Living
     "plant_large": 1,
     "side_table": 2,
     "floor_lamp": 3,
@@ -14,9 +16,28 @@ DROP_PRIORITY: dict[str, int] = {
     "tv_stand": 7,
     "sofa_3seat": 8,
     "rug": 9,
+    # Bedroom
+    "nightstand": 5,
+    "dresser": 6,
+    "wardrobe": 7,
+    "bed_double": 10,
+    # Dining
+    "dining_chair": 5,
+    "sideboard": 6,
+    "dining_table_4": 10,
+    "dining_table_6": 10,
+    # Office
+    "office_chair": 6,
+    "desk": 10,
+    "filing_cabinet": 5,
 }
 
-COOCCUPY_ALLOW: set[frozenset[str]] = {frozenset({"rug", "coffee_table"})}
+COOCCUPY_ALLOW: set[frozenset[str]] = {
+    frozenset({"rug", "coffee_table"}),
+    frozenset({"rug", "dining_table_4"}),
+    frozenset({"rug", "dining_table_6"}),
+    frozenset({"bed_double", "nightstand"}),
+}
 
 SLOT_KINDS: dict[str, str] = {
     slot: kind
@@ -36,7 +57,14 @@ SLOT_KINDS: dict[str, str] = {
             "west_wall_right",
         ],
         "corner": ["corner_NE", "corner_NW", "corner_SE", "corner_SW"],
-        "floor": ["center", "center_front", "entry"],
+        "floor": [
+            "center",
+            "center_front",
+            "entry",
+            "bed_center",
+            "table_center",
+            "desk_anchor",
+        ],
     }.items()
     for slot in slots
 }
@@ -98,6 +126,7 @@ def _try_place(
         catalogId=item.catalogId,
         slot=item.slot,  # keep original slot name in response
         facing=item.facing,
+        zone=item.zone,
         rationale=item.rationale,
         position=transform.position,
         rotation_y=transform.rotation_y,
@@ -117,22 +146,32 @@ def resolve(
     llm: LayoutLLM,
     request: GenerateLayoutRequest,
     catalog: list[CatalogItem],
+    profile: RoomTypeProfile,
 ) -> Layout:
     catalog_map: dict[str, CatalogItem] = {item.id: item for item in catalog}
     warnings: list[str] = []
     valid: list[LayoutItemLLM] = []
+    instances = set(profile.slot_instances)
 
-    # Step 1 + 2: catalogId lookup + allowedSlotKinds check
+    # Step 1 + 2: catalogId + room-type slot validity + tag intersection
     for item in llm.items:
         if item.catalogId not in catalog_map:
             warnings.append(f"Unknown catalogId: {item.catalogId!r} — dropped")
             continue
-        slot_kind = SLOT_KINDS.get(item.slot, "")
-        allowed = catalog_map[item.catalogId].allowedSlotKinds
-        if slot_kind not in allowed:
+        if item.slot not in instances:
+            warnings.append(f"Slot {item.slot!r} not in room type {request.roomType!r} — dropped")
+            continue
+        catalog_item = catalog_map[item.catalogId]
+        if request.roomType not in catalog_item.room_types:
             warnings.append(
-                f"Slot {item.slot!r} not allowed for {item.catalogId!r} "
-                f"(allowed: {allowed}) — dropped"
+                f"Item {item.catalogId!r} not allowed in room type {request.roomType!r} — dropped"
+            )
+            continue
+        accepted = profile.slot_accepted_tags.get(item.slot, [])
+        if not (set(catalog_item.tags) & set(accepted)):
+            warnings.append(
+                f"Item {item.catalogId!r} tags {catalog_item.tags!r} not accepted "
+                f"by slot {item.slot!r} (accepted: {accepted}) — dropped"
             )
             continue
         valid.append(item)
@@ -217,6 +256,7 @@ def resolve(
     return Layout(
         style=llm.style,
         palette=llm.palette,
+        zones=list(llm.zones),
         items=placed,
         designExplanation=llm.designExplanation,
         seed=request.seed,
