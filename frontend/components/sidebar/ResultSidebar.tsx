@@ -55,7 +55,7 @@ export default function ResultSidebar({
   const [showWarnings, setShowWarnings] = useState(false);
 
   return (
-    <aside className="flex h-full flex-col gap-6 overflow-y-auto p-4 bg-background">
+    <aside className="flex h-full flex-col gap-6 overflow-y-auto p-4 bg-transparent">
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap gap-2">
           {[STYLE_LABELS[style], ...preferences.map((p) => PREF_LABELS[p])].map((label) => (

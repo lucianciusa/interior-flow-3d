@@ -21,15 +21,23 @@ const PRESETS: PresetDef[] = [
 
 /** Renders inside <Canvas> — updates camera when preset changes. */
 export function CameraController3D() {
-  const { camera } = useThree();
+  const { camera, controls } = useThree();
   const preset = useViewerStore((s) => s.cameraPreset);
 
   useEffect(() => {
     const p = PRESETS.find((x) => x.id === preset);
     if (!p) return;
+    
     camera.position.set(...p.position);
-    camera.lookAt(...p.target);
-  }, [preset, camera]);
+    
+    // If OrbitControls are active, update their target
+    if (controls && (controls as any).target) {
+      (controls as any).target.set(...p.target);
+      (controls as any).update();
+    } else {
+      camera.lookAt(...p.target);
+    }
+  }, [preset, camera, controls]);
 
   return null;
 }

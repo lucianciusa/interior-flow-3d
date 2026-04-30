@@ -24,7 +24,7 @@ export function TopToolbar({ isEdgeToEdge }: { isEdgeToEdge: boolean }) {
   return (
     <header
       className={`flex h-14 items-center justify-between border-b px-6 transition-all z-20 ${
-        isEdgeToEdge ? "absolute left-0 right-0 top-0 border-b/50 backdrop-blur bg-background/80" : "bg-card"
+        isEdgeToEdge ? "absolute left-0 right-0 top-0 border-b bg-background" : "bg-card"
       }`}
     >
       <div className="flex items-center gap-2 text-sm text-muted-foreground font-body">

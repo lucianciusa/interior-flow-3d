@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import dynamic from "next/dynamic";
 import { Suspense, useEffect, useState } from "react";
 
@@ -51,6 +52,7 @@ export default function ResultView({
   const setSelected = useViewerStore((s) => s.setSelectedItem);
   const [swapOpen, setSwapOpen] = useState(false);
   const [hideWalls, setHideWalls] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
 
   useEffect(() => {
     setSelected(null);
@@ -64,16 +66,18 @@ export default function ResultView({
   return (
     <div className="flex h-full">
       <div className="relative flex-1">
-        <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
+        <div className="absolute left-4 top-8 z-10 flex flex-col gap-2 pointer-events-auto">
           <CameraPresets />
-          <Button
-            variant="outline"
-            size="sm"
-            className="bg-background/80 backdrop-blur-sm border-border shadow-sm h-8"
-            onClick={() => setHideWalls(!hideWalls)}
-          >
-            {hideWalls ? "Show walls" : "Hide walls"}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-background border-border shadow-sm h-8 px-3"
+              onClick={() => setHideWalls(!hideWalls)}
+            >
+              {hideWalls ? "Show walls" : "Hide walls"}
+            </Button>
+          </div>
         </div>
         <Suspense
           fallback={
@@ -82,7 +86,9 @@ export default function ResultView({
             </div>
           }
         >
-          <Scene layout={layout} dims={dims} hideWalls={hideWalls} />
+          <div className="fixed inset-0 z-0 pointer-events-auto">
+            <Scene layout={layout} dims={dims} hideWalls={hideWalls} />
+          </div>
         </Suspense>
         <ItemPopover />
         {showSwap && selected && (
@@ -90,53 +96,72 @@ export default function ResultView({
             <Button
               size="sm"
               onClick={() => setSwapOpen((v) => !v)}
-              className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2"
+              className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 pointer-events-auto"
             >
               {swapOpen ? "Hide replacements" : "Replace this item"}
             </Button>
             {swapOpen && layoutId && (
-              <SwapPopover
-                item={selected}
-                layoutId={layoutId}
-                roomType={roomType}
-                onClose={() => setSwapOpen(false)}
-              />
+                <div className="pointer-events-auto">
+                  <SwapPopover
+                    item={selected}
+                    layoutId={layoutId}
+                    roomType={roomType}
+                    onClose={() => setSwapOpen(false)}
+                  />
+                </div>
             )}
           </>
         )}
       </div>
-      {isInline && (
-        <div className="w-80 shrink-0 border-l border-border">
-          <ResultSidebar
-            layout={layout}
-            style={style}
-            preferences={preferences}
-            mode={mode}
-            onRegenerate={onRegenerate}
-            onAdjust={onAdjust}
-            onSave={onSave}
-            onShare={onShare}
-            onCompare={onCompare}
-            saveState={saveState}
-          />
-        </div>
-      )}
-      {!isInline && (
-        <div className="hidden lg:flex w-80 shrink-0 border-l border-border">
-          <ResultSidebar
-            layout={layout}
-            style={style}
-            preferences={preferences}
-            mode={mode}
-            onRegenerate={onRegenerate}
-            onAdjust={onAdjust}
-            onSave={onSave}
-            onShare={onShare}
-            onCompare={onCompare}
-            saveState={saveState}
-          />
-        </div>
-      )}
+      {/* Sidebars with Tab Toggles */}
+      <div className="relative flex pointer-events-none">
+        {(isInline || !isInline) && (
+          <button
+            onClick={() => setShowSidebar(!showSidebar)}
+            className="pointer-events-auto absolute top-1/2 -translate-y-1/2 right-full z-30 flex h-16 w-6 items-center justify-center rounded-l-md border border-r-0 bg-background shadow-sm transition-all hover:bg-muted"
+            title={showSidebar ? "Hide Layout Info" : "Show Layout Info"}
+          >
+            {showSidebar ? (
+              <ChevronRight size={16} className="text-muted-foreground" />
+            ) : (
+              <ChevronLeft size={16} className="text-muted-foreground" />
+            )}
+          </button>
+        )}
+
+        {isInline && showSidebar && (
+          <div className="w-80 shrink-0 border-l border-border bg-background pointer-events-auto z-10 relative">
+            <ResultSidebar
+              layout={layout}
+              style={style}
+              preferences={preferences}
+              mode={mode}
+              onRegenerate={onRegenerate}
+              onAdjust={onAdjust}
+              onSave={onSave}
+              onShare={onShare}
+              onCompare={onCompare}
+              saveState={saveState}
+            />
+          </div>
+        )}
+        {!isInline && showSidebar && (
+          <div className="hidden lg:flex w-80 shrink-0 border-l border-border bg-background pointer-events-auto z-10 relative">
+            <ResultSidebar
+              layout={layout}
+              style={style}
+              preferences={preferences}
+              mode={mode}
+              onRegenerate={onRegenerate}
+              onAdjust={onAdjust}
+              onSave={onSave}
+              onShare={onShare}
+              onCompare={onCompare}
+              saveState={saveState}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { useWizardStore } from "@/lib/stores/wizard";
 export function LeftRail() {
   const reset = useWizardStore((s) => s.reset);
   return (
-    <nav className="flex w-16 flex-col items-center justify-between border-r bg-muted/40 py-4">
+    <nav className="flex h-full w-16 flex-col items-center justify-between border-r bg-background py-4 relative z-10">
       <div className="flex flex-col items-center gap-4">
         {/* Create New Action */}
         <Link

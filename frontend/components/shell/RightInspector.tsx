@@ -16,7 +16,7 @@ export function RightInspector({ isFloating }: { isFloating: boolean }) {
   // If floating (result view), show scene details
   if (isFloating) {
     return (
-      <aside className="absolute bottom-4 right-4 top-16 w-80 overflow-hidden rounded-xl border bg-background shadow-lg transition-transform duration-300 ease-in-out z-50">
+      <aside className="absolute bottom-0 right-0 top-0 w-80 overflow-hidden border-l bg-background shadow-lg transition-transform duration-300 ease-in-out z-50">
         <div className="h-full flex flex-col p-4 overflow-y-auto">
           <h3 className="text-sm font-semibold mb-4 text-foreground uppercase tracking-wider">Scene Details</h3>
           <div className="space-y-4">
@@ -44,7 +44,7 @@ export function RightInspector({ isFloating }: { isFloating: boolean }) {
     const area = room.width_m * room.length_m;
     
     return (
-      <aside className="hidden lg:flex w-80 flex-col border-l bg-background p-6">
+      <aside className="hidden lg:flex w-80 h-full flex-col border-l bg-background p-6 relative z-10">
         <h3 className="text-lg font-semibold mb-6 tracking-tight font-display text-foreground">Room Specs</h3>
         
         <div className="space-y-6">
@@ -87,7 +87,7 @@ export function RightInspector({ isFloating }: { isFloating: boolean }) {
 
   if (roomId && roomQuery.isLoading) {
     return (
-      <aside className="hidden lg:flex w-80 flex-col border-l bg-background p-6">
+      <aside className="hidden lg:flex w-80 h-full flex-col border-l bg-background p-6 relative z-10">
         <Skeleton className="h-8 w-32 mb-6" />
         <div className="space-y-4">
           <Skeleton className="h-32 w-full rounded-xl" />
@@ -99,7 +99,7 @@ export function RightInspector({ isFloating }: { isFloating: boolean }) {
 
   // Default Wizard Inspector
   return (
-    <aside className="hidden lg:flex w-80 flex-col border-l bg-background p-6">
+    <aside className="hidden lg:flex w-80 h-full flex-col border-l bg-background p-6 relative z-10">
       <h3 className="text-lg font-semibold mb-6 tracking-tight font-display text-foreground">Inspector</h3>
       
       <div className="space-y-6">
