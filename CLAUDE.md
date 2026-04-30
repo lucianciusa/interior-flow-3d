@@ -389,10 +389,12 @@ These are settled — do not relitigate without reading `.claude/PRD.md` §15 fi
 ## Phase Status
 
 - **Phase 0–3 (MVP)**: shipped. Anon Generate, single living room, 3 styles, 10 items, save/load, RLS, marketing stub.
-- **Phase 4 (Product hierarchy)**: pending. Projects + Rooms + Layout variants + share links + dashboard + compare overlay + item swap.
-- **Phase 5 (Design system & marketing)**: pending. Light/dark mode, Geist+Inter, floating-panel shell, autoplay landing, curated template gallery, soft Pro affordances.
+- **Phase 4 (Product hierarchy)**: shipped. Projects + Rooms + Layout variants + share links + dashboard + compare overlay + item swap.
+- **Phase 5 (Design system & marketing)**: shipped. Light/dark mode, Geist+Inter, floating-panel shell, autoplay landing, curated template gallery, soft Pro affordances.
 - **Phase 6 (Catalog scaling & multi-room)**: shipped. Tag-based catalog, glTF/Meshopt/KTX2 pipeline, Azure Blob+Front Door, HDRI+PBR, 4 room types, ~40 items, zones-as-data.
-- **Phase 7 (Two-pass & style profiles)**: pending. Pass 1 + parallel Pass 2, `StyleProfile`, 5 styles end-to-end, demo seeds.
+- **Phase 7 (Two-pass & style profiles)**: shipped. Pass 1 + parallel Pass 2, `StyleProfile`, 5 styles end-to-end, demo seeds.
+
+v1 feature-complete. All locked-decision phases ✅.
 
 ---
 

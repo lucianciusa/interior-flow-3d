@@ -1,6 +1,6 @@
 # Interior Flow 3D
 
-AI-powered 3D living-room design copilot. User picks dimensions, style (Scandinavian / Minimal / Industrial), and up to two preferences; backend calls Azure OpenAI to produce a layout — items + slots + palette + first-person designer rationale — which the frontend renders in a React Three Fiber scene.
+AI-powered 3D interior design copilot. Users organize work as **Projects → Rooms → Layouts**. For each Layout, user picks a room type (living room, bedroom, dining room, home office), dimensions, a style (Scandinavian / Minimal / Industrial / Japandi / Mid-century), and up to two preferences; the backend runs a two-pass Azure OpenAI pipeline (zones + style emphasis, then items per zone in parallel) to produce a Layout — zones + items + palette + first-person designer rationale — which the frontend renders in a React Three Fiber scene with shared HDRI + PBR materials. Anonymous Generate is rate-limited (10/24h per IP); login required to save. Saved layouts support named sibling variants, item swap, compare overlay, and signed read-only share links.
 
 For full product scope see [`.claude/PRD.md`](.claude/PRD.md). For project-wide engineering rules see [`CLAUDE.md`](CLAUDE.md).
 
@@ -99,4 +99,10 @@ Reproducible seed values for stage demos: see [`docs/demo-seeds.md`](docs/demo-s
 
 ## Phase status
 
-Phase 0–3 complete (scaffolding, catalog + R3F viewer, LLM + wizard, auth + persistence + polish). MVP feature-complete per `.claude/PRD.md` §11.
+All phases (0–7) shipped. v1 feature-complete per `.claude/PRD.md`:
+
+- **0–3** — scaffolding, catalog + R3F viewer, LLM + wizard, auth + persistence + polish (MVP).
+- **4** — Projects → Rooms → Layout variants, share links, dashboard, compare overlay, item swap.
+- **5** — Light/dark design system (Geist + Inter), floating-panel shell, autoplay marketing hero, curated template gallery, soft Pro affordances.
+- **6** — Tag-based catalog (~40 items), glTF/Meshopt/KTX2 pipeline, Azure Blob + Front Door, HDRI + PBR, 4 room types, zones-as-data.
+- **7** — Two-pass LLM (Pass 1 zones + emphasis, parallel Pass 2 per zone), `StyleProfile`-driven placement, 5 styles end-to-end, demo seeds.
