@@ -34,7 +34,6 @@ class TemplatesResponse(BaseModel):
 router = APIRouter(prefix="/templates", tags=["templates"])
 
 
-@lru_cache(maxsize=1)
 def _load_templates() -> TemplatesResponse:
     path = Path(__file__).parent.parent / "data" / "templates.json"
     raw: list[dict[str, object]] = json.loads(path.read_text())

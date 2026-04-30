@@ -12,6 +12,8 @@ dependencies = [
     "openai>=1.54",
     "pyjwt[crypto]>=2.9",
     "orjson>=3.10",
+    "azure-identity>=1.25.3",
+    "azure-storage-blob>=12.28.0",
 ]
 
 [dependency-groups]

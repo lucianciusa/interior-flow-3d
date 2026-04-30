@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -cE \"^\\(sofa_3seat|loveseat|sectional_sofa|armchair|accent_chair|ottoman|coffee_table|side_table|console_table|tv_stand|media_console|bookshelf|bookshelf_tall|corner_shelf|floor_lamp|wall_sconce_pair|rug|round_rug|plant_large|small_plant|floor_mirror|bed_double|bed_queen|nightstand|dresser|wardrobe|bedside_lamp|dining_table_4|dining_table_6|sideboard|china_cabinet|desk|desk_compact|office_chair|filing_cabinet|credenza|desk_lamp\\)\\\\.glb$\")"
+    ]
+  }
+}

@@ -7,8 +7,8 @@ param endpointName string
 @description('Origin host (e.g. mystorage.blob.core.windows.net).')
 param originHost string
 
-@description('Origin path inside the host (default: /catalog).')
-param originPath string = '/catalog'
+@description('Origin path inside the host (default: empty).')
+param originPath string = ''
 
 resource profile 'Microsoft.Cdn/profiles@2024-02-01' = {
   name: profileName

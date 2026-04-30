@@ -41,3 +41,10 @@ supabase/.temp/
 dist/
 build/
 *.log
+
+# Asset pipeline raw inputs (large binaries; processed outputs go to CDN)
+assets/glb/**/*.glb
+assets/hdri/*.hdr
+assets/hdri/*.exr
+assets/hdri/*.ktx2
+assets/manifest.json

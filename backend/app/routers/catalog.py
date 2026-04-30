@@ -9,7 +9,6 @@ from app.models.catalog import CatalogItem, CatalogResponse
 router = APIRouter(prefix="/catalog", tags=["catalog"])
 
 
-@lru_cache(maxsize=1)
 def _load_catalog() -> CatalogResponse:
     path = Path(__file__).parent.parent / "data" / "catalog.json"
     raw: list[dict[str, object]] = json.loads(path.read_text())
