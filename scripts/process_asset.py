@@ -27,7 +27,7 @@ MAX_BYTES = 1_048_576  # 1 MB hard cap per asset
 
 def run(cmd: list[str]) -> None:
     print(f"$ {' '.join(cmd)}")
-    subprocess.run(cmd, check=True)
+    subprocess.run(cmd, check=True, shell=os.name == "nt")
 
 
 def gltfpack(src: Path, dst: Path) -> None:

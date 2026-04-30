@@ -27,18 +27,8 @@ export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
   }, [layout.items]);
 
   const { instanceGroups, individualItems } = useMemo(() => {
-    const groups: Record<string, typeof layout.items> = {};
-    layout.items.forEach((item) => {
-      if (!item.model.startsWith("primitive:")) {
-        if (!groups[item.model]) groups[item.model] = [];
-        groups[item.model].push(item);
-      }
-    });
-
-    const instanceGroups = Object.entries(groups).filter(([_, items]) => items.length >= 3);
-    const individualItems = layout.items.filter(
-      (item) => item.model.startsWith("primitive:") || groups[item.model].length < 3
-    );
+    const instanceGroups: [string, any[]][] = [];
+    const individualItems = layout.items;
 
     return { instanceGroups, individualItems };
   }, [layout]);
@@ -102,12 +92,16 @@ function InstanceGroup({ model, items }: { model: string; items: any[] }) {
     const clone = scene.clone();
     clone.traverse((obj: any) => {
       if (obj.isMesh) {
+        if (!obj.geometry) {
+          console.error(`InstanceGroup: Mesh "${obj.name}" in model ${model} has no geometry. Providing fallback.`);
+          obj.geometry = new THREE.BufferGeometry();
+        }
         obj.castShadow = true;
         obj.receiveShadow = true;
       }
     });
     return clone;
-  }, [scene]);
+  }, [scene, model]);
   
   return (
     <Instances range={items.length}>

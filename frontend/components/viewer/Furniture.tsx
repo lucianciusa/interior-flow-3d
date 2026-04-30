@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
 
 import { useViewerStore } from "@/lib/stores/viewer";
@@ -14,12 +15,16 @@ function GltfMesh({ model }: { model: string }) {
     const clone = scene.clone();
     clone.traverse((obj: any) => {
       if (obj.isMesh) {
+        if (!obj.geometry) {
+          console.error(`Furniture: Mesh "${obj.name}" in model ${model} has no geometry. Providing empty fallback.`);
+          obj.geometry = new THREE.BufferGeometry();
+        }
         obj.castShadow = true;
         obj.receiveShadow = true;
       }
     });
     return clone;
-  }, [scene]);
+  }, [scene, model]);
 
   return <primitive object={clonedScene} />;
 }
