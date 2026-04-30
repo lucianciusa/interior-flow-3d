@@ -9,9 +9,11 @@ import EmptyProjects from "@/components/projects/EmptyProjects";
 import NewProjectDialog from "@/components/projects/NewProjectDialog";
 import ProjectGrid from "@/components/projects/ProjectGrid";
 import { TemplateGallery } from "@/components/templates/TemplateGallery";
-import { useConvertAnonLayout, useListProjects } from "@/lib/api";
+import { useConvertAnonLayout, useListProjects, useDeleteProject } from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Button } from "@/components/ui/button";
+import { useWizardStore } from "@/lib/stores/wizard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ConversionRequest } from "@/lib/types";
 
@@ -40,6 +42,12 @@ export default function DashboardPage() {
   const [convertError, setConvertError] = useState<string | null>(null);
   const convertingRef = useRef(false);
 
+  // Selection state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
+  const [isDeletingBulk, setIsDeletingBulk] = useState(false);
+  const { mutateAsync: deleteProject } = useDeleteProject();
+
   useEffect(() => {
     if (!ready || !session || convertingRef.current) return;
     const pending = readPending();
@@ -57,6 +65,39 @@ export default function DashboardPage() {
         setConvertError(e instanceof Error ? e.message : "conversion failed");
       });
   }, [ready, session, convertAnon, router]);
+
+  const toggleOne = (id: string, val: boolean) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (val) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    if (!data) return;
+    if (selectedIds.size === data.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(data.map((p) => p.id)));
+    }
+  };
+
+  const deleteSelected = async () => {
+    setIsDeletingBulk(true);
+    try {
+      for (const id of Array.from(selectedIds)) {
+        await deleteProject(id);
+      }
+      setSelectedIds(new Set());
+      setBulkConfirmOpen(false);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsDeletingBulk(false);
+    }
+  };
 
   if (!ready) {
     return (
@@ -101,12 +142,34 @@ export default function DashboardPage() {
   return (
     <div className="w-full">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight font-display text-foreground">
-          Projects
-        </h1>
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight font-display text-foreground">
+            Projects
+          </h1>
+          {data && data.length > 0 && (
+            <button
+              onClick={toggleAll}
+              className="text-xs text-muted-foreground hover:text-primary transition-colors"
+            >
+              {selectedIds.size === data.length ? "Deselect all" : "Select all"}
+            </button>
+          )}
+        </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/app/new">Quick generate</Link>
+          {selectedIds.size > 0 && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setBulkConfirmOpen(true)}
+            >
+              Delete Selected ({selectedIds.size})
+            </Button>
+          )}
+          <Button variant="outline" size="sm" onClick={() => {
+            useWizardStore.getState().reset();
+            router.push("/app/new");
+          }}>
+            Quick generate
           </Button>
           <Button size="sm" onClick={() => setNewOpen(true)}>
             + New project
@@ -136,8 +199,21 @@ export default function DashboardPage() {
         <EmptyProjects onCreate={() => setNewOpen(true)} />
       )}
       {!isLoading && !isError && data && data.length > 0 && (
-        <ProjectGrid projects={data} />
+        <ProjectGrid 
+          projects={data} 
+          selectedIds={selectedIds}
+          onToggle={toggleOne}
+        />
       )}
+
+      <ConfirmDialog
+        open={bulkConfirmOpen}
+        onOpenChange={setBulkConfirmOpen}
+        title="Delete Multiple Projects"
+        description={`Are you sure you want to delete ${selectedIds.size} projects? This action cannot be undone.`}
+        onConfirm={deleteSelected}
+        isLoading={isDeletingBulk}
+      />
 
       <TemplateGallery />
 

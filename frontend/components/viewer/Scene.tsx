@@ -13,9 +13,10 @@ import type { Layout, RoomDims } from "@/lib/types";
 type SceneProps = {
   layout: Layout;
   dims: RoomDims;
+  hideWalls?: boolean;
 };
 
-export default function Scene({ layout, dims }: SceneProps) {
+export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
   useEffect(() => {
     layout.items.forEach((item) => {
       if (!item.model.startsWith("primitive:")) {
@@ -71,7 +72,7 @@ export default function Scene({ layout, dims }: SceneProps) {
            <Environment files={process.env.NEXT_PUBLIC_HDRI_URL} background={false} />
         )}
         <Bounds clip observe margin={1.1}>
-          <Room dims={dims} palette={layout.palette} />
+          <Room dims={dims} palette={layout.palette} hideWalls={hideWalls} />
           {individualItems.map((item) => (
             <Furniture key={`${item.catalogId}-${item.slot}`} item={item} />
           ))}

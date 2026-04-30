@@ -59,7 +59,6 @@ class SupabaseRest:
     ) -> None:
         await self._client.aclose()
 
-    @staticmethod
     async def _handle_response(self, r: httpx.Response) -> httpx.Response:
         try:
             r.raise_for_status()
@@ -70,6 +69,13 @@ class SupabaseRest:
             if e.response.status_code == 409:
                 raise SupabaseConflict(str(e)) from e
             raise SupabaseError(str(e)) from e
+
+    def _one(self, rows: Any) -> dict[str, Any]:
+        if not rows:
+            raise SupabaseNotFound("Expected at least one row, got none")
+        if isinstance(rows, list):
+            return rows[0]
+        return rows
 
     # ── rooms ───────────────────────────────────────────────────────────────
     async def insert_room(self, row: dict[str, Any]) -> dict[str, Any]:
@@ -95,6 +101,14 @@ class SupabaseRest:
         )
         await self._handle_response(r)
         return list(r.json())
+
+    async def get_room(self, room_id: str) -> dict[str, Any]:
+        r = await self._client.get(
+            "rooms",
+            params={"select": _ROOM_COLS, "id": f"eq.{room_id}", "limit": "1"},
+        )
+        await self._handle_response(r)
+        return self._one(r.json())
 
     async def update_room(self, room_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         r = await self._client.patch("rooms", params={"id": f"eq.{room_id}"}, json=payload)

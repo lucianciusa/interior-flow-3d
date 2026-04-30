@@ -5,6 +5,11 @@ Your task: Analyze the room dimensions and user preferences, then define the spa
 
 ## Rules
 - You must output valid JSON matching the exact schema provided.
+- **CRITICAL**: You must prioritize the primary function of the room.
+  - Bedroom: MUST include `sleep_zone`.
+  - Living Room: MUST include `seating_zone`.
+  - Dining Room: MUST include `dining_zone`.
+  - Home Office: MUST include `work_zone`.
 - Choose 1 to 4 zones from the allowed zones list.
 - Assign an `itemBudget` (1-6) per zone indicating how many furniture pieces belong there.
 - Select three palette swatches (wall, floor, accent) appropriate to the requested style. Use 6-digit hex colours.

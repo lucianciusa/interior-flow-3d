@@ -52,6 +52,22 @@ async def list_rooms_for_project(
     return [RoomRecord.model_validate(r) for r in rows]
 
 
+@router.get("/rooms/{room_id}", response_model=RoomRecord)
+async def get_room(
+    room_id: str,
+    user: AuthUser = Depends(require_user),
+    settings: Settings = Depends(get_settings),
+) -> RoomRecord:
+    try:
+        async with SupabaseRest(settings, user.jwt) as sb:
+            row = await sb.get_room(room_id)
+    except SupabaseNotFound as e:
+        raise HTTPException(status_code=404, detail="room not found") from e
+    except SupabaseError as e:
+        raise HTTPException(status_code=502, detail=str(e)) from e
+    return RoomRecord.model_validate(row)
+
+
 @router.patch("/rooms/{room_id}", response_model=RoomRecord)
 async def update_room(
     room_id: str,

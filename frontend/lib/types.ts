@@ -2,7 +2,7 @@
 
 export type RoomType = "living_room" | "bedroom" | "dining_room" | "home_office";
 
-export type Style = "scandinavian" | "minimal" | "industrial";
+export type Style = "scandinavian" | "minimal" | "industrial" | "japandi" | "mid_century";
 export type Preference = "more_seating" | "more_open_space" | "more_storage";
 export type SlotId =
   | "north_wall_left"

@@ -172,6 +172,15 @@ export function useListRoomsForProject(projectId: string | null | undefined) {
   });
 }
 
+export function useGetRoom(roomId: string | null | undefined) {
+  const session = useAuthStore((s) => s.session);
+  return useQuery({
+    queryKey: ["rooms", roomId] as const,
+    queryFn: () => authedFetch<RoomRecord>(`/rooms/${roomId}`),
+    enabled: !!session && !!roomId,
+  });
+}
+
 export function useCreateRoom(projectId: string) {
   const qc = useQueryClient();
   return useMutation({

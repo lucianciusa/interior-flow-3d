@@ -50,6 +50,7 @@ export default function ResultView({
   const selected = useViewerStore((s) => s.selectedItem);
   const setSelected = useViewerStore((s) => s.setSelectedItem);
   const [swapOpen, setSwapOpen] = useState(false);
+  const [hideWalls, setHideWalls] = useState(false);
 
   useEffect(() => {
     setSelected(null);
@@ -63,8 +64,16 @@ export default function ResultView({
   return (
     <div className="flex h-full">
       <div className="relative flex-1">
-        <div className="absolute left-4 top-4 z-10">
+        <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
           <CameraPresets />
+          <Button
+            variant="outline"
+            size="sm"
+            className="bg-background/80 backdrop-blur-sm border-border shadow-sm h-8"
+            onClick={() => setHideWalls(!hideWalls)}
+          >
+            {hideWalls ? "Show walls" : "Hide walls"}
+          </Button>
         </div>
         <Suspense
           fallback={
@@ -73,7 +82,7 @@ export default function ResultView({
             </div>
           }
         >
-          <Scene layout={layout} dims={dims} />
+          <Scene layout={layout} dims={dims} hideWalls={hideWalls} />
         </Suspense>
         <ItemPopover />
         {showSwap && selected && (

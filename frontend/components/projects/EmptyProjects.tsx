@@ -8,9 +8,9 @@ export default function EmptyProjects({ onCreate }: { onCreate: () => void }) {
   return (
     <EmptyState
       illustration={<EmptyProjectsIllustration />}
-      title="No projects yet"
-      description="A project groups your rooms and layout variants. Create one to get started, or pick a template below."
-      cta={<Button onClick={onCreate}>Create your first project</Button>}
+      title="No tienes proyectos guardados"
+      description="Un proyecto agrupa tus habitaciones y variantes de diseño. Crea uno para empezar o elige una plantilla a continuación."
+      cta={<Button onClick={onCreate}>Crear tu primer proyecto</Button>}
     />
   );
 }

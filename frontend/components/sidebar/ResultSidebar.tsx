@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { SLOT_LABELS } from "@/lib/slot-mappings";
 import PaletteBlock from "@/components/sidebar/PaletteBlock";
 import ExplanationBlock from "@/components/sidebar/ExplanationBlock";
@@ -23,6 +24,8 @@ const STYLE_LABELS: Record<Style, string> = {
   scandinavian: "Scandinavian",
   minimal: "Minimal",
   industrial: "Industrial",
+  japandi: "Japandi",
+  mid_century: "Mid-Century",
 };
 
 const PREF_LABELS: Record<Preference, string> = {
@@ -49,22 +52,44 @@ export default function ResultSidebar({
   const showShare = mode === "saved" && onShare;
   const showCompare = mode === "saved" && onCompare;
 
+  const [showWarnings, setShowWarnings] = useState(false);
+
   return (
     <aside className="flex h-full flex-col gap-6 overflow-y-auto p-4 bg-background">
-      <div className="flex flex-wrap gap-2">
-        {[STYLE_LABELS[style], ...preferences.map((p) => PREF_LABELS[p])].map((label) => (
-          <span
-            key={label}
-            className="rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground"
-          >
-            {label}
-          </span>
-        ))}
-        {layout.warnings.length > 0 && (
-          <span className="rounded-full border border-destructive/20 bg-destructive/5 px-3 py-1 text-xs font-medium text-destructive">
-            {layout.warnings.length} warning
-            {layout.warnings.length > 1 ? "s" : ""}
-          </span>
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap gap-2">
+          {[STYLE_LABELS[style], ...preferences.map((p) => PREF_LABELS[p])].map((label) => (
+            <span
+              key={label}
+              className="rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground"
+            >
+              {label}
+            </span>
+          ))}
+          {layout.warnings.length > 0 && (
+            <button
+              onClick={() => setShowWarnings(!showWarnings)}
+              className="rounded-full border border-destructive/20 bg-destructive/5 px-3 py-1 text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors"
+            >
+              {layout.warnings.length} warning
+              {layout.warnings.length > 1 ? "s" : ""}
+            </button>
+          )}
+        </div>
+
+        {showWarnings && layout.warnings.length > 0 && (
+          <div className="mt-2 space-y-1.5 rounded-lg border border-destructive/20 bg-destructive/5 p-3">
+            <h4 className="text-[10px] font-bold uppercase tracking-wider text-destructive">
+              Warnings
+            </h4>
+            <ul className="list-inside list-disc space-y-1">
+              {layout.warnings.map((w, i) => (
+                <li key={i} className="text-xs text-destructive/80 leading-tight">
+                  {w}
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
 
