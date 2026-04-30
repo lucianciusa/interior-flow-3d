@@ -1,7 +1,8 @@
 "use client";
 
 import { Suspense, useEffect, useMemo } from "react";
-import { Canvas } from "@react-three/fiber";
+import * as THREE from "three";
+import { Canvas, useThree } from "@react-three/fiber";
 import { Bounds, OrbitControls, PerspectiveCamera, Environment, Instances, Instance, useGLTF } from "@react-three/drei";
 
 import { configureLoaders } from "@/lib/loaders";
@@ -13,9 +14,10 @@ import type { Layout, RoomDims } from "@/lib/types";
 type SceneProps = {
   layout: Layout;
   dims: RoomDims;
+  hideWalls?: boolean;
 };
 
-export default function Scene({ layout, dims }: SceneProps) {
+export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
   useEffect(() => {
     layout.items.forEach((item) => {
       if (!item.model.startsWith("primitive:")) {
@@ -49,16 +51,9 @@ export default function Scene({ layout, dims }: SceneProps) {
       onCreated={({ gl }) => configureLoaders(gl)}
       className="h-full w-full"
     >
-      <PerspectiveCamera makeDefault position={[6, 5, 6]} fov={45} />
-      <OrbitControls
-        makeDefault
-        enablePan
-        enableZoom
-        maxDistance={15}
-        minDistance={2}
-        maxPolarAngle={Math.PI / 2.1}
-      />
       <ambientLight intensity={0.4} />
+      <PerspectiveCamera makeDefault position={[6, 5, 6]} fov={45} />
+      <SceneControls />
       <directionalLight
         position={[5, 8, 3]}
         intensity={1.0}
@@ -71,7 +66,7 @@ export default function Scene({ layout, dims }: SceneProps) {
            <Environment files={process.env.NEXT_PUBLIC_HDRI_URL} background={false} />
         )}
         <Bounds clip observe margin={1.1}>
-          <Room dims={dims} palette={layout.palette} />
+          <Room dims={dims} palette={layout.palette} hideWalls={hideWalls} />
           {individualItems.map((item) => (
             <Furniture key={`${item.catalogId}-${item.slot}`} item={item} />
           ))}
@@ -81,6 +76,23 @@ export default function Scene({ layout, dims }: SceneProps) {
         </Bounds>
       </Suspense>
     </Canvas>
+  );
+}
+
+function SceneControls() {
+  const camera = useThree((state) => state.camera);
+  return (
+    <OrbitControls
+      camera={camera}
+      makeDefault
+      enablePan={false}
+      maxDistance={15}
+      minDistance={2}
+      maxPolarAngle={Math.PI / 2.1}
+      enableDamping
+      dampingFactor={0.05}
+      rotateSpeed={0.5}
+    />
   );
 }
 

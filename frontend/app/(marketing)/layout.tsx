@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/shell/ThemeToggle";
+import { MarketingNav } from "@/components/marketing/MarketingNav";
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,12 +12,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
         </Link>
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          <Link
-            href="/app"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Sign in
-          </Link>
+          <MarketingNav />
         </div>
       </header>
 

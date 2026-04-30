@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useCallback, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState, Suspense } from "react";
 
 import LoginModal from "@/components/auth/LoginModal";
 import ResultView from "@/components/result/ResultView";
@@ -9,7 +9,8 @@ import RoomTypeStep from "@/components/wizard/RoomTypeStep";
 import DimensionsStep from "@/components/wizard/DimensionsStep";
 import PreferencesStep from "@/components/wizard/PreferencesStep";
 import StyleStep from "@/components/wizard/StyleStep";
-import { useConvertAnonLayout, useGenerateLayout } from "@/lib/api";
+
+import { useConvertAnonLayout, useGenerateLayout, useSaveLayout } from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth";
 import { useWizardStore } from "@/lib/stores/wizard";
 import type { Preference, RoomDims, Style, RoomType } from "@/lib/types";
@@ -39,11 +40,28 @@ export default function WizardShell() {
 
   const { mutate: generate, isPending } = useGenerateLayout();
   const { mutateAsync: convertAnon } = useConvertAnonLayout();
+  const { mutateAsync: saveExisting } = useSaveLayout();
+
+  const searchParams = useSearchParams();
+  const roomId = searchParams?.get("roomId");
+  const projectId = searchParams?.get("projectId");
+  const isQuickFlow = !!roomId;
 
   const [loginOpen, setLoginOpen] = useState(false);
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [saveError, setSaveError] = useState<string | null>(null);
   const pendingSaveRef = useRef(false);
+
+  const labels = isQuickFlow ? ["Style", "Preferences"] : ["Type", "Dimensions", "Style", "Preferences"];
+  const stepIndex = PHASE_INDEX[phase] ?? 0;
+  const displayStepIndex = isQuickFlow ? stepIndex - 2 : stepIndex;
+  const totalSteps = labels.length;
+
+  useEffect(() => {
+    if (isQuickFlow && phase === "step0") {
+      setPhase("step2");
+    }
+  }, [isQuickFlow, phase, setPhase]);
 
   const handleGenerate = (newSeed?: number) => {
     if (!style) return;
@@ -78,21 +96,33 @@ export default function WizardShell() {
     setSaveState("saving");
     setSaveError(null);
     try {
-      const result = await convertAnon({
-        projectName: "My first project",
-        roomName: "Living room",
-        ...dims,
-        layout,
-      });
-      setSaveState("saved");
-      router.push(
-        `/app/projects/${result.project_id}/rooms/${result.room_id}/layouts/${result.layout_id}`,
-      );
+      if (roomId && projectId) {
+        const result = await saveExisting({
+          roomId,
+          layout,
+          name: "New Layout",
+        });
+        setSaveState("saved");
+        router.push(
+          `/app/projects/${projectId}/rooms/${roomId}/layouts/${result.id}`,
+        );
+      } else {
+        const result = await convertAnon({
+          projectName: "My first project",
+          roomName: "Living room",
+          ...dims,
+          layout,
+        });
+        setSaveState("saved");
+        router.push(
+          `/app/projects/${result.project_id}/rooms/${result.room_id}/layouts/${result.layout_id}`,
+        );
+      }
     } catch (e) {
       setSaveState("idle");
       setSaveError(e instanceof Error ? e.message : "save failed");
     }
-  }, [layout, style, dims, convertAnon, router]);
+  }, [layout, style, dims, convertAnon, saveExisting, roomId, projectId, router]);
 
   const handleSave = () => {
     if (!layout || !style) return;
@@ -165,15 +195,17 @@ export default function WizardShell() {
     );
   }
 
-  const stepIndex = PHASE_INDEX[phase] ?? 0;
+
 
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center p-6">
       <div className="w-full max-w-2xl">
+
+
         <div className="mb-8">
           <div className="mb-2 flex justify-between text-xs text-muted-foreground">
-            {PHASE_LABELS.map((label, i) => (
-              <span key={label} className={i <= stepIndex ? "text-foreground font-medium" : ""}>
+            {labels.map((label, i) => (
+              <span key={label} className={i <= displayStepIndex ? "text-foreground font-medium" : ""}>
                 {label}
               </span>
             ))}
@@ -181,7 +213,7 @@ export default function WizardShell() {
           <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
             <div
               className="h-full rounded-full bg-primary transition-all"
-              style={{ width: `${((stepIndex + 1) / 4) * 100}%` }}
+              style={{ width: `${((displayStepIndex + 1) / totalSteps) * 100}%` }}
             />
           </div>
         </div>
@@ -209,7 +241,13 @@ export default function WizardShell() {
             value={style}
             onChange={(s: Style) => setStyle(s)}
             onNext={() => setPhase("step3")}
-            onBack={() => setPhase("step1")}
+            onBack={() => {
+              if (isQuickFlow) {
+                router.back();
+              } else {
+                setPhase("step1");
+              }
+            }}
           />
         )}
         {phase === "step3" && (

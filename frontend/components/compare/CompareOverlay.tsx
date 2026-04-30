@@ -20,6 +20,7 @@ export default function CompareOverlay({ aId, bId, dims, onClose }: Props) {
   const a = useGetLayout(aId);
   const b = useGetLayout(bId);
   const [t, setT] = useState(0.5);
+  const [hideWalls, setHideWalls] = useState(false);
 
   const ready = a.data && b.data;
   const dimsMismatch =
@@ -33,7 +34,13 @@ export default function CompareOverlay({ aId, bId, dims, onClose }: Props) {
       aria-modal="true"
       className="fixed inset-0 z-40 flex flex-col bg-black text-white"
     >
-      <CompareToolbar t={t} onChange={setT} onClose={onClose} />
+      <CompareToolbar 
+        t={t} 
+        onChange={setT} 
+        onClose={onClose} 
+        hideWalls={hideWalls}
+        onHideWallsChange={setHideWalls}
+      />
       <div className="relative flex-1">
         {!ready && (
           <div className="flex h-full items-center justify-center text-sm text-white/60">
@@ -49,7 +56,7 @@ export default function CompareOverlay({ aId, bId, dims, onClose }: Props) {
           <>
             <div className="absolute inset-0" style={{ opacity: 1 - t }}>
               <Suspense fallback={null}>
-                <Scene layout={a.data.layout} dims={dims} />
+                <Scene layout={a.data.layout} dims={dims} hideWalls={hideWalls} />
               </Suspense>
             </div>
             <div
@@ -57,7 +64,7 @@ export default function CompareOverlay({ aId, bId, dims, onClose }: Props) {
               style={{ opacity: t, pointerEvents: t > 0.5 ? "auto" : "none" }}
             >
               <Suspense fallback={null}>
-                <Scene layout={b.data.layout} dims={dims} />
+                <Scene layout={b.data.layout} dims={dims} hideWalls={hideWalls} />
               </Suspense>
             </div>
           </>

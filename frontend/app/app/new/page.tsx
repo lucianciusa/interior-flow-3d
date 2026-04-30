@@ -24,7 +24,9 @@ export default function NewLayoutPage() {
       <Suspense fallback={null}>
         <SeedReader />
       </Suspense>
-      <WizardShell />
+      <Suspense fallback={null}>
+        <WizardShell />
+      </Suspense>
     </>
   );
 }

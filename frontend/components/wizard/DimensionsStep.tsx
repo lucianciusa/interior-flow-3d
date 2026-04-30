@@ -42,11 +42,11 @@ export default function DimensionsStep({ roomType, initial, onNext, onBack }: Di
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {(
           [
-            { name: "width_m", label: "Width", hint: "2 – 12 m" },
-            { name: "length_m", label: "Length", hint: "2 – 12 m" },
-            { name: "height_m", label: "Height", hint: "2.2 – 4 m", step: "0.1" },
+            { name: "width_m", label: "Width" },
+            { name: "length_m", label: "Length" },
+            { name: "height_m", label: "Height", step: "0.1" },
           ] as const
-        ).map(({ name, label, hint, ...rest }) => (
+        ).map(({ name, label, ...rest }) => (
           <div key={name} className="flex flex-col gap-1">
             <label htmlFor={name} className="text-sm font-medium text-foreground">
               {label}
@@ -62,7 +62,7 @@ export default function DimensionsStep({ roomType, initial, onNext, onBack }: Di
                 errors[name] ? "border-destructive focus-visible:ring-destructive" : "border-input",
               )}
             />
-            <span className="text-xs text-muted-foreground">{hint}</span>
+            <span className="text-xs text-muted-foreground">{`${bounds[name][0]} – ${bounds[name][1]} m`}</span>
             {errors[name] && (
                <span className="text-xs text-destructive">{errors[name]?.message}</span>
             )}

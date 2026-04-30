@@ -24,26 +24,40 @@ DROP_PRIORITY: dict[str, int] = {
     "sofa_3seat": 8,
     "rug": 9,
     # Bedroom
+    "bedside_lamp": 1,
+    "accent_chair": 2,
     "nightstand": 5,
     "dresser": 6,
     "wardrobe": 7,
+    "bed_queen": 10,
     "bed_double": 10,
+    "bed_single": 10,
     # Dining
     "dining_chair": 5,
     "sideboard": 6,
     "dining_table_4": 10,
     "dining_table_6": 10,
     # Office
+    "desk_lamp": 1,
     "office_chair": 6,
     "desk": 10,
+    "desk_compact": 10,
     "filing_cabinet": 5,
+    # Misc
+    "corner_shelf": 2,
+    "mirror_wall": 1,
 }
+
+# Items that can share a slot/space without being dropped
+COOCCUPY_ALLOW_TAGS: set[str] = {"lighting", "accent", "plant", "rug", "shelf"}
 
 COOCCUPY_ALLOW: set[frozenset[str]] = {
     frozenset({"rug", "coffee_table"}),
     frozenset({"rug", "dining_table_4"}),
     frozenset({"rug", "dining_table_6"}),
     frozenset({"bed_double", "nightstand"}),
+    frozenset({"bed_queen", "nightstand"}),
+    frozenset({"bed_single", "nightstand"}),
 }
 
 SLOT_KINDS: dict[str, str] = {
@@ -121,6 +135,7 @@ def _try_place(
     room: RoomDims,
     catalog_item: CatalogItem,
     placed: list[ResolvedItem],
+    catalog_map: dict[str, CatalogItem],
     margin: float,
 ) -> ResolvedItem | None:
     """Attempt to resolve slot and check AABB. Returns ResolvedItem or None on collision."""
@@ -142,9 +157,23 @@ def _try_place(
         model=catalog_item.model,
     )
     for existing in placed:
+        # 1. Exact same item in same slot — allow (redundant LLM output)
+        if candidate.catalogId == existing.catalogId and candidate.slot == existing.slot:
+            continue
+
+        # 2. Hardcoded co-occupancy rules
         pair = frozenset({candidate.catalogId, existing.catalogId})
         if pair in COOCCUPY_ALLOW and candidate.slot == existing.slot:
             continue
+
+        # 3. Tag-based co-occupancy (e.g. lamps on tables, rugs under everything)
+        existing_item = catalog_map.get(existing.catalogId)
+        if existing_item:
+            c_tags = set(catalog_item.tags)
+            e_tags = set(existing_item.tags)
+            if (c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS):
+                continue
+
         if _aabb_overlap(candidate, existing, margin=margin):
             return None
     return candidate
@@ -204,17 +233,32 @@ def resolve(
         # Step 4: slot exclusivity
         if slot in occupied:
             existing_id = occupied[slot]
-            pair = frozenset({item.catalogId, existing_id})
-            if pair not in COOCCUPY_ALLOW:
+            
+            # Check if current item can co-occupy with existing
+            can_cooccupy = False
+            if item.catalogId == existing_id:
+                can_cooccupy = True
+            else:
+                pair = frozenset({item.catalogId, existing_id})
+                if pair in COOCCUPY_ALLOW:
+                    can_cooccupy = True
+                else:
+                    existing_item = catalog_map.get(existing_id)
+                    if existing_item:
+                        c_tags = set(catalog_item.tags)
+                        e_tags = set(existing_item.tags)
+                        if (c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS):
+                            can_cooccupy = True
+
+            if not can_cooccupy:
                 # Try wall nudge before dropping
                 prefix = _wall_prefix(slot)
                 nudged = False
                 if prefix:
                     for t_alt in _NUDGE_T:
-                        result = _try_place(item, slot, t_alt, room, catalog_item, placed, margin)
+                        result = _try_place(item, slot, t_alt, room, catalog_item, placed, catalog_map, margin)
                         if result is not None:
                             placed.append(result)
-                            # Don't mark occupied with original slot (it's a nudge)
                             nudged = True
                             break
                 if not nudged:
@@ -225,6 +269,7 @@ def resolve(
                         warnings.append(
                             f"Dropped {item.catalogId!r}: slot {slot!r} occupied by {existing_id!r}"
                         )
+                        continue # Skip to next item
                     else:
                         # Remove existing from placed, replace with new
                         placed = [p for p in placed if p.catalogId != existing_id]
@@ -233,19 +278,10 @@ def resolve(
                             f"Dropped {existing_id!r}: replaced by higher-priority "
                             f"{item.catalogId!r} in slot {slot!r}"
                         )
-                        result = _try_place(item, slot, None, room, catalog_item, placed, margin)
-                        if result is not None:
-                            placed.append(result)
-                            occupied[slot] = item.catalogId
-                        else:
-                            warnings.append(
-                                f"Dropped {item.catalogId!r}: AABB collision after "
-                                f"displacing {existing_id!r}"
-                            )
-                continue
+                        # Fall through to step 5-6
 
         # Step 5–6: resolve + AABB check
-        result = _try_place(item, slot, None, room, catalog_item, placed, margin)
+        result = _try_place(item, slot, None, room, catalog_item, placed, catalog_map, margin)
         if result is not None:
             placed.append(result)
             occupied[slot] = item.catalogId
@@ -255,7 +291,7 @@ def resolve(
             nudged = False
             if prefix:
                 for t_alt in _NUDGE_T:
-                    result = _try_place(item, slot, t_alt, room, catalog_item, placed, margin)
+                    result = _try_place(item, slot, t_alt, room, catalog_item, placed, catalog_map, margin)
                     if result is not None:
                         placed.append(result)
                         nudged = True

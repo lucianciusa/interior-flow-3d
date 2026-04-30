@@ -11,6 +11,8 @@ type Props = {
   roomId: string;
   compareIds: string[];
   onToggleCompare: (id: string) => void;
+  selectedIds: Set<string>;
+  onToggleSelection: (id: string, val: boolean) => void;
 };
 
 export default function LayoutVariantGrid({
@@ -19,6 +21,8 @@ export default function LayoutVariantGrid({
   roomId,
   compareIds,
   onToggleCompare,
+  selectedIds,
+  onToggleSelection,
 }: Props) {
   if (layouts.length === 0) {
     return (
@@ -40,6 +44,8 @@ export default function LayoutVariantGrid({
           roomId={roomId}
           isCompareSelected={compareIds.includes(l.id)}
           onToggleCompare={onToggleCompare}
+          selected={selectedIds.has(l.id)}
+          onSelect={(val) => onToggleSelection(l.id, val)}
         />
       ))}
     </div>

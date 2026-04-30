@@ -32,6 +32,20 @@ const STYLES: ReadonlyArray<{
     swatches: ["#FAFAFA", "#E5E5E5", "#1A1A1A"],
   },
   {
+    id: "japandi",
+    label: "Japandi",
+    tagline: "Japanese minimalism meets Scandi comfort",
+    gradient: "from-[#E8E1D5] via-[#A6998A] to-[#403C38]",
+    swatches: ["#E8E1D5", "#A6998A", "#403C38"],
+  },
+  {
+    id: "mid_century",
+    label: "Mid-Century",
+    tagline: "Retro curves, bold colors, teak accents",
+    gradient: "from-[#9C6644] via-[#7F5539] to-[#D4A373]",
+    swatches: ["#9C6644", "#7F5539", "#D4A373"],
+  },
+  {
     id: "industrial",
     label: "Industrial",
     tagline: "Raw metal, concrete, exposed structure",
@@ -62,7 +76,7 @@ export default function StyleStep({ value, onChange, onNext, onBack }: StyleStep
             aria-checked={value === s.id}
             onClick={() => onChange(s.id)}
             className={cn(
-              "flex flex-col overflow-hidden rounded-xl border-2 text-left transition bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              "flex flex-col overflow-hidden rounded-xl border-2 text-left transition bg-card cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               value === s.id
                 ? "border-primary ring-2 ring-primary/20"
                 : "border-border hover:border-ring",

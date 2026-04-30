@@ -28,8 +28,9 @@ export default function RoomTypeStep({ value, onChange, onNext }: Props) {
         {TYPES.map((t) => (
           <button
             key={t.id}
+            type="button"
             onClick={() => onChange(t.id)}
-            className={`flex flex-col items-start justify-center p-4 rounded-xl border-2 transition-all ${
+            className={`flex flex-col items-start justify-center p-4 rounded-xl border-2 transition-all cursor-pointer ${
               value === t.id
                 ? "border-primary bg-primary/5 shadow-sm"
                 : "border-border bg-card hover:border-primary/30 hover:bg-accent/50"

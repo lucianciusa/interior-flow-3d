@@ -1,12 +1,25 @@
 "use client";
 
-import { Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Suspense, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Bounds, OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import * as THREE from "three";
 
 import Furniture from "@/components/viewer/Furniture";
 import Room from "@/components/viewer/Room";
 import { HERO_LAYOUT, HERO_DIMS } from "@/lib/marketing-fixtures";
+
+function AutoRotatingGroup({ children }: { children: React.ReactNode }) {
+  const groupRef = useRef<THREE.Group>(null);
+  
+  useFrame((state, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.15; // Slow, steady rotation
+    }
+  });
+
+  return <group ref={groupRef}>{children}</group>;
+}
 
 export default function HeroScene() {
   return (
@@ -14,13 +27,12 @@ export default function HeroScene() {
       shadows
       dpr={[1, 2]}
       gl={{ antialias: true, powerPreference: "high-performance" }}
-      className="h-full w-full"
+      className="h-full w-full touch-pan-y"
+      eventPrefix="client"
     >
       <PerspectiveCamera makeDefault position={[6, 5, 6]} fov={45} />
       <OrbitControls
         makeDefault
-        autoRotate
-        autoRotateSpeed={0.4}
         enableDamping
         enableZoom={false}
         enablePan={false}
@@ -34,11 +46,13 @@ export default function HeroScene() {
         shadow-mapSize={[2048, 2048]}
       />
       <Suspense fallback={null}>
-        <Bounds fit clip observe margin={1.05}>
-          <Room dims={HERO_DIMS} palette={HERO_LAYOUT.palette} />
-          {HERO_LAYOUT.items.map((item) => (
-            <Furniture key={`${item.catalogId}-${item.slot}`} item={item} />
-          ))}
+        <Bounds fit clip margin={1.05}>
+          <AutoRotatingGroup>
+            <Room dims={HERO_DIMS} palette={HERO_LAYOUT.palette} hideWalls />
+            {HERO_LAYOUT.items.map((item) => (
+              <Furniture key={`${item.catalogId}-${item.slot}`} item={item} />
+            ))}
+          </AutoRotatingGroup>
         </Bounds>
       </Suspense>
     </Canvas>
