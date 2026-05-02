@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo } from "react";
 import * as THREE from "three";
 import { Canvas, useThree } from "@react-three/fiber";
-import { Bounds, OrbitControls, PerspectiveCamera, Environment, Instances, Instance, useGLTF } from "@react-three/drei";
+import { Bounds, OrbitControls, PerspectiveCamera, Environment, useGLTF } from "@react-three/drei";
 
 import { configureLoaders } from "@/lib/loaders";
 import { CameraController3D } from "@/components/viewer/CameraPresets";
@@ -18,6 +18,7 @@ type SceneProps = {
 };
 
 export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
+  // Preload models for faster rendering
   useEffect(() => {
     layout.items.forEach((item) => {
       if (!item.model.startsWith("primitive:")) {
@@ -25,23 +26,6 @@ export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
       }
     });
   }, [layout.items]);
-
-  const { instanceGroups, individualItems } = useMemo(() => {
-    const groups: Record<string, typeof layout.items> = {};
-    layout.items.forEach((item) => {
-      if (!item.model.startsWith("primitive:")) {
-        if (!groups[item.model]) groups[item.model] = [];
-        groups[item.model].push(item);
-      }
-    });
-
-    const instanceGroups = Object.entries(groups).filter(([_, items]) => items.length >= 3);
-    const individualItems = layout.items.filter(
-      (item) => item.model.startsWith("primitive:") || groups[item.model].length < 3
-    );
-
-    return { instanceGroups, individualItems };
-  }, [layout]);
 
   return (
     <Canvas
@@ -67,11 +51,8 @@ export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
         )}
         <Bounds clip observe margin={1.1}>
           <Room dims={dims} palette={layout.palette} hideWalls={hideWalls} />
-          {individualItems.map((item) => (
+          {layout.items.map((item) => (
             <Furniture key={`${item.catalogId}-${item.slot}`} item={item} />
-          ))}
-          {instanceGroups.map(([model, items]) => (
-            <InstanceGroup key={model} model={model} items={items} />
           ))}
         </Bounds>
       </Suspense>
@@ -93,32 +74,5 @@ function SceneControls() {
       dampingFactor={0.05}
       rotateSpeed={0.5}
     />
-  );
-}
-
-function InstanceGroup({ model, items }: { model: string; items: any[] }) {
-  const { scene } = useGLTF(model);
-  const clonedScene = useMemo(() => {
-    const clone = scene.clone();
-    clone.traverse((obj: any) => {
-      if (obj.isMesh) {
-        obj.castShadow = true;
-        obj.receiveShadow = true;
-      }
-    });
-    return clone;
-  }, [scene]);
-  
-  return (
-    <Instances range={items.length}>
-      <primitive object={clonedScene} />
-      {items.map((item, i) => (
-        <Instance
-          key={`${item.catalogId}-${item.slot}`}
-          position={item.position}
-          rotation={[0, item.rotation_y, 0]}
-        />
-      ))}
-    </Instances>
   );
 }

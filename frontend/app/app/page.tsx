@@ -8,11 +8,13 @@ import LoginModal from "@/components/auth/LoginModal";
 import EmptyProjects from "@/components/projects/EmptyProjects";
 import NewProjectDialog from "@/components/projects/NewProjectDialog";
 import ProjectGrid from "@/components/projects/ProjectGrid";
+import { StyleGallery } from "@/components/templates/StyleGallery";
 import { TemplateGallery } from "@/components/templates/TemplateGallery";
 import { useConvertAnonLayout, useListProjects, useDeleteProject } from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useWizardStore } from "@/lib/stores/wizard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ConversionRequest } from "@/lib/types";
@@ -122,9 +124,12 @@ export default function DashboardPage() {
             Generate a 3D interior layout in seconds. Sign in to save your work.
           </p>
           <div className="mt-6 flex flex-col items-center gap-3">
-            <Button asChild>
-              <Link href="/app/new">Try without signing in</Link>
-            </Button>
+            <Link 
+              href="/app/new" 
+              className={cn(buttonVariants())}
+            >
+              Try without signing in
+            </Link>
             <button
               type="button"
               onClick={() => setLoginOpen(true)}
@@ -214,6 +219,10 @@ export default function DashboardPage() {
         onConfirm={deleteSelected}
         isLoading={isDeletingBulk}
       />
+
+      <StyleGallery />
+
+      <div className="my-12 border-t border-border" />
 
       <TemplateGallery />
 

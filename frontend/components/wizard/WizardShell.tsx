@@ -34,6 +34,7 @@ export default function WizardShell() {
   const setPreferences = useWizardStore((s) => s.setPreferences);
   const setLayout = useWizardStore((s) => s.setLayout);
   const setSeed = useWizardStore((s) => s.setSeed);
+  const isTemplateFlow = useWizardStore((s) => s.isTemplateFlow);
 
   const session = useAuthStore((s) => s.session);
   const router = useRouter();
@@ -195,7 +196,9 @@ export default function WizardShell() {
     );
   }
 
-
+  const handleBackToDashboard = () => {
+    router.push("/app");
+  };
 
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center p-6">
@@ -223,6 +226,7 @@ export default function WizardShell() {
             value={roomType}
             onChange={(rt: RoomType) => setRoomType(rt)}
             onNext={() => setPhase("step1")}
+            onBack={isTemplateFlow ? handleBackToDashboard : undefined}
           />
         )}
         {phase === "step1" && (
@@ -233,7 +237,7 @@ export default function WizardShell() {
               setDims(d);
               setPhase("step2");
             }}
-            onBack={() => setPhase("step0")}
+            onBack={isTemplateFlow ? handleBackToDashboard : () => setPhase("step0")}
           />
         )}
         {phase === "step2" && (
@@ -242,7 +246,9 @@ export default function WizardShell() {
             onChange={(s: Style) => setStyle(s)}
             onNext={() => setPhase("step3")}
             onBack={() => {
-              if (isQuickFlow) {
+              if (isTemplateFlow) {
+                handleBackToDashboard();
+              } else if (isQuickFlow) {
                 router.back();
               } else {
                 setPhase("step1");
@@ -255,7 +261,7 @@ export default function WizardShell() {
             value={preferences}
             onChange={(p: Preference[]) => setPreferences(p)}
             onGenerate={() => handleGenerate()}
-            onBack={() => setPhase("step2")}
+            onBack={isTemplateFlow ? handleBackToDashboard : () => setPhase("step2")}
             isGenerating={isPending}
           />
         )}

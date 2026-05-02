@@ -16,8 +16,24 @@
     "thumbnail_url": null
   },
   {
+    "id": "tmpl_japandi_living",
+    "name": "Japandi Meditation Room",
+    "room_type": "living_room",
+    "style": "japandi",
+    "dims": {"width_m": 4.5, "length_m": 4.5, "height_m": 2.6},
+    "thumbnail_url": null
+  },
+  {
+    "id": "tmpl_mid_century_living",
+    "name": "Mid-Century Lounge",
+    "room_type": "living_room",
+    "style": "mid_century",
+    "dims": {"width_m": 5.0, "length_m": 5.0, "height_m": 2.6},
+    "thumbnail_url": null
+  },
+  {
     "id": "tmpl_industrial_living",
-    "name": "Industrial Living Room",
+    "name": "Industrial Loft",
     "room_type": "living_room",
     "style": "industrial",
     "dims": {"width_m": 5.0, "length_m": 6.0, "height_m": 2.8},

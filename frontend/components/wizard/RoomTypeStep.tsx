@@ -14,9 +14,10 @@ type Props = {
   value: RoomType;
   onChange: (v: RoomType) => void;
   onNext: () => void;
+  onBack?: () => void;
 };
 
-export default function RoomTypeStep({ value, onChange, onNext }: Props) {
+export default function RoomTypeStep({ value, onChange, onNext, onBack }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -41,7 +42,14 @@ export default function RoomTypeStep({ value, onChange, onNext }: Props) {
         ))}
       </div>
 
-      <div className="flex justify-end pt-4">
+      <div className="flex justify-between items-center pt-4">
+        {onBack ? (
+          <Button variant="ghost" onClick={onBack}>
+            Back
+          </Button>
+        ) : (
+          <div />
+        )}
         <Button onClick={onNext}>Next</Button>
       </div>
     </div>

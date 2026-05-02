@@ -4,7 +4,8 @@ import MarketingHero from "@/components/marketing/MarketingHero";
 import HowItWorks from "@/components/marketing/HowItWorks";
 import WhatsIncluded from "@/components/marketing/WhatsIncluded";
 import PricingTeaser from "@/components/marketing/PricingTeaser";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function MarketingPage() {
   return (
@@ -21,9 +22,12 @@ export default function MarketingPage() {
           Interior Flow 3D turns room dimensions and a style into a 3D layout
           you can rotate, inspect, and save. No design skills needed.
         </p>
-        <Button asChild size="lg">
-          <Link href="/app/new">Try it free, no signup</Link>
-        </Button>
+        <Link 
+          href="/app/new" 
+          className={cn(buttonVariants({ size: "lg" }))}
+        >
+          Try it free, no signup
+        </Link>
       </section>
 
       {/* 3D hero */}

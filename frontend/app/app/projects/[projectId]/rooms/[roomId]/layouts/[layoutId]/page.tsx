@@ -6,7 +6,8 @@ import { useState } from "react";
 
 import ResultView from "@/components/result/ResultView";
 import ShareDialog from "@/components/share/ShareDialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetLayout } from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth";
@@ -68,11 +69,12 @@ export default function SavedLayoutPage() {
           <h1 className="text-2xl font-semibold tracking-tight font-display text-foreground">
             {status === 404 ? "Layout not found" : "Something went wrong"}
           </h1>
-          <Button asChild className="mt-4">
-            <Link href={`/app/projects/${projectId}/rooms/${roomId}`}>
-              Back to room
-            </Link>
-          </Button>
+          <Link 
+            href={`/app/projects/${projectId}/rooms/${roomId}`}
+            className={cn(buttonVariants({ className: "mt-4" }))}
+          >
+            Back to room
+          </Link>
         </div>
       </div>
     );
