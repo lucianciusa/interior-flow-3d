@@ -9,13 +9,7 @@ import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import type { LayoutSummary } from "@/lib/types";
 
-const STYLE_LABELS: Record<string, string> = {
-  scandinavian: "Scandinavian",
-  minimal: "Minimal",
-  industrial: "Industrial",
-  japandi: "Japandi",
-  mid_century: "Mid-Century",
-};
+import { useLanguage } from "@/lib/stores/useLanguage";
 
 type Props = {
   layout: LayoutSummary;
@@ -36,6 +30,7 @@ export default function LayoutCard({
   selected = false,
   onSelect,
 }: Props) {
+  const { t } = useLanguage();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const { mutateAsync: deleteLayout, isPending } = useDeleteLayout();
   const updateLayout = useUpdateLayout(layout.id);
@@ -67,7 +62,17 @@ export default function LayoutCard({
         )}
       >
         <Link href={`/app/projects/${projectId}/rooms/${roomId}/layouts/${layout.id}`}>
-          <div className="aspect-[3/2] w-full bg-gradient-to-br from-muted to-muted/50" />
+          <div className="aspect-[3/2] w-full bg-muted overflow-hidden">
+            {layout.thumbnail_url ? (
+              <img 
+                src={layout.thumbnail_url} 
+                alt={layout.name} 
+                className="h-full w-full object-cover transition-transform group-hover:scale-105" 
+              />
+            ) : (
+              <div className="h-full w-full bg-gradient-to-br from-muted to-muted/50" />
+            )}
+          </div>
         </Link>
         
         {/* Selection Checkbox */}
@@ -97,13 +102,13 @@ export default function LayoutCard({
           <div className="min-w-0 flex-1">
             <div className="truncate text-sm font-medium text-foreground">{layout.name}</div>
             <div className="text-xs text-muted-foreground">
-              {STYLE_LABELS[layout.style] ?? layout.style}
+              {t(layout.style || "none")}
             </div>
           </div>
           <div className="flex flex-col items-end gap-1">
             {layout.is_primary ? (
               <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-medium uppercase text-primary-foreground">
-                Primary
+                {t("primary")}
               </span>
             ) : (
               <button
@@ -111,7 +116,7 @@ export default function LayoutCard({
                 onClick={setPrimary}
                 className="rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground hover:bg-muted transition-colors"
               >
-                Set primary
+                {t("set_primary")}
               </button>
             )}
             <label className="flex items-center gap-1 text-[10px] text-muted-foreground">
@@ -120,7 +125,7 @@ export default function LayoutCard({
                 checked={isCompareSelected}
                 onChange={() => onToggleCompare(layout.id)}
               />
-              Compare
+              {t("compare")}
             </label>
           </div>
         </div>
@@ -129,8 +134,8 @@ export default function LayoutCard({
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title="Delete Layout"
-        description={`Are you sure you want to delete "${layout.name}"? This action cannot be undone.`}
+        title={t("delete_layout")}
+        description={t("delete_layout_desc").replace("${name}", layout.name)}
         onConfirm={handleDelete}
         isLoading={isPending}
       />

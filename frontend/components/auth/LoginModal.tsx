@@ -19,7 +19,10 @@ type Status =
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export default function LoginModal({ open, onOpenChange, message }: LoginModalProps) {
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const emailRef = useRef<HTMLInputElement | null>(null);
@@ -57,9 +60,9 @@ export default function LoginModal({ open, onOpenChange, message }: LoginModalPr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Sign in to save</DialogTitle>
+          <DialogTitle>{t("sign_in_to_save")}</DialogTitle>
           <DialogDescription>
-            {message ?? "We'll send you a magic link or use Google."}
+            {message ?? t("magic_link_desc")}
           </DialogDescription>
         </DialogHeader>
 
@@ -71,19 +74,19 @@ export default function LoginModal({ open, onOpenChange, message }: LoginModalPr
             disabled={status.kind === "sending"}
             className="w-full"
           >
-            Continue with Google
+            {t("auth_google")}
           </Button>
 
           <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
             <span className="h-px flex-1 bg-border" />
-            or
+            {t("or")}
             <span className="h-px flex-1 bg-border" />
           </div>
 
           <form onSubmit={sendMagicLink} className="flex flex-col gap-3">
             <div>
               <label htmlFor="login-email" className="text-xs font-medium text-foreground">
-                Email
+                {t("email")}
               </label>
               <input
                 id="login-email"
@@ -101,13 +104,13 @@ export default function LoginModal({ open, onOpenChange, message }: LoginModalPr
               disabled={!emailValid || status.kind === "sending" || status.kind === "sent"}
               className="w-full"
             >
-              {status.kind === "sending" ? "Sending…" : "Send magic link"}
+              {status.kind === "sending" ? t("sending_link") : t("send_magic_link")}
             </Button>
           </form>
 
           {status.kind === "sent" && (
             <p className="mt-3 text-sm text-emerald-600">
-              Check your inbox for the sign-in link.
+              {t("check_inbox")}
             </p>
           )}
           {status.kind === "error" && (
@@ -122,7 +125,7 @@ export default function LoginModal({ open, onOpenChange, message }: LoginModalPr
             onClick={() => onOpenChange(false)}
             className="w-full mt-2"
           >
-            Cancel
+            {t("cancel")}
           </Button>
         </DialogFooter>
       </DialogContent>

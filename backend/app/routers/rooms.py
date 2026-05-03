@@ -81,6 +81,11 @@ async def update_room(
     try:
         async with SupabaseRest(settings, user.jwt) as sb:
             row = await sb.update_room(room_id, payload)
+            
+            # If room thumbnail was updated, propagate to project as a representative image
+            if "thumbnail_url" in payload and payload["thumbnail_url"]:
+                await sb.update_project(row["project_id"], {"thumbnail_url": payload["thumbnail_url"]})
+
     except SupabaseNotFound as e:
         raise HTTPException(status_code=404, detail="room not found") from e
     except SupabaseError as e:

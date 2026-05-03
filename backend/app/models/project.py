@@ -10,6 +10,7 @@ class ProjectCreate(BaseModel):
 
     name: str = Field(min_length=1, max_length=80)
     default_style: str | None = None
+    thumbnail_url: str | None = None
 
 
 class ProjectPatch(BaseModel):
@@ -18,6 +19,7 @@ class ProjectPatch(BaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=80)
     default_style: str | None = None
     default_palette: dict[str, Any] | None = None
+    thumbnail_url: str | None = None
 
 
 class ProjectRecord(BaseModel):
@@ -28,6 +30,7 @@ class ProjectRecord(BaseModel):
     name: str
     default_style: str | None = None
     default_palette: dict[str, Any] | None = None
+    thumbnail_url: str | None = None
     created_at: str
 
 
@@ -38,10 +41,12 @@ class ConversionRequest(BaseModel):
 
     projectName: str = Field(min_length=1, max_length=80)
     roomName: str = Field(min_length=1, max_length=80)
+    roomType: str = Field(default="living_room")
     width_m: float = Field(ge=2, le=12)
     length_m: float = Field(ge=2, le=12)
     height_m: float = Field(ge=2.2, le=4)
     layout: Layout
+    thumbnail_url: str | None = None
 
 
 class ConversionResponse(BaseModel):

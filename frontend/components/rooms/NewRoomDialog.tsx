@@ -14,8 +14,11 @@ type Props = {
   projectId: string;
 };
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export default function NewRoomDialog({ open, onOpenChange, projectId }: Props) {
-  const [name, setName] = useState("Living room");
+  const { t } = useLanguage();
+  const [name, setName] = useState(t("living_room"));
   const [roomType, setRoomType] = useState<RoomType>("living_room");
   const [width, setWidth] = useState(5);
   const [length, setLength] = useState(6);
@@ -41,11 +44,10 @@ export default function NewRoomDialog({ open, onOpenChange, projectId }: Props) 
     setLength(Math.round((b.length_m[0] + b.length_m[1]) / 2));
     setHeight(2.6);
     
-    // Auto-update name if it was default
-    const currentLabel = Object.entries(ROOM_TYPES).find(([k]) => k === roomType)?.[0] || "";
-    if (name.toLowerCase() === currentLabel.replace("_", " ")) {
-       const newLabel = type.charAt(0).toUpperCase() + type.slice(1).replace("_", " ");
-       setName(newLabel);
+    // Auto-update name if it was a default room name
+    const currentLabel = t(roomType);
+    if (name.toLowerCase() === currentLabel.toLowerCase()) {
+       setName(t(type));
     }
   };
 
@@ -53,7 +55,7 @@ export default function NewRoomDialog({ open, onOpenChange, projectId }: Props) 
     e.preventDefault();
     try {
       await create.mutateAsync({
-        name: name.trim() || "My Room",
+        name: name.trim() || t("rooms"),
         roomType,
         width_m: width,
         length_m: length,
@@ -70,13 +72,13 @@ export default function NewRoomDialog({ open, onOpenChange, projectId }: Props) 
       <DialogContent className="sm:max-w-md">
         <form onSubmit={submit}>
           <DialogHeader>
-            <DialogTitle>New room</DialogTitle>
+            <DialogTitle>{t("new_room")}</DialogTitle>
           </DialogHeader>
 
           <div className="py-4 space-y-4">
             <div>
               <label htmlFor="room-name" className="block text-xs font-medium text-foreground">
-                Name
+                {t("room_name")}
               </label>
               <input
                 ref={inputRef}
@@ -91,7 +93,7 @@ export default function NewRoomDialog({ open, onOpenChange, projectId }: Props) 
 
             <div>
               <label htmlFor="room-type" className="block text-xs font-medium text-foreground">
-                Type
+                {t("room_type")}
               </label>
               <select
                 id="room-type"
@@ -99,16 +101,16 @@ export default function NewRoomDialog({ open, onOpenChange, projectId }: Props) 
                 onChange={(e) => handleRoomTypeChange(e.target.value as RoomType)}
                 className="mt-1 flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
               >
-                <option value="living_room">Living room</option>
-                <option value="bedroom">Bedroom</option>
-                <option value="dining_room">Dining room</option>
-                <option value="home_office">Home office</option>
+                <option value="living_room">{t("living_room")}</option>
+                <option value="bedroom">{t("bedroom")}</option>
+                <option value="dining_room">{t("dining_room")}</option>
+                <option value="home_office">{t("home_office")}</option>
               </select>
             </div>
 
             <div className="grid grid-cols-3 gap-3">
               <label className="text-xs font-medium text-foreground">
-                Width (m)
+                {t("width_m")}
                 <span className="ml-1 text-[10px] text-muted-foreground opacity-70">({bounds.width_m[0]}-{bounds.width_m[1]})</span>
                 <input
                   type="number"
@@ -121,7 +123,7 @@ export default function NewRoomDialog({ open, onOpenChange, projectId }: Props) 
                 />
               </label>
               <label className="text-xs font-medium text-foreground">
-                Length (m)
+                {t("length_m")}
                 <span className="ml-1 text-[10px] text-muted-foreground opacity-70">({bounds.length_m[0]}-{bounds.length_m[1]})</span>
                 <input
                   type="number"
@@ -134,7 +136,7 @@ export default function NewRoomDialog({ open, onOpenChange, projectId }: Props) 
                 />
               </label>
               <label className="text-xs font-medium text-foreground">
-                Height (m)
+                {t("height_m")}
                 <span className="ml-1 text-[10px] text-muted-foreground opacity-70">({bounds.height_m[0]}-{bounds.height_m[1]})</span>
                 <input
                   type="number"
@@ -157,13 +159,13 @@ export default function NewRoomDialog({ open, onOpenChange, projectId }: Props) 
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button
               type="submit"
               disabled={create.isPending}
             >
-              {create.isPending ? "Creating…" : "Create"}
+              {create.isPending ? t("creating") : t("create")}
             </Button>
           </DialogFooter>
         </form>

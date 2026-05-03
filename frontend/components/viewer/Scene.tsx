@@ -15,9 +15,10 @@ type SceneProps = {
   layout: Layout;
   dims: RoomDims;
   hideWalls?: boolean;
+  captureRef?: React.MutableRefObject<(() => string) | null>;
 };
 
-export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
+export default function Scene({ layout, dims, hideWalls = false, captureRef }: SceneProps) {
   // Preload models for faster rendering
   useEffect(() => {
     layout.items.forEach((item) => {
@@ -31,7 +32,7 @@ export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
     <Canvas
       shadows
       dpr={[1, 2]}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
+      gl={{ antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance" }}
       onCreated={({ gl }) => configureLoaders(gl)}
       className="h-full w-full"
     >
@@ -45,6 +46,7 @@ export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
         shadow-mapSize={[2048, 2048]}
       />
       <CameraController3D />
+      {captureRef && <CaptureHandler captureRef={captureRef} />}
       <Suspense fallback={null}>
         {process.env.NEXT_PUBLIC_HDRI_URL && (
            <Environment files={process.env.NEXT_PUBLIC_HDRI_URL} background={false} />
@@ -58,6 +60,17 @@ export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
       </Suspense>
     </Canvas>
   );
+}
+
+function CaptureHandler({ captureRef }: { captureRef: React.MutableRefObject<(() => string) | null> }) {
+  const { gl, scene, camera } = useThree();
+  useEffect(() => {
+    captureRef.current = () => {
+      gl.render(scene, camera);
+      return gl.domElement.toDataURL("image/webp", 0.5);
+    };
+  }, [gl, scene, camera, captureRef]);
+  return null;
 }
 
 function SceneControls() {

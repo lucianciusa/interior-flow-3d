@@ -18,7 +18,10 @@ import { useAuthStore } from "@/lib/stores/auth";
 import { useWizardStore } from "@/lib/stores/wizard";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export default function RoomPage() {
+  const { t } = useLanguage();
   const params = useParams<{ projectId: string; roomId: string }>();
   const projectId = params?.projectId ?? "";
   const roomId = params?.roomId ?? "";
@@ -93,7 +96,7 @@ export default function RoomPage() {
     return (
       <div className="flex min-h-[50vh] items-center justify-center p-6">
         <Link href="/app" className="text-sm underline text-muted-foreground hover:text-foreground">
-          Sign in
+          {t("sign_in")}
         </Link>
       </div>
     );
@@ -136,26 +139,26 @@ export default function RoomPage() {
     <div className="w-full">
       <div className="mb-2 text-xs text-muted-foreground">
         <Link href="/app" className="hover:text-foreground transition-colors">
-          Projects
+          {t("projects")}
         </Link>{" "}
         /{" "}
         <Link href={`/app/projects/${projectId}`} className="hover:text-foreground transition-colors">
           {project.data?.name ?? "…"}
         </Link>{" "}
-        / {room?.name ?? "Room"}
+        / {room?.name ?? t("rooms")}
       </div>
 
       <div className="mb-6 flex items-center justify-between gap-4">
         <div className="flex flex-col">
           <h1 className="text-2xl font-semibold tracking-tight font-display text-foreground">
-            {room?.name ?? "Room"}
+            {room?.name ?? t("rooms")}
           </h1>
           {layouts.data && layouts.data.length > 0 && (
             <button
               onClick={toggleAll}
               className="text-left text-xs text-muted-foreground hover:text-primary transition-colors"
             >
-              {selectedIds.size === layouts.data.length ? "Deselect all" : "Select all"}
+              {selectedIds.size === layouts.data.length ? t("deselect_all") : t("select_all")}
             </button>
           )}
         </div>
@@ -166,16 +169,16 @@ export default function RoomPage() {
               size="sm"
               onClick={() => setBulkConfirmOpen(true)}
             >
-              Delete Selected ({selectedIds.size})
+              {t("delete_selected")} ({selectedIds.size})
             </Button>
           )}
           {compareIds.length === 2 && (
             <Button variant="outline" size="sm" onClick={() => setCompareOpen(true)}>
-              Compare (2)
+              {t("compare")} (2)
             </Button>
           )}
           <Button size="sm" onClick={startNewLayout}>
-            + New layout
+            + {t("new_layout")}
           </Button>
         </div>
       </div>
@@ -193,8 +196,8 @@ export default function RoomPage() {
       <ConfirmDialog
         open={bulkConfirmOpen}
         onOpenChange={setBulkConfirmOpen}
-        title="Delete Multiple Layouts"
-        description={`Are you sure you want to delete ${selectedIds.size} layouts? This action cannot be undone.`}
+        title={t("delete_multiple_layouts_title")}
+        description={t("delete_multiple_layouts_desc").replace("${size}", selectedIds.size.toString())}
         onConfirm={deleteSelected}
         isLoading={isDeletingBulk}
       />

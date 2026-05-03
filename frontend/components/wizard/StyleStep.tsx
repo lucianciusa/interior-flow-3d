@@ -12,13 +12,16 @@ type StyleStepProps = {
 
 import { STYLES } from "@/lib/constants";
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export default function StyleStep({ value, onChange, onNext, onBack }: StyleStepProps) {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-xl font-semibold tracking-tight font-display text-foreground">Choose a style</h2>
+        <h2 className="text-xl font-semibold tracking-tight font-display text-foreground">{t("choose_style")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          The AI will honour this aesthetic throughout.
+          {t("choose_style_subtitle")}
         </p>
       </div>
       <div
@@ -49,8 +52,10 @@ export default function StyleStep({ value, onChange, onNext, onBack }: StyleStep
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
             </div>
             <div className="p-3">
-              <p className="font-semibold text-foreground">{s.label}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{s.tagline}</p>
+              <p className="font-semibold text-foreground">{t(s.id)}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">
+                {t(`style_tagline_${s.id}`)}
+              </p>
               <div className="mt-2 flex gap-1">
                 {s.swatches.map((hex) => (
                   <span
@@ -66,10 +71,10 @@ export default function StyleStep({ value, onChange, onNext, onBack }: StyleStep
       </div>
       <div className="flex justify-between items-center mt-2">
         <Button variant="ghost" onClick={onBack}>
-          Back
+          {t("back")}
         </Button>
         <Button onClick={onNext} disabled={!value}>
-          Next
+          {t("next")}
         </Button>
       </div>
     </div>

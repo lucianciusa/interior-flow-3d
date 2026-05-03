@@ -31,6 +31,7 @@ async def create_layout(
         "style": body.layout.style,
         "layout": body.layout.model_dump(),
         "seed": body.layout.seed,
+        "thumbnail_url": body.thumbnail_url,
         "catalog_version": body.layout.catalogVersion,
     }
     try:
@@ -38,7 +39,13 @@ async def create_layout(
             if body.is_primary:
                 # Clear any existing primary on this room before insert.
                 await sb.unset_other_primaries(body.roomId, except_layout_id=None)
+            
             row = await sb.insert_layout(payload)
+            
+            # Also update the room's thumbnail to show this latest layout
+            if body.thumbnail_url:
+                await sb.update_room(body.roomId, {"thumbnail_url": body.thumbnail_url})
+
     except SupabaseConflict as e:
         raise HTTPException(status_code=409, detail="primary already set") from e
     except SupabaseNotFound as e:

@@ -7,7 +7,10 @@ import { useWizardStore } from "@/lib/stores/wizard";
 import type { Template } from "@/lib/types";
 import type { Style } from "@/lib/types";
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 function TemplateCard({ template, onUse }: { template: Template; onUse: () => void }) {
+  const { t } = useLanguage();
   const styleImage = `/images/styles/${template.style}.png`;
 
   return (
@@ -28,7 +31,7 @@ function TemplateCard({ template, onUse }: { template: Template; onUse: () => vo
         <div className="absolute inset-x-0 bottom-0 p-4">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-medium text-primary-foreground backdrop-blur-md border border-primary/30 uppercase tracking-wider">
-              {template.style}
+              {t(template.style)}
             </span>
             <span className="text-[10px] text-white/70">
               {template.dims.width_m}m × {template.dims.length_m}m
@@ -42,7 +45,7 @@ function TemplateCard({ template, onUse }: { template: Template; onUse: () => vo
         {/* Hover action button */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
           <div className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-lg transform translate-y-4 transition-transform group-hover:translate-y-0">
-            Use this template
+            {t("use_template")}
           </div>
         </div>
       </div>
@@ -51,6 +54,7 @@ function TemplateCard({ template, onUse }: { template: Template; onUse: () => vo
 }
 
 export function TemplateGallery() {
+  const { t } = useLanguage();
   const { data, isLoading } = useListTemplates();
   const router = useRouter();
   const reset = useWizardStore((s) => s.reset);
@@ -85,7 +89,7 @@ export function TemplateGallery() {
   return (
     <section className="mt-8">
       <h2 className="text-lg font-semibold tracking-tight font-display text-foreground mb-4">
-        Start from a template
+        {t("start_from_template")}
       </h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {data.items.map((t) => (

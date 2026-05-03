@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/shell/ThemeToggle";
 import { MarketingNav } from "@/components/marketing/MarketingNav";
+import { LanguageToggle } from "@/components/shell/LanguageToggle";
+import { Footer } from "@/components/marketing/Footer";
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,6 +13,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
           Interior Flow 3D
         </Link>
         <div className="flex items-center gap-4">
+          <LanguageToggle />
           <ThemeToggle />
           <MarketingNav />
         </div>
@@ -20,11 +23,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
       <div className="flex-1">{children}</div>
 
       {/* Footer */}
-      <footer className="border-t border-border py-8 px-6 text-center">
-        <p className="text-xs text-muted-foreground">
-          Interior Flow 3D — AI-powered interior design copilot. Free during beta.
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }

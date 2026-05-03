@@ -89,6 +89,7 @@ export type GenerateRequest = {
   style: Style;
   preferences: Preference[];
   seed?: number;
+  language?: string;
 };
 
 export type RoomDims = {
@@ -103,6 +104,7 @@ export type RoomCreate = {
   width_m: number;
   length_m: number;
   height_m: number;
+  thumbnail_url?: string | null;
 };
 
 export type RoomPatch = {
@@ -110,6 +112,7 @@ export type RoomPatch = {
   width_m?: number;
   length_m?: number;
   height_m?: number;
+  thumbnail_url?: string | null;
 };
 
 export type RoomRecord = {
@@ -121,6 +124,7 @@ export type RoomRecord = {
   width_m: number;
   length_m: number;
   height_m: number;
+  thumbnail_url: string | null;
   created_at: string;
 };
 
@@ -151,6 +155,7 @@ export type LayoutCreate = {
   name?: string;
   is_primary?: boolean;
   layout: Layout;
+  thumbnail_url?: string | null;
 };
 
 export type LayoutPatch = {
@@ -161,11 +166,13 @@ export type LayoutPatch = {
 export type ProjectCreate = {
   name: string;
   default_style?: string | null;
+  thumbnail_url?: string | null;
 };
 
 export type ProjectPatch = {
   name?: string;
   default_style?: string | null;
+  thumbnail_url?: string | null;
 };
 
 export type ProjectRecord = {
@@ -174,6 +181,7 @@ export type ProjectRecord = {
   name: string;
   default_style: string | null;
   default_palette: Record<string, unknown> | null;
+  thumbnail_url: string | null;
   created_at: string;
 };
 
@@ -190,6 +198,7 @@ export type ConversionRequest = {
   length_m: number;
   height_m: number;
   layout: Layout;
+  thumbnail_url?: string | null;
 };
 
 export type ConversionResponse = {

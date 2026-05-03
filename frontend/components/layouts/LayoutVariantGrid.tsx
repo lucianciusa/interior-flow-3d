@@ -15,6 +15,8 @@ type Props = {
   onToggleSelection: (id: string, val: boolean) => void;
 };
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export default function LayoutVariantGrid({
   layouts,
   projectId,
@@ -24,12 +26,13 @@ export default function LayoutVariantGrid({
   selectedIds,
   onToggleSelection,
 }: Props) {
+  const { t } = useLanguage();
   if (layouts.length === 0) {
     return (
       <EmptyState
         illustration={<EmptyLayoutsIllustration />}
-        title="No layouts yet"
-        description="Generate your first 3D layout to see it here."
+        title={t("no_layouts_yet")}
+        description={t("add_layout_desc")}
         cta={<></>}
       />
     );

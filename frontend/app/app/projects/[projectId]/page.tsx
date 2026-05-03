@@ -19,7 +19,10 @@ import {
 import { useAuthStore } from "@/lib/stores/auth";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export default function ProjectPage() {
+  const { t } = useLanguage();
   const params = useParams<{ projectId: string }>();
   const projectId = params?.projectId;
   const session = useAuthStore((s) => s.session);
@@ -86,7 +89,7 @@ export default function ProjectPage() {
     return (
       <div className="flex min-h-[50vh] items-center justify-center p-6">
         <Link href="/app" className="text-sm underline text-muted-foreground hover:text-foreground">
-          Sign in
+          {t("sign_in")}
         </Link>
       </div>
     );
@@ -108,9 +111,9 @@ export default function ProjectPage() {
   if (project.isError || !project.data) {
     return (
       <div>
-        <p className="text-sm text-destructive">Project not found.</p>
+        <p className="text-sm text-destructive">{t("project_not_found")}</p>
         <Link href="/app" className="text-sm underline text-muted-foreground hover:text-foreground">
-          Back to projects
+          {t("back")}
         </Link>
       </div>
     );
@@ -137,7 +140,7 @@ export default function ProjectPage() {
     <div className="w-full">
       <div className="mb-2 text-xs text-muted-foreground">
         <Link href="/app" className="hover:text-foreground transition-colors">
-          Projects
+          {t("projects")}
         </Link>{" "}
         / {project.data.name}
       </div>
@@ -160,7 +163,7 @@ export default function ProjectPage() {
               <h1
                 className="text-2xl font-semibold tracking-tight font-display text-foreground cursor-text"
                 onClick={startRename}
-                title="Click to rename"
+                title={t("click_to_rename")}
               >
                 {project.data.name}
               </h1>
@@ -169,7 +172,7 @@ export default function ProjectPage() {
                   onClick={toggleAll}
                   className="text-left text-xs text-muted-foreground hover:text-primary transition-colors"
                 >
-                  {selectedIds.size === rooms.data.length ? "Deselect all" : "Select all"}
+                  {selectedIds.size === rooms.data.length ? t("deselect_all") : t("select_all")}
                 </button>
               )}
             </div>
@@ -182,11 +185,11 @@ export default function ProjectPage() {
               size="sm"
               onClick={() => setBulkConfirmOpen(true)}
             >
-              Delete Selected ({selectedIds.size})
+              {t("delete_selected")} ({selectedIds.size})
             </Button>
           )}
           <Button size="sm" onClick={() => setNewRoomOpen(true)}>
-            + New room
+            + {t("new_room")}
           </Button>
         </div>
       </div>
@@ -194,9 +197,9 @@ export default function ProjectPage() {
       {rooms.data && rooms.data.length === 0 && (
         <EmptyState
           illustration={<EmptyRoomsIllustration />}
-          title="No rooms yet"
-          description="Add your first room to start designing layouts."
-          cta={<Button onClick={() => setNewRoomOpen(true)}>Add a room</Button>}
+          title={t("no_rooms_yet")}
+          description={t("add_room_desc")}
+          cta={<Button onClick={() => setNewRoomOpen(true)}>{t("add_a_room")}</Button>}
         />
       )}
 
@@ -217,8 +220,8 @@ export default function ProjectPage() {
       <ConfirmDialog
         open={bulkConfirmOpen}
         onOpenChange={setBulkConfirmOpen}
-        title="Delete Multiple Rooms"
-        description={`Are you sure you want to delete ${selectedIds.size} rooms? This action will permanently remove all layouts within these rooms.`}
+        title={t("delete_multiple_rooms_title")}
+        description={t("delete_multiple_rooms_desc").replace("${size}", selectedIds.size.toString())}
         onConfirm={deleteSelected}
         isLoading={isDeletingBulk}
       />

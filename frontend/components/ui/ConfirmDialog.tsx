@@ -23,17 +23,23 @@ type ConfirmDialogProps = {
   isLoading?: boolean;
 };
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export function ConfirmDialog({
   open,
   onOpenChange,
   title,
   description,
   onConfirm,
-  confirmText = "Confirm",
-  cancelText = "Cancel",
+  confirmText,
+  cancelText,
   variant = "destructive",
   isLoading = false,
 }: ConfirmDialogProps) {
+  const { t } = useLanguage();
+  const displayConfirm = confirmText ?? t("confirm");
+  const displayCancel = cancelText ?? t("cancel");
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -47,7 +53,7 @@ export function ConfirmDialog({
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
           >
-            {cancelText}
+            {displayCancel}
           </Button>
           <Button
             variant={variant}
@@ -57,7 +63,7 @@ export function ConfirmDialog({
             }}
             disabled={isLoading}
           >
-            {isLoading ? "Deleting..." : confirmText}
+            {isLoading ? t("deleting") : displayConfirm}
           </Button>
         </DialogFooter>
       </DialogContent>

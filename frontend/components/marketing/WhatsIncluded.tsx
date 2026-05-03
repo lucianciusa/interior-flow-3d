@@ -1,28 +1,38 @@
-import { Home, Palette, BookOpen } from "lucide-react";
+"use client";
 
-const CARDS = [
-  {
-    icon: Home,
-    title: "4 room types",
-    body: "Living room, bedroom, dining room, and home office — each with tailored furniture and slots.",
-  },
-  {
-    icon: Palette,
-    title: "5 styles",
-    body: "Scandinavian, Minimal, Industrial, Japandi, and Mid-century — each with a curated palette.",
-  },
-  {
-    icon: BookOpen,
-    title: "~40 catalog items",
-    body: "Tagged furniture with smart placement, zone-aware AI, and first-person design rationale.",
-  },
-];
+import { useEffect, useState } from "react";
+import { Home, Palette, BookOpen } from "lucide-react";
+import { useLanguage } from "@/lib/stores/useLanguage";
 
 export default function WhatsIncluded() {
+  const { t } = useLanguage();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const safeT = (key: string) => mounted ? t(key) : key;
+
+  const CARDS = [
+    {
+      icon: Home,
+      title: safeT("room_types_feat"),
+      body: safeT("room_types_desc"),
+    },
+    {
+      icon: Palette,
+      title: safeT("styles_feat"),
+      body: safeT("styles_desc"),
+    },
+    {
+      icon: BookOpen,
+      title: safeT("catalog_feat"),
+      body: safeT("catalog_desc"),
+    },
+  ];
+
   return (
     <section className="py-16">
       <h2 className="text-center text-2xl font-semibold tracking-tight font-display text-foreground mb-8">
-        What&apos;s included
+        {safeT("whats_included")}
       </h2>
       <div className="grid gap-6 sm:grid-cols-3">
         {CARDS.map((card) => (

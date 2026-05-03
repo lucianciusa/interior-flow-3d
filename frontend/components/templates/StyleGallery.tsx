@@ -5,7 +5,10 @@ import { STYLES } from "@/lib/constants";
 import { useWizardStore } from "@/lib/stores/wizard";
 import type { Style } from "@/lib/types";
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export function StyleGallery() {
+  const { t } = useLanguage();
   const router = useRouter();
   const reset = useWizardStore((s) => s.reset);
   const setStyle = useWizardStore((s) => s.setStyle);
@@ -24,10 +27,10 @@ export function StyleGallery() {
     <section className="mt-16">
       <div className="mb-10 flex flex-col items-center text-center gap-2">
         <h2 className="text-3xl font-bold tracking-tight font-display text-foreground sm:text-4xl">
-          Start from a photo
+          {t("start_from_photo")}
         </h2>
         <p className="max-w-lg text-muted-foreground">
-          Choose a design style that resonates with you and we'll help you create the perfect layout.
+          {t("choose_style_desc")}
         </p>
       </div>
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
@@ -64,10 +67,10 @@ export function StyleGallery() {
             </div>
             <div className="text-center">
               <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
-                {s.label}
+                {t(s.id)}
               </h3>
               <p className="mt-0.5 text-[10px] uppercase tracking-widest text-muted-foreground font-medium">
-                Explore aesthetic
+                {t("explore_aesthetic")}
               </p>
             </div>
           </button>

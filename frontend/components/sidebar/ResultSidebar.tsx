@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { SLOT_LABELS } from "@/lib/slot-mappings";
 import PaletteBlock from "@/components/sidebar/PaletteBlock";
 import ExplanationBlock from "@/components/sidebar/ExplanationBlock";
 import { Button } from "@/components/ui/button";
@@ -20,19 +19,7 @@ type ResultSidebarProps = {
   saveState?: "idle" | "saving" | "saved";
 };
 
-const STYLE_LABELS: Record<Style, string> = {
-  scandinavian: "Scandinavian",
-  minimal: "Minimal",
-  industrial: "Industrial",
-  japandi: "Japandi",
-  mid_century: "Mid-Century",
-};
-
-const PREF_LABELS: Record<Preference, string> = {
-  more_seating: "More seating",
-  more_open_space: "More open space",
-  more_storage: "More storage",
-};
+import { useLanguage } from "@/lib/stores/useLanguage";
 
 export default function ResultSidebar({
   layout,
@@ -46,6 +33,22 @@ export default function ResultSidebar({
   onCompare,
   saveState = "idle",
 }: ResultSidebarProps) {
+  const { t } = useLanguage();
+
+  const STYLE_LABELS: Record<Style, string> = {
+    scandinavian: t("scandinavian"),
+    minimal: t("minimal"),
+    industrial: t("industrial"),
+    japandi: t("japandi"),
+    mid_century: t("mid_century"),
+  };
+
+  const PREF_LABELS: Record<Preference, string> = {
+    more_seating: t("more_seating"),
+    more_open_space: t("more_open_space"),
+    more_storage: t("more_storage"),
+  };
+
   const showRegenerate = mode === "live" && onRegenerate;
   const showAdjust = mode === "live" && onAdjust;
   const showSave = mode === "live" && onSave;
@@ -71,8 +74,7 @@ export default function ResultSidebar({
               onClick={() => setShowWarnings(!showWarnings)}
               className="rounded-full border border-destructive/20 bg-destructive/5 px-3 py-1 text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors"
             >
-              {layout.warnings.length} warning
-              {layout.warnings.length > 1 ? "s" : ""}
+              {layout.warnings.length} {layout.warnings.length > 1 ? t("warnings") : t("warnings").slice(0, -1)}
             </button>
           )}
         </div>
@@ -80,7 +82,7 @@ export default function ResultSidebar({
         {showWarnings && layout.warnings.length > 0 && (
           <div className="mt-2 space-y-1.5 rounded-lg border border-destructive/20 bg-destructive/5 p-3">
             <h4 className="text-[10px] font-bold uppercase tracking-wider text-destructive">
-              Warnings
+              {t("warnings")}
             </h4>
             <ul className="list-inside list-disc space-y-1">
               {layout.warnings.map((w, i) => (
@@ -95,15 +97,15 @@ export default function ResultSidebar({
 
       <div>
         <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Layout
+          {t("layout_title")}
         </h3>
         <ul className="flex flex-col gap-2">
           {layout.items.map((item) => (
             <li key={`${item.catalogId}-${item.slot}`} className="flex flex-col">
               <span className="text-sm font-medium capitalize text-foreground">
-                {item.catalogId.replace(/_/g, " ")}
+                {t(item.catalogId)}
               </span>
-              <span className="text-xs text-muted-foreground">{SLOT_LABELS[item.slot]}</span>
+              <span className="text-xs text-muted-foreground">{t(item.slot)}</span>
             </li>
           ))}
         </ul>
@@ -115,22 +117,22 @@ export default function ResultSidebar({
       <div className="mt-auto flex flex-col gap-2 pt-2">
         {showRegenerate && (
           <Button variant="outline" onClick={onRegenerate}>
-            Regenerate
+            {t("regenerate")}
           </Button>
         )}
         {showAdjust && (
           <Button variant="outline" onClick={onAdjust}>
-            Adjust preferences
+            {t("adjust_prefs")}
           </Button>
         )}
         {showShare && (
           <Button variant="outline" onClick={onShare}>
-            Share link
+            {t("share_link")}
           </Button>
         )}
         {showCompare && (
           <Button variant="outline" onClick={onCompare}>
-            Compare
+            {t("compare")}
           </Button>
         )}
         {showSave && (
@@ -139,10 +141,10 @@ export default function ResultSidebar({
             disabled={saveState === "saving" || saveState === "saved"}
           >
             {saveState === "saving"
-              ? "Saving…"
+              ? t("saving")
               : saveState === "saved"
-                ? "Saved"
-                : "Save"}
+                ? t("saved")
+                : t("save")}
           </Button>
         )}
       </div>

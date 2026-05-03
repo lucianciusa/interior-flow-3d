@@ -19,6 +19,8 @@ function fmtDate(iso: string): string {
       });
 }
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export default function ProjectCard({ 
   project,
   selected = false,
@@ -28,6 +30,7 @@ export default function ProjectCard({
   selected?: boolean;
   onSelect?: (val: boolean) => void;
 }) {
+  const { t } = useLanguage();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const { mutateAsync: deleteProject, isPending } = useDeleteProject();
 
@@ -40,6 +43,17 @@ export default function ProjectCard({
     }
   };
 
+  const HOUSE_IMAGES = [
+    "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800",
+  ];
+
+  // Deterministic fallback based on project ID
+  const fallbackIndex = project.id.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) % HOUSE_IMAGES.length;
+  const fallback = HOUSE_IMAGES[fallbackIndex];
+
   return (
     <>
       <div className="relative group">
@@ -47,7 +61,13 @@ export default function ProjectCard({
           href={`/app/projects/${project.id}`}
           className="block overflow-hidden rounded-xl border border-border transition hover:border-ring hover:shadow-md"
         >
-          <div className="aspect-[3/2] w-full bg-gradient-to-br from-muted to-muted/50" />
+          <div className="aspect-[3/2] w-full bg-muted overflow-hidden">
+            <img 
+              src={project.thumbnail_url || fallback} 
+              alt={project.name} 
+              className="h-full w-full object-cover transition-transform group-hover:scale-105" 
+            />
+          </div>
           <div className="p-4">
             <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
               {project.name}
@@ -83,8 +103,8 @@ export default function ProjectCard({
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title="Delete Project"
-        description={`Are you sure you want to delete "${project.name}"? This will permanently remove all rooms and layouts within this project.`}
+        title={t("delete_project")}
+        description={t("delete_project_desc").replace("${name}", project.name)}
         onConfirm={handleDelete}
         isLoading={isPending}
       />

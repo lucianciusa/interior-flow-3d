@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
 
 import { useViewerStore } from "@/lib/stores/viewer";
@@ -8,10 +9,31 @@ import type { ResolvedItem } from "@/lib/types";
 
 type FurnitureProps = { item: ResolvedItem };
 
-function GltfMesh({ model }: { model: string }) {
+function GltfMesh({ model, footprint }: { model: string; footprint: ResolvedItem["footprint"] }) {
   const { scene } = useGLTF(model);
-  const clonedScene = useMemo(() => {
+  const scaledScene = useMemo(() => {
     const clone = scene.clone();
+    
+    // Calculate bounding box to determine natural size
+    const box = new THREE.Box3().setFromObject(clone);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    
+    // Avoid division by zero
+    const sx = size.x > 0 ? footprint.w / size.x : 1;
+    const sy = size.y > 0 ? footprint.h / size.y : 1;
+    const sz = size.z > 0 ? footprint.d / size.z : 1;
+    
+    clone.scale.set(sx, sy, sz);
+
+    // Re-center model if its origin isn't at the bottom-center
+    const newBox = new THREE.Box3().setFromObject(clone);
+    const center = new THREE.Vector3();
+    newBox.getCenter(center);
+    clone.position.x -= center.x;
+    clone.position.z -= center.z;
+    clone.position.y -= newBox.min.y; // Sit on ground
+
     clone.traverse((obj: any) => {
       if (obj.isMesh) {
         obj.castShadow = true;
@@ -19,9 +41,9 @@ function GltfMesh({ model }: { model: string }) {
       }
     });
     return clone;
-  }, [scene]);
+  }, [scene, footprint.w, footprint.h, footprint.d]);
 
-  return <primitive object={clonedScene} />;
+  return <primitive object={scaledScene} />;
 }
 
 function PrimitiveMesh({ footprint }: { footprint: ResolvedItem["footprint"] }) {
@@ -30,7 +52,7 @@ function PrimitiveMesh({ footprint }: { footprint: ResolvedItem["footprint"] }) 
     [footprint.w, footprint.h, footprint.d],
   );
   return (
-    <mesh castShadow>
+    <mesh castShadow position={[0, footprint.h / 2, 0]}>
       <boxGeometry args={args} />
       <meshStandardMaterial color="#8B7355" />
     </mesh>
@@ -46,10 +68,15 @@ export default function Furniture({ item }: FurnitureProps) {
   const [px, py, pz] = item.position;
   const isPrimitive = item.model.startsWith("primitive:");
 
+  // Only the bed models in the catalog are exported facing -Z instead of +Z
+  const isInvertedModel = item.catalogId.startsWith("bed_");
+  
+  const rotY = item.rotation_y + (isInvertedModel ? Math.PI : 0);
+
   return (
     <group
       position={[px, py, pz]}
-      rotation={[0, item.rotation_y, 0]}
+      rotation={[0, rotY, 0]}
       onClick={(e) => {
         e.stopPropagation();
         setSelected(isSelected ? null : item);
@@ -64,10 +91,10 @@ export default function Furniture({ item }: FurnitureProps) {
       {isPrimitive ? (
         <PrimitiveMesh footprint={item.footprint} />
       ) : (
-        <GltfMesh model={item.model} />
+        <GltfMesh model={item.model} footprint={item.footprint} />
       )}
       {isSelected && (
-        <mesh>
+        <mesh position={[0, item.footprint.h / 2, 0]}>
           <boxGeometry
             args={[item.footprint.w + 0.05, item.footprint.h + 0.05, item.footprint.d + 0.05]}
           />

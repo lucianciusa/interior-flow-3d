@@ -24,6 +24,9 @@ export default function Room({ dims, palette, hideWalls = false }: RoomProps) {
         <planeGeometry args={[w, roomL]} />
         <meshStandardMaterial color={floorColor} roughness={0.85} metalness={0.05} envMapIntensity={0.6} />
       </mesh>
+      <gridHelper args={[Math.max(w, roomL), Math.ceil(Math.max(w, roomL)), 0x000000, 0x000000]} position={[0, 0.01, 0]}>
+        <meshBasicMaterial opacity={0.15} transparent />
+      </gridHelper>
 
       {!hideWalls && (
         <>

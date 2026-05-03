@@ -1,5 +1,5 @@
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 FACING_ROTATIONS: dict[str, float] = {
     "south": 0.0,
@@ -27,6 +27,7 @@ class Footprint:
     w: float
     d: float
     h: float
+    tags: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -50,76 +51,92 @@ def _slot_position(
 ) -> tuple[tuple[float, float, float], float]:
     """Return (position_xyz, default_rotation_y) for a slot."""
     room_w, room_l = room.width_m, room.length_m
-    y = fp.h / 2
+    y = 0.0
 
     # ── Wall slots ───────────────────────────────────────────────────────────
     if slot.startswith("north_wall_"):
         t = t_override if t_override is not None else _t_from_suffix(slot)
         x = (t - 0.5) * room_w
-        z = -(room_l / 2 - fp.d / 2 - 0.07)
+        z = -(room_l / 2 - fp.d / 2 - 0.02)
         return (x, y, z), 0.0
 
     if slot.startswith("south_wall_"):
         t = t_override if t_override is not None else _t_from_suffix(slot)
         x = (t - 0.5) * room_w
-        z = room_l / 2 - fp.d / 2 - 0.07
+        z = room_l / 2 - fp.d / 2 - 0.02
         return (x, y, z), math.pi
 
     if slot.startswith("east_wall_"):
         t = t_override if t_override is not None else _t_from_suffix(slot)
-        x = room_w / 2 - fp.d / 2 - 0.07
+        x = room_w / 2 - fp.d / 2 - 0.02
         z = (t - 0.5) * room_l
         return (x, y, z), -math.pi / 2
 
     if slot.startswith("west_wall_"):
         t = t_override if t_override is not None else _t_from_suffix(slot)
-        x = -(room_w / 2 - fp.d / 2 - 0.07)
+        x = -(room_w / 2 - fp.d / 2 - 0.02)
         z = (t - 0.5) * room_l
         return (x, y, z), math.pi / 2
 
     # ── Corner slots ─────────────────────────────────────────────────────────
     if slot == "corner_NE":
-        x = room_w / 2 - fp.w / 2 - 0.05
-        z = -(room_l / 2 - fp.d / 2 - 0.05)
+        x = room_w / 2 - fp.w / 2 - 0.02
+        z = -(room_l / 2 - fp.d / 2 - 0.02)
         return (x, y, z), -math.pi / 4
 
     if slot == "corner_NW":
-        x = -(room_w / 2 - fp.w / 2 - 0.05)
-        z = -(room_l / 2 - fp.d / 2 - 0.05)
+        x = -(room_w / 2 - fp.w / 2 - 0.02)
+        z = -(room_l / 2 - fp.d / 2 - 0.02)
         return (x, y, z), math.pi / 4
 
     if slot == "corner_SE":
-        x = room_w / 2 - fp.w / 2 - 0.05
-        z = room_l / 2 - fp.d / 2 - 0.05
+        x = room_w / 2 - fp.w / 2 - 0.02
+        z = room_l / 2 - fp.d / 2 - 0.02
         return (x, y, z), -3 * math.pi / 4
 
     if slot == "corner_SW":
-        x = -(room_w / 2 - fp.w / 2 - 0.05)
-        z = room_l / 2 - fp.d / 2 - 0.05
+        x = -(room_w / 2 - fp.w / 2 - 0.02)
+        z = room_l / 2 - fp.d / 2 - 0.02
         return (x, y, z), 3 * math.pi / 4
 
     # ── Floor slots ──────────────────────────────────────────────────────────
     if slot == "center":
-        return (0.0, y, 0.0), math.pi
+        return (0.0, y, 0.0), 0.0
 
     if slot == "center_front":
-        return (0.0, y, room_l * 0.25), math.pi
+        # Usually 1.3m in front of center, but clamp for small rooms
+        z = min(1.3, room_l * 0.35)
+        return (0.0, y, z), 0.0
 
     if slot == "entry":
         return (0.0, y, room_l * 0.4), math.pi
 
     if slot == "bed_center":
         # Headboard against north wall, bed extends into room
-        return (0.0, y, -(room_l / 2 - fp.d / 2 - 0.05)), 0.0
+        return (0.0, y, -(room_l / 2 - fp.d / 2 - 0.02)), math.pi
 
     if slot == "table_center":
-        return (0.0, y, 0.0), math.pi
+        return (0.0, y, 0.0), 0.0
 
     if slot == "desk_anchor":
+        # If it's a chair, redirect to desk_chair for the user's sanity
+        if "chair" in fp.tags or "seating" in fp.tags:
+            x = room_w / 6
+            z = -(room_l / 2 - 0.7)
+            return (x, y, z), math.pi
+            
         # Against north wall, offset toward east third
         x = room_w / 6
-        z = -(room_l / 2 - fp.d / 2 - 0.07)
+        z = -(room_l / 2 - fp.d / 2 - 0.02)
         return (x, y, z), 0.0
+
+    if slot == "desk_chair":
+        # In front of the desk_anchor
+        x = room_w / 6
+        # Offset from north wall: desk depth (approx 0.7) + chair space (approx 0.4 center-to-center)
+        # 1.1m ensures no collision with a 0.7m deep desk and 0.65m deep chair
+        z = -(room_l / 2 - 1.1)
+        return (x, y, z), math.pi
 
     raise ValueError(f"Unknown slot: {slot!r}")
 

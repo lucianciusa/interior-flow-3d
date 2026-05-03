@@ -14,7 +14,10 @@ type DimensionsStepProps = {
   onBack: () => void;
 };
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export default function DimensionsStep({ roomType, initial, onNext, onBack }: DimensionsStepProps) {
+  const { t } = useLanguage();
   const bounds = ROOM_TYPES[roomType].dim_bounds;
   const schema = z.object({
     width_m: z.number().min(bounds.width_m[0]).max(bounds.width_m[1]),
@@ -34,22 +37,22 @@ export default function DimensionsStep({ roomType, initial, onNext, onBack }: Di
   return (
     <form onSubmit={handleSubmit(onNext)} className="flex flex-col gap-6">
       <div>
-        <h2 className="text-xl font-semibold tracking-tight font-display text-foreground">Room dimensions</h2>
+        <h2 className="text-xl font-semibold tracking-tight font-display text-foreground">{t("room_dimensions")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Enter approximate measurements in metres.
+          {t("dimensions_desc")}
         </p>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {(
           [
-            { name: "width_m", label: "Width" },
-            { name: "length_m", label: "Length" },
-            { name: "height_m", label: "Height", step: "0.1" },
+            { name: "width_m", labelKey: "width" },
+            { name: "length_m", labelKey: "length" },
+            { name: "height_m", labelKey: "height", step: "0.1" },
           ] as const
-        ).map(({ name, label, ...rest }) => (
+        ).map(({ name, labelKey, ...rest }) => (
           <div key={name} className="flex flex-col gap-1">
             <label htmlFor={name} className="text-sm font-medium text-foreground">
-              {label}
+              {t(labelKey)}
             </label>
             <input
               id={name}
@@ -71,10 +74,10 @@ export default function DimensionsStep({ roomType, initial, onNext, onBack }: Di
       </div>
       <div className="flex justify-between items-center w-full">
         <Button type="button" variant="outline" onClick={onBack}>
-          Back
+          {t("back")}
         </Button>
         <Button type="submit" className="self-end">
-          Next
+          {t("next")}
         </Button>
       </div>
     </form>

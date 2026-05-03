@@ -1,28 +1,38 @@
-import { Sofa, Paintbrush, Layers } from "lucide-react";
+"use client";
 
-const STEPS = [
-  {
-    icon: Sofa,
-    title: "1. Set your room",
-    body: "Enter dimensions for any room — living, bedroom, dining, or home office.",
-  },
-  {
-    icon: Paintbrush,
-    title: "2. Pick a style",
-    body: "Scandinavian, Minimal, Industrial, Japandi, or Mid-century — five curated palettes.",
-  },
-  {
-    icon: Layers,
-    title: "3. Get a 3D layout",
-    body: "AI places furniture, picks a palette, and explains every decision in under 10 seconds.",
-  },
-];
+import { useEffect, useState } from "react";
+import { Sofa, Paintbrush, Layers } from "lucide-react";
+import { useLanguage } from "@/lib/stores/useLanguage";
 
 export default function HowItWorks() {
+  const { t } = useLanguage();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const safeT = (key: string) => mounted ? t(key) : key;
+
+  const STEPS = [
+    {
+      icon: Sofa,
+      title: safeT("step1_title"),
+      body: safeT("step1_body"),
+    },
+    {
+      icon: Paintbrush,
+      title: safeT("step2_title"),
+      body: safeT("step2_body"),
+    },
+    {
+      icon: Layers,
+      title: safeT("step3_title"),
+      body: safeT("step3_body"),
+    },
+  ];
+
   return (
     <section className="py-16">
       <h2 className="text-center text-2xl font-semibold tracking-tight font-display text-foreground mb-8">
-        How it works
+        {safeT("how_it_works")}
       </h2>
       <div className="grid gap-6 sm:grid-cols-3">
         {STEPS.map((step) => (

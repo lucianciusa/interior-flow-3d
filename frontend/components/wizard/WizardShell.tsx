@@ -13,6 +13,7 @@ import StyleStep from "@/components/wizard/StyleStep";
 import { useConvertAnonLayout, useGenerateLayout, useSaveLayout } from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth";
 import { useWizardStore } from "@/lib/stores/wizard";
+import { useLanguage } from "@/lib/stores/useLanguage";
 import type { Preference, RoomDims, Style, RoomType } from "@/lib/types";
 
 const PHASE_LABELS = ["Type", "Dimensions", "Style", "Preferences"];
@@ -21,6 +22,7 @@ const PHASE_INDEX: Record<string, number> = { step0: 0, step1: 1, step2: 2, step
 type SaveState = "idle" | "saving" | "saved";
 
 export default function WizardShell() {
+  const { t } = useLanguage();
   const phase = useWizardStore((s) => s.phase);
   const roomType = useWizardStore((s) => s.roomType);
   const dims = useWizardStore((s) => s.dims);
@@ -39,7 +41,7 @@ export default function WizardShell() {
   const session = useAuthStore((s) => s.session);
   const router = useRouter();
 
-  const { mutate: generate, isPending } = useGenerateLayout();
+  const { mutateAsync: generateAsync, isPending } = useGenerateLayout();
   const { mutateAsync: convertAnon } = useConvertAnonLayout();
   const { mutateAsync: saveExisting } = useSaveLayout();
 
@@ -52,8 +54,11 @@ export default function WizardShell() {
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [saveError, setSaveError] = useState<string | null>(null);
   const pendingSaveRef = useRef(false);
+  const captureRef = useRef<(() => string) | null>(null);
 
-  const labels = isQuickFlow ? ["Style", "Preferences"] : ["Type", "Dimensions", "Style", "Preferences"];
+  const labels = isQuickFlow 
+    ? [t("style"), t("preferences")] 
+    : [t("type"), t("dimensions"), t("style"), t("preferences")];
   const stepIndex = PHASE_INDEX[phase] ?? 0;
   const displayStepIndex = isQuickFlow ? stepIndex - 2 : stepIndex;
   const totalSteps = labels.length;
@@ -64,24 +69,31 @@ export default function WizardShell() {
     }
   }, [isQuickFlow, phase, setPhase]);
 
-  const handleGenerate = (newSeed?: number) => {
+  const { language } = useLanguage();
+
+  const handleGenerate = async (newSeed?: number) => {
     if (!style) return;
     const useSeed = newSeed ?? Math.floor(Math.random() * 1_000_000);
     setSeed(useSeed);
     setPhase("generating");
     setSaveState("idle");
-    generate(
-      { roomType, ...dims, style, preferences, seed: useSeed },
-      {
-        onSuccess: (data) => {
-          setLayout(data);
-          setPhase("result");
-        },
-        onError: () => {
-          setPhase("step3");
-        },
-      },
-    );
+    
+    try {
+      const data = await generateAsync({
+        roomType,
+        ...dims,
+        style,
+        preferences,
+        seed: useSeed,
+        language,
+      });
+      setLayout(data);
+      setPhase("result");
+    } catch (err) {
+      console.error("Generation failed:", err);
+      // Fallback to step 3 so user isn't stuck
+      setPhase("step3");
+    }
   };
 
   const handleRegenerate = () => {
@@ -97,11 +109,13 @@ export default function WizardShell() {
     setSaveState("saving");
     setSaveError(null);
     try {
+      const screenshot = captureRef.current ? captureRef.current() : null;
       if (roomId && projectId) {
         const result = await saveExisting({
           roomId,
           layout,
           name: "New Layout",
+          thumbnail_url: screenshot,
         });
         setSaveState("saved");
         router.push(
@@ -109,10 +123,12 @@ export default function WizardShell() {
         );
       } else {
         const result = await convertAnon({
-          projectName: "My first project",
-          roomName: "Living room",
+          projectName: t("free_designs_project"),
+          roomName: t("quick_room"),
+          roomType,
           ...dims,
           layout,
+          thumbnail_url: screenshot,
         });
         setSaveState("saved");
         router.push(
@@ -123,7 +139,7 @@ export default function WizardShell() {
       setSaveState("idle");
       setSaveError(e instanceof Error ? e.message : "save failed");
     }
-  }, [layout, style, dims, convertAnon, saveExisting, roomId, projectId, router]);
+  }, [layout, style, dims, roomType, t, convertAnon, saveExisting, roomId, projectId, router]);
 
   const handleSave = () => {
     if (!layout || !style) return;
@@ -132,8 +148,9 @@ export default function WizardShell() {
         window.sessionStorage.setItem(
           "pendingAnonLayout",
           JSON.stringify({
-            projectName: "My first project",
-            roomName: "Living room",
+            projectName: t("free_designs_project"),
+            roomName: t("quick_room"),
+            roomType,
             ...dims,
             layout,
           }),
@@ -172,6 +189,7 @@ export default function WizardShell() {
           onAdjust={handleAdjust}
           onSave={handleSave}
           saveState={saveState}
+          captureRef={captureRef}
         />
         {saveError && (
           <div className="fixed bottom-4 right-4 z-50 rounded-lg bg-destructive px-4 py-2 text-sm text-primary-foreground shadow-lg">
@@ -191,7 +209,7 @@ export default function WizardShell() {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-primary" />
-        <p className="text-sm text-muted-foreground">Designing your room&hellip;</p>
+        <p className="text-sm text-muted-foreground">{t("designing_room")}</p>
       </div>
     );
   }
@@ -226,7 +244,7 @@ export default function WizardShell() {
             value={roomType}
             onChange={(rt: RoomType) => setRoomType(rt)}
             onNext={() => setPhase("step1")}
-            onBack={isTemplateFlow ? handleBackToDashboard : undefined}
+            onBack={handleBackToDashboard}
           />
         )}
         {phase === "step1" && (
