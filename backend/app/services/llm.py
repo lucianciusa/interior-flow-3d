@@ -20,6 +20,19 @@ _SYSTEM_PROMPT_PASS1: str | None = None
 _SYSTEM_PROMPT_PASS2: str | None = None
 
 
+def _extract_json(text: str) -> str:
+    """Strip optional markdown code fences so models that wrap output still parse."""
+    text = text.strip()
+    if text.startswith("```"):
+        lines = text.splitlines()
+        # drop opening fence line and closing fence
+        inner = lines[1:] if lines[0].startswith("```") else lines
+        if inner and inner[-1].strip() == "```":
+            inner = inner[:-1]
+        text = "\n".join(inner).strip()
+    return text
+
+
 def _load_pass1_prompt() -> str:
     global _SYSTEM_PROMPT_PASS1
     if _SYSTEM_PROMPT_PASS1 is None:
@@ -116,11 +129,29 @@ Output JSON matching this schema exactly:
     ]
 
 
+def _split_messages(
+    messages: list[dict[str, Any]],
+) -> tuple[str, list[dict[str, Any]]]:
+    """Split a messages list into (instructions, convo).
+
+    Responses API takes system content as `instructions` and the
+    remaining user/assistant turns as `input`.
+    """
+    instructions = ""
+    convo: list[dict[str, Any]] = []
+    for m in messages:
+        if m["role"] == "system":
+            instructions = m["content"]
+        else:
+            convo.append(m)
+    return instructions, convo
+
+
 def _add_correction(
-    messages: list[dict[str, Any]], bad_json: str, error: str
+    convo: list[dict[str, Any]], bad_json: str, error: str
 ) -> list[dict[str, Any]]:
     return [
-        *messages,
+        *convo,
         {"role": "assistant", "content": bad_json},
         {
             "role": "user",
@@ -133,20 +164,6 @@ def _add_correction(
     ]
 
 
-def _prepare_schema(obj: Any) -> Any:
-    """Recursively prepare schema for OpenAI strict mode."""
-    if isinstance(obj, dict):
-        if obj.get("type") == "object":
-            obj["additionalProperties"] = False
-            # OpenAI strict mode requires ALL properties to be in 'required'
-            if "properties" in obj:
-                obj["required"] = list(obj["properties"].keys())
-        return {k: _prepare_schema(v) for k, v in obj.items()}
-    if isinstance(obj, list):
-        return [_prepare_schema(i) for i in obj]
-    return obj
-
-
 async def _generate_pass1(
     client: AsyncAzureOpenAI,
     req: GenerateLayoutRequest,
@@ -155,26 +172,17 @@ async def _generate_pass1(
     style_prof: StyleProfile,
 ) -> Pass1LLM:
     messages = _build_pass1_messages(req, profile, style_prof)
-    schema = _prepare_schema(Pass1LLM.model_json_schema())
+    instructions, convo = _split_messages(messages)
 
     for attempt in (1, 2):
         try:
-            resp = await client.chat.completions.create(  # type: ignore[call-overload]
+            resp = await client.responses.create(
                 model=settings.AZURE_OPENAI_DEPLOYMENT,
-                messages=messages,
-                temperature=0.7,
-                seed=req.seed,
-                response_format={
-                    "type": "json_schema",
-                    "json_schema": {
-                        "name": "Pass1",
-                        "schema": schema,
-                        "strict": True,
-                    },
-                },
-                timeout=12.0,
+                instructions=instructions,
+                input=convo,  # type: ignore[arg-type]
+                timeout=45.0,
             )
-            raw = resp.choices[0].message.content or ""
+            raw = _extract_json(resp.output_text or "")
             logger.info(
                 "Pass 1 attempt=%d tokens=%d",
                 attempt,
@@ -185,7 +193,7 @@ async def _generate_pass1(
             if attempt == 2:
                 raise LLMValidationError(f"Pass 1 schema mismatch after retry: {e}") from e
             logger.warning("Pass 1 validation failed attempt=1, retrying: %s", e)
-            messages = _add_correction(messages, raw, str(e))
+            convo = _add_correction(convo, raw, str(e))
         except (APIError, BadRequestError) as e:
             logger.error("Pass 1 upstream error attempt=%d: %s", attempt, e)
             raise LLMUpstreamError(str(e)) from e
@@ -205,28 +213,18 @@ async def _generate_pass2_zone(
     profile: RoomTypeProfile,
 ) -> Pass2ZoneLLM:
     messages = _build_pass2_messages(req, zone_id, budget, catalog_items, profile)
-    schema = _prepare_schema(Pass2ZoneLLM.model_json_schema())
+    instructions, convo = _split_messages(messages)
 
     for attempt in (1, 2):
         try:
-            resp = await client.chat.completions.create(  # type: ignore[call-overload]
+            resp = await client.responses.create(
                 model=settings.AZURE_OPENAI_DEPLOYMENT,
-                messages=messages,
-                temperature=0.7,
-                seed=req.seed,
-                response_format={
-                    "type": "json_schema",
-                    "json_schema": {
-                        "name": "Pass2",
-                        "schema": schema,
-                        "strict": True,
-                    },
-                },
-                timeout=12.0,
+                instructions=instructions,
+                input=convo,  # type: ignore[arg-type]
+                timeout=45.0,
             )
-            raw = resp.choices[0].message.content or ""
+            raw = _extract_json(resp.output_text or "")
             data = json.loads(raw)
-            # Inject zone id so items don't lose context
             for item in data.get("items", []):
                 item["zone"] = zone_id
             return Pass2ZoneLLM.model_validate(data)
@@ -234,7 +232,7 @@ async def _generate_pass2_zone(
             if attempt == 2:
                 logger.warning("Zone %s failed after 2 attempts, dropping.", zone_id)
                 return Pass2ZoneLLM(items=[])
-            messages = _add_correction(messages, raw, str(e))
+            convo = _add_correction(convo, raw, str(e))
         except Exception as e:
             logger.warning("Zone %s upstream error, dropping: %s", zone_id, e)
             return Pass2ZoneLLM(items=[])

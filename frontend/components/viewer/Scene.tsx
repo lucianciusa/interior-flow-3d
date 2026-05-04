@@ -44,7 +44,7 @@ export default function Scene({ layout, dims, hideWalls = false, captureRef }: S
         <Canvas
           shadows
           dpr={[1, 2]}
-          gl={{ antialias: true, preserveDrawingBuffer: true, powerPreference: "default", failIfMajorPerformanceCaveat: false }}
+          gl={{ antialias: true, preserveDrawingBuffer: true }}
           onCreated={({ gl }) => configureLoaders(gl)}
           className="h-full w-full"
         >
@@ -60,9 +60,6 @@ export default function Scene({ layout, dims, hideWalls = false, captureRef }: S
           <CameraController3D />
           {captureRef && <CaptureHandler captureRef={captureRef} />}
           <Suspense fallback={null}>
-            {process.env.NEXT_PUBLIC_HDRI_URL && (
-               <Environment files={process.env.NEXT_PUBLIC_HDRI_URL} background={false} />
-            )}
             <Bounds clip observe margin={1.1}>
               <Room dims={dims} palette={layout.palette} hideWalls={hideWalls} />
               {layout.items.map((item) => (

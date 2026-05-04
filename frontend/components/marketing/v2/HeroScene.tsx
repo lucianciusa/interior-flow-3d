@@ -318,7 +318,7 @@ export default function HeroScene() {
       <Canvas
         shadows
         dpr={[1, 2]}
-        gl={{ antialias: true, alpha: true, powerPreference: "default", failIfMajorPerformanceCaveat: false }}
+        gl={{ antialias: true, alpha: true }}
         style={{ width: "100%", height: "100%", display: "block" }}
       >
         <Scene />
