@@ -106,12 +106,15 @@ def test_no_aabb_overlap(catalog_items: list[CatalogItem], living_profile) -> No
     )
     layout = resolve(llm, STD_REQ, catalog_items, living_profile, get_profile(STD_REQ.style))
     placed = layout.items
+    catalog_map = {item.id: item for item in catalog_items}
     for i, a in enumerate(placed):
         for b in placed[i + 1 :]:
+            a_cat = catalog_map[a.catalogId]
+            b_cat = catalog_map[b.catalogId]
             pair = frozenset({a.catalogId, b.catalogId})
             if pair == frozenset({"rug", "coffee_table"}):
                 continue
-            assert not _aabb_overlap(a, b, margin=0.0), (
+            assert not _aabb_overlap(a, b, a_cat, b_cat, margin=0.0), (
                 f"AABB overlap: {a.catalogId}@{a.slot} vs {b.catalogId}@{b.slot}"
             )
 

@@ -6,12 +6,16 @@ import { useState } from "react";
 
 import ResultView from "@/components/result/ResultView";
 import ShareDialog from "@/components/share/ShareDialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetLayout } from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth";
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export default function SavedLayoutPage() {
+  const { t } = useLanguage();
   const params = useParams<{
     projectId: string;
     roomId: string;
@@ -40,7 +44,7 @@ export default function SavedLayoutPage() {
     return (
       <div className="flex min-h-[50vh] items-center justify-center p-6">
         <Link href="/app" className="text-sm underline text-muted-foreground hover:text-foreground">
-          Sign in
+          {t("sign_in")}
         </Link>
       </div>
     );
@@ -66,13 +70,14 @@ export default function SavedLayoutPage() {
       <div className="flex min-h-[50vh] items-center justify-center p-6">
         <div className="max-w-md text-center">
           <h1 className="text-2xl font-semibold tracking-tight font-display text-foreground">
-            {status === 404 ? "Layout not found" : "Something went wrong"}
+            {status === 404 ? t("layout_not_found") : t("something_went_wrong")}
           </h1>
-          <Button asChild className="mt-4">
-            <Link href={`/app/projects/${projectId}/rooms/${roomId}`}>
-              Back to room
-            </Link>
-          </Button>
+          <Link 
+            href={`/app/projects/${projectId}/rooms/${roomId}`}
+            className={cn(buttonVariants({ className: "mt-4" }))}
+          >
+            {t("back")}
+          </Link>
         </div>
       </div>
     );

@@ -25,6 +25,8 @@ async def create_project(
     payload: dict[str, object] = {"user_id": user.id, "name": body.name}
     if body.default_style is not None:
         payload["default_style"] = body.default_style
+    if body.thumbnail_url is not None:
+        payload["thumbnail_url"] = body.thumbnail_url
     try:
         async with SupabaseRest(settings, user.jwt) as sb:
             row = await sb.insert_project(payload)
@@ -117,8 +119,23 @@ async def convert_anon_layout(
     room_id: str | None = None
     try:
         async with SupabaseRest(settings, user.jwt) as sb:
-            project_row = await sb.insert_project({"user_id": user.id, "name": body.projectName})
-            project_id = project_row["id"]
+            # Try to find existing project with this name first (handling both languages)
+            existing_projects = await sb.list_projects()
+            known_free_names = {"Free Designs", "Diseños libres"}
+            target_project = next(
+                (p for p in existing_projects if p["name"] in known_free_names), 
+                None
+            )
+            
+            if target_project:
+                project_id = target_project["id"]
+            else:
+                project_row = await sb.insert_project({
+                    "user_id": user.id, 
+                    "name": body.projectName,
+                    "thumbnail_url": body.thumbnail_url
+                })
+                project_id = project_row["id"]
 
             try:
                 room_row = await sb.insert_room(
@@ -126,15 +143,17 @@ async def convert_anon_layout(
                         "user_id": user.id,
                         "project_id": project_id,
                         "name": body.roomName,
-                        "room_type": "living_room",
+                        "room_type": body.roomType,
                         "width_m": body.width_m,
                         "length_m": body.length_m,
                         "height_m": body.height_m,
+                        "thumbnail_url": body.thumbnail_url,
                     }
                 )
                 room_id = room_row["id"]
             except SupabaseError:
-                if project_id is not None:
+                # Only delete if we just created it
+                if project_id is not None and not target_project:
                     with contextlib.suppress(SupabaseError):
                         await sb.delete_project(project_id)
                 raise
@@ -149,6 +168,7 @@ async def convert_anon_layout(
                         "style": body.layout.style,
                         "layout": body.layout.model_dump(),
                         "seed": body.layout.seed,
+                        "thumbnail_url": body.thumbnail_url,
                         "catalog_version": body.layout.catalogVersion,
                     }
                 )

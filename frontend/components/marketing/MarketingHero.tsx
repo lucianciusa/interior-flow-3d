@@ -5,7 +5,10 @@ import { useReducedMotion } from "framer-motion";
 
 const HeroScene = dynamic(() => import("./HeroScene"), { ssr: false });
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 function HeroFallback() {
+  const { t } = useLanguage();
   return (
     <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted to-background">
       <div className="text-center">
@@ -15,7 +18,7 @@ function HeroFallback() {
             <polyline points="9 22 9 12 15 12 15 22" />
           </svg>
         </div>
-        <p className="text-sm text-muted-foreground">3D preview</p>
+        <p className="text-sm text-muted-foreground">{t("preview_3d")}</p>
       </div>
     </div>
   );

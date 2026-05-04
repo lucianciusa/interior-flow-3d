@@ -43,6 +43,7 @@ class GenerateLayoutRequest(BaseModel):
     style: Style
     preferences: list[Preference] = Field(default_factory=list, max_length=2)
     seed: int | None = None
+    language: str = "en"
 
 
 class Zone(BaseModel):
@@ -139,6 +140,7 @@ class LayoutCreate(BaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=80)
     is_primary: bool = False
     layout: Layout
+    thumbnail_url: str | None = None
 
 
 class LayoutPatch(BaseModel):

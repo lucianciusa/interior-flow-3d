@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/auth";
 import { AccountMenu } from "@/components/shell/AccountMenu";
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/lib/stores/useLanguage";
 
 export function MarketingNav() {
   const session = useAuthStore((s) => s.session);
   const [mounted, setMounted] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => setMounted(true), []);
 
@@ -20,7 +22,7 @@ export function MarketingNav() {
           href="/app"
           className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
-          Dashboard
+          {t("dashboard")}
         </Link>
       )}
       <AccountMenu />

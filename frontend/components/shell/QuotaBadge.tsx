@@ -4,7 +4,10 @@ import { useQuotaStore } from "@/lib/stores/quota";
 import { useAuthStore } from "@/lib/stores/auth";
 import { Lock } from "lucide-react";
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export function QuotaBadge() {
+  const { t } = useLanguage();
   const session = useAuthStore((s) => s.session);
   const ready = useAuthStore((s) => s.ready);
   const { generations, limit } = useQuotaStore();
@@ -14,7 +17,7 @@ export function QuotaBadge() {
   if (session) {
     return (
       <div className="flex h-8 items-center gap-1.5 rounded-full border bg-muted/50 px-3 text-xs font-medium text-muted-foreground shadow-sm">
-        Free plan
+        {t("free_plan")}
       </div>
     );
   }
@@ -24,7 +27,7 @@ export function QuotaBadge() {
   return (
     <div className="flex h-8 items-center gap-2 rounded-full border bg-muted/50 px-3 text-xs font-medium shadow-sm">
       <span className="text-muted-foreground">
-        {remaining} free var{remaining === 1 ? "" : "s"}
+        {remaining} {remaining === 1 ? t("free_var") : t("free_vars")}
       </span>
       <button className="flex h-5 items-center gap-1 rounded-full bg-primary pl-1.5 pr-2 text-[10px] font-semibold text-primary-foreground hover:opacity-90">
         <Lock size={10} className="opacity-80" />

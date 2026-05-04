@@ -14,7 +14,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   
   const isLayoutPage = pathname?.includes("/layouts/");
   const isResultPage = pathname?.includes("/result");
-  const isFullWidthPage = isResultPage || isLayoutPage || phase === "result";
+  const isFullWidthPage = isResultPage || isLayoutPage || (phase === "result" && pathname?.includes("/app/new"));
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-background text-foreground">

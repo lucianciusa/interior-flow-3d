@@ -6,10 +6,15 @@ import { useEffect, useState } from "react";
 import { QuotaBadge } from "./QuotaBadge";
 import { ThemeToggle } from "./ThemeToggle";
 import { AccountMenu } from "./AccountMenu";
+import { useWizardStore } from "@/lib/stores/wizard";
+import { LanguageToggle } from "./LanguageToggle";
+import { useLanguage } from "@/lib/stores/useLanguage";
 
 export function TopToolbar({ isEdgeToEdge }: { isEdgeToEdge: boolean }) {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const reset = useWizardStore((s) => s.reset);
+  const { language, t } = useLanguage();
 
   useEffect(() => setMounted(true), []);
 
@@ -28,12 +33,20 @@ export function TopToolbar({ isEdgeToEdge }: { isEdgeToEdge: boolean }) {
       }`}
     >
       <div className="flex items-center gap-2 text-sm text-muted-foreground font-body">
-        <Link href="/app" className="flex items-center hover:text-foreground transition-colors">
+        <Link 
+          href="/" 
+          onClick={() => reset()}
+          className="flex items-center hover:text-foreground transition-colors"
+        >
           <Home size={16} />
         </Link>
         <ChevronRight size={14} className="opacity-50" />
-        <Link href="/app" className="hover:text-foreground transition-colors">
-          Dashboard
+        <Link 
+          href="/app" 
+          onClick={() => reset()}
+          className="hover:text-foreground transition-colors"
+        >
+          {mounted ? t("dashboard") : "Dashboard"}
         </Link>
 
         {projectId && (
@@ -43,7 +56,7 @@ export function TopToolbar({ isEdgeToEdge }: { isEdgeToEdge: boolean }) {
               href={`/app/projects/${projectId}`} 
               className={`hover:text-foreground transition-colors ${!roomId ? "font-semibold text-foreground" : ""}`}
             >
-              Project
+              {mounted ? t("projects") : "Projects"}
             </Link>
           </>
         )}
@@ -55,7 +68,7 @@ export function TopToolbar({ isEdgeToEdge }: { isEdgeToEdge: boolean }) {
               href={`/app/projects/${projectId}/rooms/${roomId}`} 
               className={`hover:text-foreground transition-colors ${!layoutId ? "font-semibold text-foreground" : ""}`}
             >
-              Room
+              {mounted ? t("rooms") : "Rooms"}
             </Link>
           </>
         )}
@@ -64,7 +77,7 @@ export function TopToolbar({ isEdgeToEdge }: { isEdgeToEdge: boolean }) {
           <>
             <ChevronRight size={14} className="opacity-50" />
             <span className="font-semibold text-foreground tracking-tight font-display">
-              Layout
+              {mounted ? t("layouts") : "Layouts"}
             </span>
           </>
         )}
@@ -74,6 +87,7 @@ export function TopToolbar({ isEdgeToEdge }: { isEdgeToEdge: boolean }) {
         {mounted && (
           <>
             <QuotaBadge />
+            <LanguageToggle />
             <ThemeToggle />
             <AccountMenu />
           </>

@@ -8,13 +8,16 @@ import LoginModal from "@/components/auth/LoginModal";
 import EmptyProjects from "@/components/projects/EmptyProjects";
 import NewProjectDialog from "@/components/projects/NewProjectDialog";
 import ProjectGrid from "@/components/projects/ProjectGrid";
+import { StyleGallery } from "@/components/templates/StyleGallery";
 import { TemplateGallery } from "@/components/templates/TemplateGallery";
 import { useConvertAnonLayout, useListProjects, useDeleteProject } from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useWizardStore } from "@/lib/stores/wizard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLanguage } from "@/lib/stores/useLanguage";
 import type { ConversionRequest } from "@/lib/types";
 
 const PENDING_KEY = "pendingAnonLayout";
@@ -31,6 +34,7 @@ function readPending(): ConversionRequest | null {
 }
 
 export default function DashboardPage() {
+  const { t } = useLanguage();
   const session = useAuthStore((s) => s.session);
   const ready = useAuthStore((s) => s.ready);
   const router = useRouter();
@@ -99,7 +103,10 @@ export default function DashboardPage() {
     }
   };
 
-  if (!ready) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!ready || !mounted) {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="space-y-4 w-full max-w-md">
@@ -119,18 +126,21 @@ export default function DashboardPage() {
             Interior Flow 3D
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Generate a 3D interior layout in seconds. Sign in to save your work.
+            {t("auth_subtitle")}
           </p>
           <div className="mt-6 flex flex-col items-center gap-3">
-            <Button asChild>
-              <Link href="/app/new">Try without signing in</Link>
-            </Button>
+            <Link 
+              href="/app/new" 
+              className={cn(buttonVariants())}
+            >
+              {t("try_no_signup")}
+            </Link>
             <button
               type="button"
               onClick={() => setLoginOpen(true)}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Sign in
+              {t("sign_in")}
             </button>
           </div>
         </div>
@@ -139,19 +149,23 @@ export default function DashboardPage() {
     );
   }
 
+  const freeDesignsNames = [t("free_designs_project"), "Free Designs", "Diseños libres"];
+  const quickProjects = data?.filter(p => freeDesignsNames.includes(p.name)) || [];
+  const regularProjects = data?.filter(p => !freeDesignsNames.includes(p.name)) || [];
+
   return (
     <div className="w-full">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight font-display text-foreground">
-            Projects
+            {t("projects")}
           </h1>
-          {data && data.length > 0 && (
+          {regularProjects.length > 0 && (
             <button
               onClick={toggleAll}
               className="text-xs text-muted-foreground hover:text-primary transition-colors"
             >
-              {selectedIds.size === data.length ? "Deselect all" : "Select all"}
+              {selectedIds.size === regularProjects.length ? t("deselect_all") : t("select_all")}
             </button>
           )}
         </div>
@@ -162,24 +176,25 @@ export default function DashboardPage() {
               size="sm"
               onClick={() => setBulkConfirmOpen(true)}
             >
-              Delete Selected ({selectedIds.size})
+              {t("delete_selected")} ({selectedIds.size})
             </Button>
           )}
           <Button variant="outline" size="sm" onClick={() => {
             useWizardStore.getState().reset();
+            useWizardStore.getState().setIsTemplateFlow(true);
             router.push("/app/new");
           }}>
-            Quick generate
+            {t("quick_generate")}
           </Button>
           <Button size="sm" onClick={() => setNewOpen(true)}>
-            + New project
+            + {t("new_project")}
           </Button>
         </div>
       </div>
 
       {convertError && (
         <div className="mb-4 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-2 text-sm text-destructive">
-          Could not save your generated layout: {convertError}
+          {convertError}
         </div>
       )}
 
@@ -192,29 +207,53 @@ export default function DashboardPage() {
       )}
       {isError && (
         <p className="text-sm text-destructive">
-          Could not load projects: {error instanceof Error ? error.message : "error"}
+          {error instanceof Error ? error.message : "error"}
         </p>
       )}
-      {!isLoading && !isError && data && data.length === 0 && (
+      
+      {!isLoading && !isError && regularProjects.length === 0 && quickProjects.length === 0 && (
         <EmptyProjects onCreate={() => setNewOpen(true)} />
       )}
-      {!isLoading && !isError && data && data.length > 0 && (
+
+      {!isLoading && !isError && regularProjects.length > 0 && (
         <ProjectGrid 
-          projects={data} 
+          projects={regularProjects} 
           selectedIds={selectedIds}
           onToggle={toggleOne}
         />
       )}
 
+      {/* Quick Generations Section */}
+      {!isLoading && !isError && quickProjects.length > 0 && (
+        <div className="mt-12">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold tracking-tight font-display text-foreground">
+              {t("quick_generations")}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {t("quick_generate_desc")}
+            </p>
+          </div>
+          <ProjectGrid 
+            projects={quickProjects} 
+            selectedIds={selectedIds}
+            onToggle={toggleOne}
+          />
+        </div>
+      )}
+
       <ConfirmDialog
         open={bulkConfirmOpen}
         onOpenChange={setBulkConfirmOpen}
-        title="Delete Multiple Projects"
-        description={`Are you sure you want to delete ${selectedIds.size} projects? This action cannot be undone.`}
+        title={t("delete_multiple_title")}
+        description={t("delete_multiple_desc")}
         onConfirm={deleteSelected}
         isLoading={isDeletingBulk}
       />
 
+      <div className="my-12 border-t border-border" />
+      <StyleGallery />
+      <div className="my-12 border-t border-border" />
       <TemplateGallery />
 
       <NewProjectDialog open={newOpen} onOpenChange={setNewOpen} />

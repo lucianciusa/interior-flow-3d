@@ -187,11 +187,15 @@
       ],
       "center": [
         "surface",
-        "rug"
+        "rug",
+        "seating",
+        "upholstered"
       ],
       "center_front": [
         "surface",
-        "rug"
+        "rug",
+        "seating",
+        "upholstered"
       ],
       "entry": [
         "accent",
@@ -398,7 +402,8 @@
         "seating"
       ],
       "bed_center": [
-        "bed"
+        "bed",
+        "rug"
       ],
       "entry": [
         "accent",
@@ -597,7 +602,8 @@
       ],
       "table_center": [
         "dining",
-        "surface"
+        "surface",
+        "rug"
       ],
       "entry": [
         "accent",
@@ -651,6 +657,7 @@
       "corner_SE",
       "corner_SW",
       "desk_anchor",
+      "desk_chair",
       "center",
       "entry"
     ],
@@ -796,10 +803,20 @@
         "storage"
       ],
       "desk_anchor": [
-        "desk"
+        "desk",
+        "rug",
+        "lighting",
+        "accent",
+        "chair",
+        "seating"
+      ],
+      "desk_chair": [
+        "chair",
+        "seating",
+        "desk",
+        "lighting"
       ],
       "center": [
-        "chair",
         "surface",
         "rug"
       ],

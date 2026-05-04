@@ -4,13 +4,16 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { EmptyProjectsIllustration } from "@/components/ui/illustrations/EmptyProjects";
 import { Button } from "@/components/ui/button";
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export default function EmptyProjects({ onCreate }: { onCreate: () => void }) {
+  const { t } = useLanguage();
   return (
     <EmptyState
       illustration={<EmptyProjectsIllustration />}
-      title="No tienes proyectos guardados"
-      description="Un proyecto agrupa tus habitaciones y variantes de diseño. Crea uno para empezar o elige una plantilla a continuación."
-      cta={<Button onClick={onCreate}>Crear tu primer proyecto</Button>}
+      title={t("no_projects_yet")}
+      description={t("create_first_project")}
+      cta={<Button onClick={onCreate}>{t("new_project_btn")}</Button>}
     />
   );
 }

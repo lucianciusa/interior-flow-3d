@@ -31,7 +31,10 @@ type ResultViewProps = {
   onShare?: () => void;
   onCompare?: () => void;
   saveState?: "idle" | "saving" | "saved";
+  captureRef?: React.MutableRefObject<(() => string) | null>;
 };
+
+import { useLanguage } from "@/lib/stores/useLanguage";
 
 export default function ResultView({
   roomType,
@@ -47,7 +50,9 @@ export default function ResultView({
   onShare,
   onCompare,
   saveState,
+  captureRef,
 }: ResultViewProps) {
+  const { t } = useLanguage();
   const selected = useViewerStore((s) => s.selectedItem);
   const setSelected = useViewerStore((s) => s.setSelectedItem);
   const [swapOpen, setSwapOpen] = useState(false);
@@ -75,7 +80,7 @@ export default function ResultView({
               className="bg-background border-border shadow-sm h-8 px-3"
               onClick={() => setHideWalls(!hideWalls)}
             >
-              {hideWalls ? "Show walls" : "Hide walls"}
+              {hideWalls ? t("show_walls") : t("hide_walls")}
             </Button>
           </div>
         </div>
@@ -87,7 +92,7 @@ export default function ResultView({
           }
         >
           <div className="fixed inset-0 z-0 pointer-events-auto">
-            <Scene layout={layout} dims={dims} hideWalls={hideWalls} />
+            <Scene layout={layout} dims={dims} hideWalls={hideWalls} captureRef={captureRef} />
           </div>
         </Suspense>
         <ItemPopover />
@@ -98,7 +103,7 @@ export default function ResultView({
               onClick={() => setSwapOpen((v) => !v)}
               className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 pointer-events-auto"
             >
-              {swapOpen ? "Hide replacements" : "Replace this item"}
+              {swapOpen ? t("hide_replacements") : t("replace_item")}
             </Button>
             {swapOpen && layoutId && (
                 <div className="pointer-events-auto">
@@ -119,7 +124,7 @@ export default function ResultView({
           <button
             onClick={() => setShowSidebar(!showSidebar)}
             className="pointer-events-auto absolute top-1/2 -translate-y-1/2 right-full z-30 flex h-16 w-6 items-center justify-center rounded-l-md border border-r-0 bg-background shadow-sm transition-all hover:bg-muted"
-            title={showSidebar ? "Hide Layout Info" : "Show Layout Info"}
+            title={showSidebar ? t("hide_layout_info") : t("show_layout_info")}
           >
             {showSidebar ? (
               <ChevronRight size={16} className="text-muted-foreground" />

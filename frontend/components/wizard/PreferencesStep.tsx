@@ -11,10 +11,12 @@ type PreferencesStepProps = {
   isGenerating: boolean;
 };
 
-const PREFERENCES: ReadonlyArray<{ id: Preference; label: string }> = [
-  { id: "more_seating", label: "More seating" },
-  { id: "more_open_space", label: "More open space" },
-  { id: "more_storage", label: "More storage" },
+import { useLanguage } from "@/lib/stores/useLanguage";
+
+const PREFERENCES: ReadonlyArray<{ id: Preference }> = [
+  { id: "more_seating" },
+  { id: "more_open_space" },
+  { id: "more_storage" },
 ];
 
 export default function PreferencesStep({
@@ -24,6 +26,7 @@ export default function PreferencesStep({
   onBack,
   isGenerating,
 }: PreferencesStepProps) {
+  const { t } = useLanguage();
   const toggle = (pref: Preference) => {
     if (value.includes(pref)) {
       onChange(value.filter((p) => p !== pref));
@@ -35,9 +38,9 @@ export default function PreferencesStep({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-xl font-semibold tracking-tight font-display text-foreground">Any preferences?</h2>
+        <h2 className="text-xl font-semibold tracking-tight font-display text-foreground">{t("any_preferences")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Pick up to 2. Skip to let the AI decide.
+          {t("preferences_desc")}
         </p>
       </div>
       <fieldset>
@@ -62,7 +65,7 @@ export default function PreferencesStep({
                   isDisabled && "cursor-not-allowed opacity-40",
                 )}
               >
-                {p.label}
+                {t(p.id)}
               </button>
             );
           })}
@@ -70,10 +73,10 @@ export default function PreferencesStep({
       </fieldset>
       <div className="flex justify-between items-center mt-2">
         <Button variant="ghost" onClick={onBack}>
-          Back
+          {t("back")}
         </Button>
         <Button onClick={onGenerate} disabled={isGenerating}>
-          {isGenerating ? "Generating\u2026" : "Generate"}
+          {isGenerating ? t("generating") : t("generate")}
         </Button>
       </div>
     </div>

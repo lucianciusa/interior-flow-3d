@@ -8,6 +8,8 @@ import { useDeleteRoom } from "@/lib/api";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import type { RoomRecord } from "@/lib/types";
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+
 export default function RoomCard({
   room,
   projectId,
@@ -19,6 +21,7 @@ export default function RoomCard({
   selected?: boolean;
   onSelect?: (val: boolean) => void;
 }) {
+  const { t } = useLanguage();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const { mutateAsync: deleteRoom, isPending } = useDeleteRoom();
 
@@ -31,6 +34,15 @@ export default function RoomCard({
     }
   };
 
+  const ROOM_FALLBACKS: Record<string, string> = {
+    living_room: "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&q=80&w=800",
+    bedroom: "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&q=80&w=800",
+    dining_room: "https://images.unsplash.com/photo-1617806118233-f8e137453f9c?auto=format&fit=crop&q=80&w=800",
+    home_office: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800",
+  };
+
+  const fallback = ROOM_FALLBACKS[room.room_type] || ROOM_FALLBACKS.living_room;
+
   return (
     <>
       <div className="relative group">
@@ -38,7 +50,13 @@ export default function RoomCard({
           href={`/app/projects/${projectId}/rooms/${room.id}`}
           className="block overflow-hidden rounded-xl border border-border transition hover:border-ring hover:shadow-md"
         >
-          <div className="aspect-[3/2] w-full bg-gradient-to-br from-muted to-muted/50" />
+          <div className="aspect-[3/2] w-full bg-muted overflow-hidden">
+            <img 
+              src={fallback} 
+              alt={room.name} 
+              className="h-full w-full object-cover transition-transform group-hover:scale-105" 
+            />
+          </div>
           <div className="p-4">
             <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
               {room.name}
@@ -46,7 +64,7 @@ export default function RoomCard({
             <div className="text-xs text-muted-foreground">
               {room.width_m.toFixed(1)} × {room.length_m.toFixed(1)} m
               {" · "}
-              {room.room_type.replace(/_/g, " ")}
+              {t(room.room_type || "none")}
             </div>
           </div>
         </Link>
@@ -78,8 +96,8 @@ export default function RoomCard({
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title="Delete Room"
-        description={`Are you sure you want to delete "${room.name}"? This will permanently remove all layouts within this room.`}
+        title={t("delete_room")}
+        description={t("delete_room_desc").replace("${name}", room.name)}
         onConfirm={handleDelete}
         isLoading={isPending}
       />

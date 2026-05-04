@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo } from "react";
 import * as THREE from "three";
 import { Canvas, useThree } from "@react-three/fiber";
-import { Bounds, OrbitControls, PerspectiveCamera, Environment, Instances, Instance, useGLTF } from "@react-three/drei";
+import { Bounds, OrbitControls, PerspectiveCamera, Environment, useGLTF } from "@react-three/drei";
 
 import { configureLoaders } from "@/lib/loaders";
 import { CameraController3D } from "@/components/viewer/CameraPresets";
@@ -15,9 +15,11 @@ type SceneProps = {
   layout: Layout;
   dims: RoomDims;
   hideWalls?: boolean;
+  captureRef?: React.MutableRefObject<(() => string) | null>;
 };
 
-export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
+export default function Scene({ layout, dims, hideWalls = false, captureRef }: SceneProps) {
+  // Preload models for faster rendering
   useEffect(() => {
     layout.items.forEach((item) => {
       if (!item.model.startsWith("primitive:")) {
@@ -26,18 +28,12 @@ export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
     });
   }, [layout.items]);
 
-  const { instanceGroups, individualItems } = useMemo(() => {
-    const instanceGroups: [string, any[]][] = [];
-    const individualItems = layout.items;
-
-    return { instanceGroups, individualItems };
-  }, [layout]);
 
   return (
     <Canvas
       shadows
       dpr={[1, 2]}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
+      gl={{ antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance" }}
       onCreated={({ gl }) => configureLoaders(gl)}
       className="h-full w-full"
     >
@@ -51,22 +47,31 @@ export default function Scene({ layout, dims, hideWalls = false }: SceneProps) {
         shadow-mapSize={[2048, 2048]}
       />
       <CameraController3D />
+      {captureRef && <CaptureHandler captureRef={captureRef} />}
       <Suspense fallback={null}>
         {process.env.NEXT_PUBLIC_HDRI_URL && (
            <Environment files={process.env.NEXT_PUBLIC_HDRI_URL} background={false} />
         )}
         <Bounds clip observe margin={1.1}>
           <Room dims={dims} palette={layout.palette} hideWalls={hideWalls} />
-          {individualItems.map((item) => (
+          {layout.items.map((item) => (
             <Furniture key={`${item.catalogId}-${item.slot}`} item={item} />
-          ))}
-          {instanceGroups.map(([model, items]) => (
-            <InstanceGroup key={model} model={model} items={items} />
           ))}
         </Bounds>
       </Suspense>
     </Canvas>
   );
+}
+
+function CaptureHandler({ captureRef }: { captureRef: React.MutableRefObject<(() => string) | null> }) {
+  const { gl, scene, camera } = useThree();
+  useEffect(() => {
+    captureRef.current = () => {
+      gl.render(scene, camera);
+      return gl.domElement.toDataURL("image/webp", 0.5);
+    };
+  }, [gl, scene, camera, captureRef]);
+  return null;
 }
 
 function SceneControls() {
@@ -86,33 +91,3 @@ function SceneControls() {
   );
 }
 
-function InstanceGroup({ model, items }: { model: string; items: any[] }) {
-  const { scene } = useGLTF(model);
-  const clonedScene = useMemo(() => {
-    const clone = scene.clone();
-    clone.traverse((obj: any) => {
-      if (obj.isMesh) {
-        if (!obj.geometry) {
-          console.error(`InstanceGroup: Mesh "${obj.name}" in model ${model} has no geometry. Providing fallback.`);
-          obj.geometry = new THREE.BufferGeometry();
-        }
-        obj.castShadow = true;
-        obj.receiveShadow = true;
-      }
-    });
-    return clone;
-  }, [scene, model]);
-  
-  return (
-    <Instances range={items.length}>
-      <primitive object={clonedScene} />
-      {items.map((item, i) => (
-        <Instance
-          key={`${item.catalogId}-${item.slot}`}
-          position={item.position}
-          rotation={[0, item.rotation_y, 0]}
-        />
-      ))}
-    </Instances>
-  );
-}

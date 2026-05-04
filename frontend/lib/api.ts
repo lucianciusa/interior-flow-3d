@@ -37,17 +37,28 @@ export class ApiError extends Error {
 export async function authedFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
-  const res = await fetch(`${API}${path}`, {
-    ...init,
-    headers: {
-      "content-type": "application/json",
-      ...(token ? { authorization: `Bearer ${token}` } : {}),
-      ...init?.headers,
-    },
-  });
-  if (!res.ok) throw new ApiError(res.status, await res.text());
-  if (res.status === 204) return undefined as T;
-  return res.json();
+  
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
+  try {
+    const res = await fetch(`${API}${path}`, {
+      ...init,
+      signal: controller.signal,
+      headers: {
+        "content-type": "application/json",
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
+        ...init?.headers,
+      },
+    });
+    clearTimeout(id);
+    if (!res.ok) throw new ApiError(res.status, await res.text());
+    if (res.status === 204) return undefined as T;
+    return res.json();
+  } catch (err) {
+    clearTimeout(id);
+    throw err;
+  }
 }
 
 export async function publicFetch<T>(path: string): Promise<T> {

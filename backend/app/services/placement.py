@@ -22,7 +22,9 @@ DROP_PRIORITY: dict[str, int] = {
     "coffee_table": 6,
     "tv_stand": 7,
     "sofa_3seat": 8,
-    "rug": 9,
+    "loveseat": 8,
+    "sectional_sofa": 9,
+    "rug": 10,
     # Bedroom
     "bedside_lamp": 1,
     "accent_chair": 2,
@@ -58,6 +60,9 @@ COOCCUPY_ALLOW: set[frozenset[str]] = {
     frozenset({"bed_double", "nightstand"}),
     frozenset({"bed_queen", "nightstand"}),
     frozenset({"bed_single", "nightstand"}),
+    frozenset({"desk", "chair"}),
+    frozenset({"desk", "seating"}),
+    frozenset({"desk", "lighting"}),
 }
 
 SLOT_KINDS: dict[str, str] = {
@@ -112,12 +117,35 @@ def _half_extents(item: ResolvedItem) -> tuple[float, float]:
     return r, r
 
 
-def _aabb_overlap(a: ResolvedItem, b: ResolvedItem, margin: float = 0.05) -> bool:
+def _aabb_overlap(
+    a: ResolvedItem, 
+    b: ResolvedItem, 
+    a_cat: CatalogItem, 
+    b_cat: CatalogItem,
+    margin: float = 0.05
+) -> bool:
     ahx, ahz = _half_extents(a)
     bhx, bhz = _half_extents(b)
     ax, _, az = a.position
     bx, _, bz = b.position
-    return abs(ax - bx) < (ahx + bhx + margin) and abs(az - bz) < (ahz + bhz + margin)
+
+    # 1. Base buffer: prevent items from being within 10cm of each other
+    # For large items or seating, increase to 40cm to allow for "walking space"
+    dynamic_margin = 0.1
+    if ("large" in a_cat.tags or "seating" in a_cat.tags) and \
+       ("large" in b_cat.tags or "seating" in b_cat.tags):
+        dynamic_margin = 0.4
+    
+    # 2. Specific Sofa-Table separation
+    # If one is seating and other is surface (table), ensure they aren't touching
+    if ("seating" in a_cat.tags and "surface" in b_cat.tags) or \
+       ("surface" in a_cat.tags and "seating" in b_cat.tags):
+        dynamic_margin = 0.35
+
+    overlap_x = abs(ax - bx) < (ahx + bhx + dynamic_margin)
+    overlap_z = abs(az - bz) < (ahz + bhz + dynamic_margin)
+    
+    return overlap_x and overlap_z
 
 
 def _wall_prefix(slot: str) -> str | None:
@@ -143,6 +171,7 @@ def _try_place(
         w=catalog_item.footprint.w,
         d=catalog_item.footprint.d,
         h=catalog_item.footprint.h,
+        tags=catalog_item.tags,
     )
     transform = resolve_slot(slot, room, fp, item.facing, t_override)
     candidate = ResolvedItem(
@@ -156,27 +185,86 @@ def _try_place(
         footprint={"w": fp.w, "d": fp.d, "h": fp.h},
         model=catalog_item.model,
     )
+    # 1. Room boundary check — ensure item fits inside walls
+    hx, hz = _half_extents(candidate)
+    cx, _, cz = candidate.position
+    # Allow 1cm tolerance for rounding
+    if (abs(cx) + hx > room.width_m / 2 + 0.01) or (abs(cz) + hz > room.length_m / 2 + 0.01):
+        return "OUT_OF_BOUNDS"
+
     for existing in placed:
-        # 1. Exact same item in same slot — allow (redundant LLM output)
-        if candidate.catalogId == existing.catalogId and candidate.slot == existing.slot:
-            continue
-
-        # 2. Hardcoded co-occupancy rules
-        pair = frozenset({candidate.catalogId, existing.catalogId})
-        if pair in COOCCUPY_ALLOW and candidate.slot == existing.slot:
-            continue
-
-        # 3. Tag-based co-occupancy (e.g. lamps on tables, rugs under everything)
         existing_item = catalog_map.get(existing.catalogId)
-        if existing_item:
-            c_tags = set(catalog_item.tags)
-            e_tags = set(existing_item.tags)
-            if (c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS):
-                continue
+        if not existing_item:
+            continue
 
-        if _aabb_overlap(candidate, existing, margin=margin):
-            return None
+        # 2. Exact same item in same slot — drop as redundant
+        if candidate.catalogId == existing.catalogId and candidate.slot == existing.slot:
+            return "DUPLICATE_ITEM"
+
+        # 2b. Redundant twins in same zone (e.g. two floor lamps)
+        # Allow multiples for chairs, stools, or if specifically allowed
+        if candidate.catalogId == existing.catalogId and candidate.zone == existing.zone:
+            if "chair" not in catalog_item.tags and "stool" not in catalog_item.tags:
+                return "REDUNDANT_ZONE_ITEM"
+
+        # 3. Hero item exclusivity (e.g., only one bed per layout)
+        hero_tags = {"bed", "seating", "dining"}
+        c_hero = set(catalog_item.tags) & hero_tags
+        e_hero = set(existing_item.tags) & hero_tags
+        if c_hero and e_hero and c_hero == e_hero:
+            # For seating, only enforce exclusivity on LARGE items (sofas)
+            if "seating" in c_hero:
+                if "large" in catalog_item.tags and "large" in existing_item.tags:
+                    return "HERO_COLLISION"
+            else:
+                if "chair" not in catalog_item.tags and "chair" not in existing_item.tags:
+                    return "HERO_COLLISION"
+
+        # 4. Hardcoded co-occupancy rules (Tag based)
+        can_ignore = False
+        c_tags = set(catalog_item.tags)
+        e_tags = set(existing_item.tags)
+        for allowed in COOCCUPY_ALLOW:
+            if any(t in c_tags for t in allowed) and any(t in e_tags for t in allowed):
+                can_ignore = True
+                break
+        if can_ignore:
+            continue
+
+        # 5. Tag-based co-occupancy (Rugs only for now)
+        c_tags = set(catalog_item.tags)
+        e_tags = set(existing_item.tags)
+        if "rug" in c_tags or "rug" in e_tags:
+            continue
+
+        if _aabb_overlap(candidate, existing, catalog_item, existing_item, margin=margin):
+            return "AABB_COLLISION"
+            
     return candidate
+
+
+_MSGS = {
+    "en": {
+        "unknown_id": "Unknown catalogId: {id!r} — dropped",
+        "slot_invalid": "Slot {slot!r} not in room type {type!r} — dropped",
+        "item_not_allowed": "Item {id!r} not allowed in room type {type!r} — dropped",
+        "tags_not_accepted": "Item {id!r} tags {tags!r} not accepted by slot {slot!r} — dropped",
+        "occupied": "Dropped {id!r}: slot {slot!r} occupied by {other!r}",
+        "replaced": "Dropped {other!r}: replaced by higher-priority {id!r} in slot {slot!r}",
+        "collision": "Dropped {id!r}: {reason} at {slot!r}",
+        "placement_invalid": "Item {id!r} placement in a {kind} slot is not allowed — dropped",
+    },
+    "es": {
+        "unknown_id": "CatalogId desconocido: {id!r} — descartado",
+        "slot_invalid": "El espacio {slot!r} no es válido para {type!r} — descartado",
+        "item_not_allowed": "El mueble {id!r} no está permitido en {type!r} — descartado",
+        "tags_not_accepted": "Las etiquetas de {id!r} ({tags!r}) no son aceptadas por {slot!r} — descartado",
+        "occupied": "Descartado {id!r}: el espacio {slot!r} está ocupado por {other!r}",
+        "replaced": "Descartado {other!r}: reemplazado por {id!r} (prioridad mayor) en {slot!r}",
+        "collision": "Descartado {id!r}: {reason} en {slot!r}",
+        "placement_invalid": "El mueble {id!r} no está permitido en un espacio de tipo {kind} — descartado",
+    }
+}
 
 
 def resolve(
@@ -186,6 +274,9 @@ def resolve(
     profile: RoomTypeProfile,
     style_prof: StyleProfile,
 ) -> Layout:
+    lang = request.language if request.language in _MSGS else "en"
+    m = _MSGS[lang]
+
     catalog_map: dict[str, CatalogItem] = {item.id: item for item in catalog}
     warnings: list[str] = []
     valid: list[LayoutItemLLM] = []
@@ -194,23 +285,26 @@ def resolve(
     # Step 1 + 2: catalogId + room-type slot validity + tag intersection
     for item in llm.items:
         if item.catalogId not in catalog_map:
-            warnings.append(f"Unknown catalogId: {item.catalogId!r} — dropped")
+            warnings.append(m["unknown_id"].format(id=item.catalogId))
             continue
         if item.slot not in instances:
-            warnings.append(f"Slot {item.slot!r} not in room type {request.roomType!r} — dropped")
+            warnings.append(m["slot_invalid"].format(slot=item.slot, type=request.roomType))
             continue
         catalog_item = catalog_map[item.catalogId]
         if request.roomType not in catalog_item.room_types:
-            warnings.append(
-                f"Item {item.catalogId!r} not allowed in room type {request.roomType!r} — dropped"
-            )
+            warnings.append(m["item_not_allowed"].format(id=item.catalogId, type=request.roomType))
             continue
+        # 2. Check slot kind (wall, corner, floor) vs item placement rules
+        slot_kind = SLOT_KINDS.get(item.slot)
+        allowed_kinds = catalog_item.placement.surfaces
+        if slot_kind not in allowed_kinds:
+            warnings.append(m["placement_invalid"].format(id=item.catalogId, kind=slot_kind))
+            continue
+
+        # 3. Check tag intersection
         accepted = profile.slot_accepted_tags.get(item.slot, [])
         if not (set(catalog_item.tags) & set(accepted)):
-            warnings.append(
-                f"Item {item.catalogId!r} tags {catalog_item.tags!r} not accepted "
-                f"by slot {item.slot!r} (accepted: {accepted}) — dropped"
-            )
+            warnings.append(m["tags_not_accepted"].format(id=item.catalogId, tags=catalog_item.tags, slot=item.slot))
             continue
         valid.append(item)
 
@@ -239,14 +333,19 @@ def resolve(
             if item.catalogId == existing_id:
                 can_cooccupy = True
             else:
-                pair = frozenset({item.catalogId, existing_id})
-                if pair in COOCCUPY_ALLOW:
-                    can_cooccupy = True
-                else:
-                    existing_item = catalog_map.get(existing_id)
-                    if existing_item:
-                        c_tags = set(catalog_item.tags)
-                        e_tags = set(existing_item.tags)
+                existing_item = catalog_map.get(existing_id)
+                if existing_item:
+                    c_tags = set(catalog_item.tags)
+                    e_tags = set(existing_item.tags)
+                    
+                    # 1. Check hardcoded tag pairs in COOCCUPY_ALLOW
+                    for allowed in COOCCUPY_ALLOW:
+                        if any(t in c_tags for t in allowed) and any(t in e_tags for t in allowed):
+                            can_cooccupy = True
+                            break
+                    
+                    # 2. Check general co-occupancy tags
+                    if not can_cooccupy:
                         if (c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS):
                             can_cooccupy = True
 
@@ -256,9 +355,9 @@ def resolve(
                 nudged = False
                 if prefix:
                     for t_alt in _NUDGE_T:
-                        result = _try_place(item, slot, t_alt, room, catalog_item, placed, catalog_map, margin)
-                        if result is not None:
-                            placed.append(result)
+                        res = _try_place(item, slot, t_alt, room, catalog_item, placed, catalog_map, margin)
+                        if isinstance(res, ResolvedItem):
+                            placed.append(res)
                             nudged = True
                             break
                 if not nudged:
@@ -266,23 +365,18 @@ def resolve(
                     new_pri = DROP_PRIORITY.get(item.catalogId, 0)
                     occ_pri = DROP_PRIORITY.get(existing_id, 0)
                     if new_pri <= occ_pri:
-                        warnings.append(
-                            f"Dropped {item.catalogId!r}: slot {slot!r} occupied by {existing_id!r}"
-                        )
+                        warnings.append(m["occupied"].format(id=item.catalogId, slot=slot, other=existing_id))
                         continue # Skip to next item
                     else:
                         # Remove existing from placed, replace with new
                         placed = [p for p in placed if p.catalogId != existing_id]
                         del occupied[slot]
-                        warnings.append(
-                            f"Dropped {existing_id!r}: replaced by higher-priority "
-                            f"{item.catalogId!r} in slot {slot!r}"
-                        )
+                        warnings.append(m["replaced"].format(other=existing_id, id=item.catalogId, slot=slot))
                         # Fall through to step 5-6
 
         # Step 5–6: resolve + AABB check
         result = _try_place(item, slot, None, room, catalog_item, placed, catalog_map, margin)
-        if result is not None:
+        if isinstance(result, ResolvedItem):
             placed.append(result)
             occupied[slot] = item.catalogId
         else:
@@ -291,13 +385,14 @@ def resolve(
             nudged = False
             if prefix:
                 for t_alt in _NUDGE_T:
-                    result = _try_place(item, slot, t_alt, room, catalog_item, placed, catalog_map, margin)
-                    if result is not None:
-                        placed.append(result)
+                    res = _try_place(item, slot, t_alt, room, catalog_item, placed, catalog_map, margin)
+                    if isinstance(res, ResolvedItem):
+                        placed.append(res)
                         nudged = True
                         break
             if not nudged:
-                warnings.append(f"Dropped {item.catalogId!r}: AABB collision at {slot!r}")
+                reason = result if isinstance(result, str) else "UNKNOWN_COLLISION"
+                warnings.append(m["collision"].format(id=item.catalogId, reason=reason, slot=slot))
 
     return Layout(
         style=llm.style,

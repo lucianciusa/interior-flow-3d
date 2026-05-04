@@ -11,6 +11,8 @@ type WizardStore = {
   preferences: Preference[];
   layout: Layout | null;
   seed: number | null;
+  isTemplateFlow: boolean;
+  setIsTemplateFlow: (val: boolean) => void;
   setPhase: (phase: WizardPhase) => void;
   setRoomType: (roomType: RoomType) => void;
   setDims: (dims: RoomDims) => void;
@@ -31,6 +33,8 @@ export const useWizardStore = create<WizardStore>((set) => ({
   preferences: [],
   layout: null,
   seed: null,
+  isTemplateFlow: false,
+  setIsTemplateFlow: (val) => set({ isTemplateFlow: val }),
   setPhase: (phase) => set({ phase }),
   setRoomType: (roomType) => set({ roomType }),
   setDims: (dims) => set({ dims }),
@@ -47,5 +51,6 @@ export const useWizardStore = create<WizardStore>((set) => ({
       layout: null,
       seed: null,
       dims: DEFAULT_DIMS,
+      isTemplateFlow: false,
     }),
 }));
