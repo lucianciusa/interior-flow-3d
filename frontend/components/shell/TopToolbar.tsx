@@ -33,12 +33,15 @@ export function TopToolbar({ isEdgeToEdge }: { isEdgeToEdge: boolean }) {
       }`}
     >
       <div className="flex items-center gap-2 text-sm text-muted-foreground font-body">
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           onClick={() => reset()}
-          className="flex items-center hover:text-foreground transition-colors"
+          className="flex items-center gap-1.5 hover:text-foreground transition-colors"
         >
           <Home size={16} />
+          <span className="font-display font-medium text-sm tracking-tight hidden md:inline">
+            Interior Flow 3D
+          </span>
         </Link>
         <ChevronRight size={14} className="opacity-50" />
         <Link 

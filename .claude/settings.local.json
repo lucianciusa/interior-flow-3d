@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(grep -cE \"^\\(sofa_3seat|loveseat|sectional_sofa|armchair|accent_chair|ottoman|coffee_table|side_table|console_table|tv_stand|media_console|bookshelf|bookshelf_tall|corner_shelf|floor_lamp|wall_sconce_pair|rug|round_rug|plant_large|small_plant|floor_mirror|bed_double|bed_queen|nightstand|dresser|wardrobe|bedside_lamp|dining_table_4|dining_table_6|sideboard|china_cabinet|desk|desk_compact|office_chair|filing_cabinet|credenza|desk_lamp\\)\\\\.glb$\")"
+      "Bash(grep -cE \"^\\(sofa_3seat|loveseat|sectional_sofa|armchair|accent_chair|ottoman|coffee_table|side_table|console_table|tv_stand|media_console|bookshelf|bookshelf_tall|corner_shelf|floor_lamp|wall_sconce_pair|rug|round_rug|plant_large|small_plant|floor_mirror|bed_double|bed_queen|nightstand|dresser|wardrobe|bedside_lamp|dining_table_4|dining_table_6|sideboard|china_cabinet|desk|desk_compact|office_chair|filing_cabinet|credenza|desk_lamp\\)\\\\.glb$\")",
+      "Bash(cp '/c/Users/Lucian/.claude/projects/C--Users-Lucian-Desktop-Tajamar-IA-Generativa-interior-flow-3d/98457462-11cb-4fa2-b82b-703d87720bbf/tool-results/webfetch-1777885074402-fi6y1v.bin' /tmp/design.bin)",
+      "Read(//tmp/**)"
     ]
   }
 }

@@ -7,6 +7,8 @@ import { Bounds, OrbitControls, PerspectiveCamera, Environment, useGLTF } from "
 
 import { configureLoaders } from "@/lib/loaders";
 import { CameraController3D } from "@/components/viewer/CameraPresets";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { WebGLFallback } from "@/components/ui/WebGLFallback";
 import Furniture from "@/components/viewer/Furniture";
 import Room from "@/components/viewer/Room";
 import type { Layout, RoomDims } from "@/lib/types";
@@ -30,36 +32,49 @@ export default function Scene({ layout, dims, hideWalls = false, captureRef }: S
 
 
   return (
-    <Canvas
-      shadows
-      dpr={[1, 2]}
-      gl={{ antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance" }}
-      onCreated={({ gl }) => configureLoaders(gl)}
-      className="h-full w-full"
+    <WebGLFallback
+      fallback={
+        <div className="flex h-full w-full flex-col items-center justify-center bg-muted/20 p-6 text-center text-muted-foreground">
+          <h3 className="mb-2 text-lg font-semibold text-foreground">WebGL Not Supported</h3>
+          <p className="max-w-md text-sm">
+            We couldn't initialize the 3D viewer. This usually means WebGL is disabled or not supported by your browser.
+          </p>
+        </div>
+      }
     >
-      <ambientLight intensity={0.4} />
-      <PerspectiveCamera makeDefault position={[6, 5, 6]} fov={45} />
-      <SceneControls />
-      <directionalLight
-        position={[5, 8, 3]}
-        intensity={1.0}
-        castShadow
-        shadow-mapSize={[2048, 2048]}
-      />
-      <CameraController3D />
-      {captureRef && <CaptureHandler captureRef={captureRef} />}
-      <Suspense fallback={null}>
-        {process.env.NEXT_PUBLIC_HDRI_URL && (
-           <Environment files={process.env.NEXT_PUBLIC_HDRI_URL} background={false} />
-        )}
-        <Bounds clip observe margin={1.1}>
-          <Room dims={dims} palette={layout.palette} hideWalls={hideWalls} />
-          {layout.items.map((item) => (
-            <Furniture key={`${item.catalogId}-${item.slot}`} item={item} />
-          ))}
-        </Bounds>
-      </Suspense>
-    </Canvas>
+      <ErrorBoundary>
+        <Canvas
+          shadows
+          dpr={[1, 2]}
+          gl={{ antialias: true, preserveDrawingBuffer: true, powerPreference: "default", failIfMajorPerformanceCaveat: false }}
+          onCreated={({ gl }) => configureLoaders(gl)}
+          className="h-full w-full"
+        >
+          <ambientLight intensity={0.4} />
+          <PerspectiveCamera makeDefault position={[6, 5, 6]} fov={45} />
+          <SceneControls />
+          <directionalLight
+            position={[5, 8, 3]}
+            intensity={1.0}
+            castShadow
+            shadow-mapSize={[2048, 2048]}
+          />
+          <CameraController3D />
+          {captureRef && <CaptureHandler captureRef={captureRef} />}
+          <Suspense fallback={null}>
+            {process.env.NEXT_PUBLIC_HDRI_URL && (
+               <Environment files={process.env.NEXT_PUBLIC_HDRI_URL} background={false} />
+            )}
+            <Bounds clip observe margin={1.1}>
+              <Room dims={dims} palette={layout.palette} hideWalls={hideWalls} />
+              {layout.items.map((item) => (
+                <Furniture key={`${item.catalogId}-${item.slot}`} item={item} />
+              ))}
+            </Bounds>
+          </Suspense>
+        </Canvas>
+      </ErrorBoundary>
+    </WebGLFallback>
   );
 }
 

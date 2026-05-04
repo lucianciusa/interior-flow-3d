@@ -194,6 +194,7 @@ export type ShareTokenResponse = {
 export type ConversionRequest = {
   projectName: string;
   roomName: string;
+  roomType: RoomType;
   width_m: number;
   length_m: number;
   height_m: number;

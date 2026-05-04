@@ -59,7 +59,7 @@ export default function ProjectCard({
       <div className="relative group">
         <Link
           href={`/app/projects/${project.id}`}
-          className="block overflow-hidden rounded-xl border border-border transition hover:border-ring hover:shadow-md"
+          className="block overflow-hidden rounded-[14px] border border-border transition-shadow duration-150 hover:border-ring hover:shadow-[0_4px_16px_rgba(20,20,26,0.08)]"
         >
           <div className="aspect-[3/2] w-full bg-muted overflow-hidden">
             <img 
@@ -69,7 +69,7 @@ export default function ProjectCard({
             />
           </div>
           <div className="p-4">
-            <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+            <div className="text-sm font-medium font-display tracking-tight text-foreground group-hover:text-primary transition-colors">
               {project.name}
             </div>
             <div className="text-xs text-muted-foreground">{fmtDate(project.created_at)}</div>
