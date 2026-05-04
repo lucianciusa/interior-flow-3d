@@ -1,9 +1,8 @@
 "use client";
 
-import { Suspense, useEffect, useMemo } from "react";
-import * as THREE from "three";
+import { Suspense, useEffect } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
-import { Bounds, OrbitControls, PerspectiveCamera, Environment, useGLTF } from "@react-three/drei";
+import { Bounds, OrbitControls, PerspectiveCamera, useGLTF } from "@react-three/drei";
 
 import { configureLoaders } from "@/lib/loaders";
 import { CameraController3D } from "@/components/viewer/CameraPresets";
@@ -28,7 +27,6 @@ export default function Scene({ layout, dims, hideWalls = false, captureRef }: S
     });
   }, [layout.items]);
 
-
   return (
     <Canvas
       shadows
@@ -49,9 +47,6 @@ export default function Scene({ layout, dims, hideWalls = false, captureRef }: S
       <CameraController3D />
       {captureRef && <CaptureHandler captureRef={captureRef} />}
       <Suspense fallback={null}>
-        {process.env.NEXT_PUBLIC_HDRI_URL && (
-           <Environment files={process.env.NEXT_PUBLIC_HDRI_URL} background={false} />
-        )}
         <Bounds clip observe margin={1.1}>
           <Room dims={dims} palette={layout.palette} hideWalls={hideWalls} />
           {layout.items.map((item) => (
@@ -90,4 +85,3 @@ function SceneControls() {
     />
   );
 }
-

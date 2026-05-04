@@ -27,6 +27,8 @@ def _build_resolved(
         w=replacement.footprint.w,
         d=replacement.footprint.d,
         h=replacement.footprint.h,
+        tags=replacement.tags,
+        surfaces=replacement.placement.surfaces,
     )
     transform = resolve_slot(
         target.slot,

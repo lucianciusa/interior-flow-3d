@@ -12,7 +12,8 @@
     ],
     "placement": {
       "surfaces": [
-        "wall"
+        "wall",
+        "floor"
       ],
       "against": [
         "wall"
@@ -43,7 +44,8 @@
     ],
     "placement": {
       "surfaces": [
-        "wall"
+        "wall",
+        "floor"
       ],
       "against": [
         "wall"
@@ -76,7 +78,8 @@
     "placement": {
       "surfaces": [
         "wall",
-        "corner"
+        "corner",
+        "floor"
       ],
       "against": [
         "wall"
@@ -110,7 +113,8 @@
     "placement": {
       "surfaces": [
         "wall",
-        "corner"
+        "corner",
+        "floor"
       ],
       "against": [
         "wall",
@@ -146,7 +150,8 @@
     "placement": {
       "surfaces": [
         "wall",
-        "corner"
+        "corner",
+        "floor"
       ],
       "against": [
         "wall",
@@ -180,7 +185,8 @@
     "placement": {
       "surfaces": [
         "wall",
-        "corner"
+        "corner",
+        "floor"
       ],
       "against": [
         "none"
@@ -510,7 +516,8 @@
     ],
     "placement": {
       "surfaces": [
-        "wall"
+        "wall",
+        "corner"
       ],
       "against": [
         "wall"
@@ -797,7 +804,7 @@
       "sides": 0.05,
       "back": 0.05
     },
-    "model": "primitive:magazine_rack"
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/09d5059a7f4ad2164ce91b33527bedb8be9c12c76ef9463c0ab451ac3774a581.glb"
   },
   {
     "id": "bed_double",
@@ -1000,7 +1007,8 @@
     ],
     "placement": {
       "surfaces": [
-        "wall"
+        "wall",
+        "corner"
       ],
       "against": [
         "wall"
@@ -1083,6 +1091,71 @@
     },
     "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/4ecef388f7b59fb361bd06886650659718010147eacc93cc25e1747cdc3532ad.glb",
     "is_premium": true
+  },
+  {
+    "id": "dining_chair",
+    "name": "Dining chair",
+    "tags": [
+      "dining",
+      "seating",
+      "chair"
+    ],
+    "room_types": [
+      "dining_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.5,
+      "d": 0.5,
+      "h": 0.9
+    },
+    "clearance": {
+      "front": 0.4,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/16589dafc62036133a9bc1ae62841f0829bf784ce2b4dcb7bff6a72713a7d71a.glb"
+  },
+  {
+    "id": "mirror_wall",
+    "name": "Wall mirror",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "living_room",
+      "bedroom",
+      "dining_room",
+      "home_office"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.8,
+      "d": 0.05,
+      "h": 1.2
+    },
+    "clearance": {
+      "front": 0.1,
+      "sides": 0.1,
+      "back": 0.02
+    },
+    "model": "primitive:mirror_wall"
   },
   {
     "id": "sideboard",
@@ -1273,7 +1346,7 @@
       "sides": 0.05,
       "back": 0.05
     },
-    "model": "primitive:filing_cabinet"
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/3972a580cd8c4d8ecf26268a59e2fa65c0c84ab093cb145472d24dd0a5801bc5.glb"
   },
   {
     "id": "credenza",
@@ -1320,7 +1393,8 @@
     ],
     "placement": {
       "surfaces": [
-        "wall"
+        "wall",
+        "corner"
       ],
       "against": [
         "wall"
@@ -1338,5 +1412,3387 @@
       "back": 0.05
     },
     "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/6d086ca4f7279022111121e014318eef59980c61767b4e2a372ccad7f054f6e0.glb"
+  },
+  {
+    "id": "bathroom_cabinet",
+    "name": "Bathroom Cabinet",
+    "tags": [
+      "accent",
+      "storage",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/9eb01f923df52dafacee0223b2094634289cd2de168ccf9494a3bc5b39589e04.glb"
+  },
+  {
+    "id": "bathroom_sink",
+    "name": "Bathroom Sink",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/63e992c6b5db0972b46d7d608a56074572ee245fe611f47885cd33ed9c52576d.glb"
+  },
+  {
+    "id": "bathroom_sink_square",
+    "name": "Bathroom Sink Square",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/9c6dc9770c62941687fae5e99872dbfe00a8893081753641a9d8ec8bc4eed74f.glb"
+  },
+  {
+    "id": "bathtub",
+    "name": "Bathtub",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/41838b5e55974dc6aa1df85abaeac0b6636359b269a5eaeb3e0a1b9ed9ffc09e.glb"
+  },
+  {
+    "id": "bear_toy",
+    "name": "Bear Toy",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/7852bafb6921df26ca77ba4da27c1b3463c859702033dd641cd5a2b678d125a4.glb"
+  },
+  {
+    "id": "bed_bunk",
+    "name": "Bed Bunk",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/f7c24b15d77755e80be7853e8f769d3325903394e77732a7c243babea22694fd.glb"
+  },
+  {
+    "id": "bed_single_modern",
+    "name": "Bed Single Modern",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/93731ad6e30271320b24c1f3d1dca827a6ee7f303b798d54aa03f16d44852eba.glb"
+  },
+  {
+    "id": "bench",
+    "name": "Bench",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/cd378e704872b61cedbbae41698bfcb237f239bc36c6b4ee4cb32383040e9c91.glb"
+  },
+  {
+    "id": "bench_cushion",
+    "name": "Bench Cushion",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/9f8b22c0b9c30a6034d47a2d99970b60ab1ef3ae71ec743512421ed4325baffe.glb"
+  },
+  {
+    "id": "bench_cushion_low",
+    "name": "Bench Cushion Low",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/e907443979a7324423a24c0948d009d68ed198ef7eedd2bad462429a3017534e.glb"
+  },
+  {
+    "id": "bookshelf_low",
+    "name": "Bookshelf Low",
+    "tags": [
+      "accent",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/89a5d8a3d4a5b6f25be739f1675d6c9a8f48288b4148a6807601e46fc1471630.glb"
+  },
+  {
+    "id": "books_decor",
+    "name": "Books Decor",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/09d5059a7f4ad2164ce91b33527bedb8be9c12c76ef9463c0ab451ac3774a581.glb"
+  },
+  {
+    "id": "cabinet_bedside",
+    "name": "Cabinet Bedside",
+    "tags": [
+      "accent",
+      "storage",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/d45f14a2d37cb6c8a4e7f56353564e71cd04a439285d109fc84183fe8a2fdad8.glb"
+  },
+  {
+    "id": "cardboardBoxClosed",
+    "name": "Cardboardboxclosed",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/df8bdb973796c39737eb387a32ddd03c3874256e713c2b600a30802e1bc1443d.glb"
+  },
+  {
+    "id": "cardboardBoxOpen",
+    "name": "Cardboardboxopen",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/6b80c6cdc03ad924363ce53d52d74931c9d136058ec109f323b3edfb7ba62fc7.glb"
+  },
+  {
+    "id": "ceiling_fan",
+    "name": "Ceiling Fan",
+    "tags": [
+      "accent",
+      "lighting"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/f9d4a64b77402fb1f8e5a48d589c292867cb328062301b8a811bc99ecfe414e6.glb"
+  },
+  {
+    "id": "chairCushion",
+    "name": "Chaircushion",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/c390ca9d4cea7247b72eb4612beb1cb596881bd6425805e3a3306fb1251fbfaa.glb"
+  },
+  {
+    "id": "chairModernFrameCushion",
+    "name": "Chairmodernframecushion",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/1785b774968224323d5adf169fd80b2e4e52b7af4ac650c5b3b66f747f931a28.glb"
+  },
+  {
+    "id": "chairRounded",
+    "name": "Chairrounded",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/2a82ab4f495e032b6b17b7fca65f26e3ec604a4d3ccc2f5cb9c881e9e425eab1.glb"
+  },
+  {
+    "id": "chair_modern_cushion",
+    "name": "Chair Modern Cushion",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/f9705aa081554ab9670425e933bc0fafa9b58749c17fd35f79953046a7530956.glb"
+  },
+  {
+    "id": "chair_simple",
+    "name": "Chair Simple",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/16589dafc62036133a9bc1ae62841f0829bf784ce2b4dcb7bff6a72713a7d71a.glb"
+  },
+  {
+    "id": "coatRackStanding",
+    "name": "Coatrackstanding",
+    "tags": [
+      "accent",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/c9349949ffbd8b58d124b0159b8fcd8cca918a660d4b03c29785126f9194618b.glb"
+  },
+  {
+    "id": "coat_rack",
+    "name": "Coat Rack",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/59dd16c663d4e521d5a31d6057efabcf75ca1783193f747d1856ba72ef44b636.glb"
+  },
+  {
+    "id": "computerKeyboard",
+    "name": "Computerkeyboard",
+    "tags": [
+      "accent",
+      "media"
+    ],
+    "room_types": [
+      "bedroom",
+      "home_office",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/06950f48e8b6c9506caab564fdd239393ec169588bd6a7f899f4ffaa33c439e0.glb"
+  },
+  {
+    "id": "computerMouse",
+    "name": "Computermouse",
+    "tags": [
+      "accent",
+      "media"
+    ],
+    "room_types": [
+      "bedroom",
+      "home_office",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/541825ad9ae4a2db5d291b6be071eee51cf9bc1ed01c47fc73051d0b4061eef8.glb"
+  },
+  {
+    "id": "doorway",
+    "name": "Doorway",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/03a79a86d791714cd3de0664a4cb4302fd1423c33ecdc6b8604fe8f85b43c3e4.glb"
+  },
+  {
+    "id": "doorwayFront",
+    "name": "Doorwayfront",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/59a57c99c211aff0f8e44248a8b754e69e45514bd8491ed4f84a6d49cde3a48a.glb"
+  },
+  {
+    "id": "doorwayOpen",
+    "name": "Doorwayopen",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/8876defcfcb86825dc0fd8eb5858851e4cded7ac7061502df7c651f64bbed2eb.glb"
+  },
+  {
+    "id": "dryer",
+    "name": "Dryer",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/62d9d481752e94565d8e6f06ce3f630cf68ceaa0c9e634c6d6030fc824237aa0.glb"
+  },
+  {
+    "id": "floorCorner",
+    "name": "Floorcorner",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "corner"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/e3856bfababa70f2772f5a6f0e9ec643ff0a3506e551234713ebbe93b1eee0dd.glb"
+  },
+  {
+    "id": "floorCornerRound",
+    "name": "Floorcornerround",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "corner"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/51579663ea306f4c083fb60432c448469da618cf51ccc69c04590df403c902b8.glb"
+  },
+  {
+    "id": "floorFull",
+    "name": "Floorfull",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/e3267fe7e83e79983327a7a645b7843fa1898482cb6ba8f2f874a5d9b417bc31.glb"
+  },
+  {
+    "id": "floorHalf",
+    "name": "Floorhalf",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/906470c888ea214cd927300d20379237efe0f5415b61b33f22de9dd901a44ee3.glb"
+  },
+  {
+    "id": "hoodLarge",
+    "name": "Hoodlarge",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/630440e517fc063661d883e28b1fae22213b0cb7da2782567da10eec1331602e.glb"
+  },
+  {
+    "id": "hoodModern",
+    "name": "Hoodmodern",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/c28192cd958740a166a27ed49684b4ec855e3a6adb9fab2cdd9300b0dd6c5811.glb"
+  },
+  {
+    "id": "kitchenBar",
+    "name": "Kitchenbar",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/cdc9c4cd4c450c0b8782938440e785edaf7304d7accd20b92da0297ea1712d46.glb"
+  },
+  {
+    "id": "kitchenBarEnd",
+    "name": "Kitchenbarend",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/c39c718cd322f0aa15b24e2d4ef8ecd14219398968d609cc16eb3fd7f6ee9805.glb"
+  },
+  {
+    "id": "kitchenBlender",
+    "name": "Kitchenblender",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/050547bc6914b7673f87aae97f5027f406592a549f967e5dc6cbc130faf44956.glb"
+  },
+  {
+    "id": "kitchenCabinet",
+    "name": "Kitchencabinet",
+    "tags": [
+      "accent",
+      "storage",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/8406718e763f7bb29c33e0c4d9158291c32217c1d27878f6f3702f2fdbfd2aac.glb"
+  },
+  {
+    "id": "kitchenCabinetCornerInner",
+    "name": "Kitchencabinetcornerinner",
+    "tags": [
+      "accent",
+      "storage",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "corner"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/5413514ad3bd20422829a85286c0b214771318f7c91d49fc2622e4f7eb77df4c.glb"
+  },
+  {
+    "id": "kitchenCabinetCornerRound",
+    "name": "Kitchencabinetcornerround",
+    "tags": [
+      "accent",
+      "storage",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "corner"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/f1f9e5e3c94d2055102324ad0cf00d1aa64ea3168aa6971be0e97e564fa8a898.glb"
+  },
+  {
+    "id": "kitchenCabinetDrawer",
+    "name": "Kitchencabinetdrawer",
+    "tags": [
+      "accent",
+      "storage",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/3972a580cd8c4d8ecf26268a59e2fa65c0c84ab093cb145472d24dd0a5801bc5.glb"
+  },
+  {
+    "id": "kitchenCabinetUpper",
+    "name": "Kitchencabinetupper",
+    "tags": [
+      "accent",
+      "storage",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/9d76617ad6c68cbbd443c8d8ec9d797df3fa97e7d6a37ffe366c48c8ac4a7c12.glb"
+  },
+  {
+    "id": "kitchenCabinetUpperCorner",
+    "name": "Kitchencabinetuppercorner",
+    "tags": [
+      "accent",
+      "storage",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "corner"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/422b4fbb3881b35519eb398ba3b71e8e5cadc51b480cf62b8892c7a0a8527b14.glb"
+  },
+  {
+    "id": "kitchenCabinetUpperDouble",
+    "name": "Kitchencabinetupperdouble",
+    "tags": [
+      "accent",
+      "storage",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/e02eb6717512093b8f8c08dd82aa63d9b6c9082787d991bed7f1a2131b00a2be.glb"
+  },
+  {
+    "id": "kitchenCabinetUpperLow",
+    "name": "Kitchencabinetupperlow",
+    "tags": [
+      "accent",
+      "storage",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/bdbf36e517a32485442c78705f6311e845b451d39d00d3d5543dd9f3d991ecbd.glb"
+  },
+  {
+    "id": "kitchenCoffeeMachine",
+    "name": "Kitchencoffeemachine",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/d06d4f6466a06958f5a11effeeecbc6f205f7185a3505cadfc0e6ad0bc6c98a2.glb"
+  },
+  {
+    "id": "kitchenFridge",
+    "name": "Kitchenfridge",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/1d68fd334038fd25d5cdd1575adfb58d7bfd5761b31ea8d733e3cefdc9ee9520.glb"
+  },
+  {
+    "id": "kitchenFridgeBuiltIn",
+    "name": "Kitchenfridgebuiltin",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/8d505622dfbf9bccee0701fb91c856d1cd44906379dd0aee9ea50e7885e1b09d.glb"
+  },
+  {
+    "id": "kitchenFridgeLarge",
+    "name": "Kitchenfridgelarge",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/1ecdcf7a00a5d93ff09feb541a46756b7d6a2d5aacdb250a5799eaa3205f2f22.glb"
+  },
+  {
+    "id": "kitchenFridgeSmall",
+    "name": "Kitchenfridgesmall",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/b656c4364e87e9bd4bfcf122a8282cbb9346a2253dc056ec51ffcb26cdc2fd3c.glb"
+  },
+  {
+    "id": "kitchenMicrowave",
+    "name": "Kitchenmicrowave",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/0fe2869286085af3c4228ce24c9a8176c1577eb07c95042ad4e2cfb1e5bc1106.glb"
+  },
+  {
+    "id": "kitchenSink",
+    "name": "Kitchensink",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/be4f703d22c7f5d33f6381789a928ef7bc9bad88c8c39fb3c41155044dc3d0b6.glb"
+  },
+  {
+    "id": "kitchenStove",
+    "name": "Kitchenstove",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "primitive:kitchenStove"
+  },
+  {
+    "id": "kitchenStoveElectric",
+    "name": "Kitchenstoveelectric",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "primitive:kitchenStoveElectric"
+  },
+  {
+    "id": "lampSquareCeiling",
+    "name": "Lampsquareceiling",
+    "tags": [
+      "accent",
+      "lighting"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/85e30656502fd01cba0a73ed0ded559bc243c639d15eb23782a74f1572a367fe.glb"
+  },
+  {
+    "id": "lamp_square_table",
+    "name": "Square Table Lamp",
+    "tags": [
+      "accent",
+      "lighting"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall",
+        "corner"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/93585bf3794ee2ce313810fcdc06bfcda3c78c6b55876b562d972077cc3a47d8.glb"
+  },
+  {
+    "id": "laptop",
+    "name": "Laptop",
+    "tags": [
+      "accent",
+      "media"
+    ],
+    "room_types": [
+      "bedroom",
+      "home_office",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/5a109b53e89a8b74b0fb52c5175ce4f1d56793c9959a1b47322cf5b7cfb084bd.glb"
+  },
+  {
+    "id": "loungeChairRelax",
+    "name": "Loungechairrelax",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/e73381d1749b90b9b328597346ba1d2dc6909a50848bcb3076ef42e8e5e09d79.glb"
+  },
+  {
+    "id": "loungeDesignSofa",
+    "name": "Loungedesignsofa",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/3569622ff86b32ce8e2ea484e8f74877e0210688df7641085ecc5cc6161480b4.glb"
+  },
+  {
+    "id": "loungeDesignSofaCorner",
+    "name": "Loungedesignsofacorner",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "corner",
+        "floor"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/3afe754e2f969b5a2ed004d52972f4829fa128933dfd976a71be4874da700957.glb"
+  },
+  {
+    "id": "monitor",
+    "name": "Monitor",
+    "tags": [
+      "accent",
+      "media"
+    ],
+    "room_types": [
+      "bedroom",
+      "home_office",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/db7c60cb33000bd1edc35d9e9f1a117e22b84a1a15c25db0160a44bf4341f03a.glb"
+  },
+  {
+    "id": "paneling",
+    "name": "Paneling",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/b984eb505c754f50db40cbae8b604b17e531200f0fa0cf7458e5bee359a831d5.glb"
+  },
+  {
+    "id": "pillow",
+    "name": "Pillow",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/05606523835fdc3f514a181358b05caceeef96e8fac40e08155e2586ca347742.glb"
+  },
+  {
+    "id": "pillowBlue",
+    "name": "Pillowblue",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/aa1d49b5004df31b757b10286d8273ce78db48e141583f707c948bf2701caabb.glb"
+  },
+  {
+    "id": "pillowBlueLong",
+    "name": "Pillowbluelong",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/7201ab5bc3a64d2100d721a962a380bec3e74d1b8cbce559c83f5cd3183c3815.glb"
+  },
+  {
+    "id": "pillowLong",
+    "name": "Pillowlong",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/5e098a9117ae705194c66e909e4fad5da842e1d396f7ac0f846ba890d1fcd5d4.glb"
+  },
+  {
+    "id": "plant_small_2",
+    "name": "Plant Small 2",
+    "tags": [
+      "accent",
+      "plant"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/a6e62b22fb8a75ab526fde8fb1620093daad7bd82e8f357104d594b2a26dec05.glb"
+  },
+  {
+    "id": "plant_small_3",
+    "name": "Plant Small 3",
+    "tags": [
+      "accent",
+      "plant"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/4d86daaa6eb4e487c0a72c8aec120edcaac55b042848ee84046f92f11d45a3b8.glb"
+  },
+  {
+    "id": "radio",
+    "name": "Radio",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/9600d0b3aad3cce91a23b8fcbee8041d3858d0d84d0226da0d3a701a10a33ca4.glb"
+  },
+  {
+    "id": "rugDoormat",
+    "name": "Rugdoormat",
+    "tags": [
+      "accent",
+      "rug"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.02
+    },
+    "clearance": {
+      "front": 0.0,
+      "sides": 0.0,
+      "back": 0.0
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/03254aa557a01712aa27b77f2e76cc118915920b69d9bf8effe4410537c7fad4.glb"
+  },
+  {
+    "id": "rugRounded",
+    "name": "Rugrounded",
+    "tags": [
+      "accent",
+      "rug"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.02
+    },
+    "clearance": {
+      "front": 0.0,
+      "sides": 0.0,
+      "back": 0.0
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/1527204c7aed2b5c9eeaec338eae64e9600671c13c0a79594fc68df1b608d71e.glb"
+  },
+  {
+    "id": "rugSquare",
+    "name": "Rugsquare",
+    "tags": [
+      "accent",
+      "rug"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.02
+    },
+    "clearance": {
+      "front": 0.0,
+      "sides": 0.0,
+      "back": 0.0
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/d352e11e5a6026ccc072aa88e3b6083cd6016c8477c1551eb73e58a252acb94a.glb"
+  },
+  {
+    "id": "shower",
+    "name": "Shower",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/0c557898e909ed78a9912ff056a421f31b765cfee29f011b8c60ee77044b7896.glb"
+  },
+  {
+    "id": "showerRound",
+    "name": "Showerround",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/de464baac65ab323074260599fd87af03e63d60c3b3de01c7765f88699173ce4.glb"
+  },
+  {
+    "id": "speaker",
+    "name": "Speaker",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/7eebd7849d97d258ffa58715c1d36bdd04f9e33f34f057fe518922c979751d90.glb"
+  },
+  {
+    "id": "speakerSmall",
+    "name": "Speakersmall",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/5530814d232a97381bdf850a4134304c5634e2f5819fbab3ec67f383b89f34b7.glb"
+  },
+  {
+    "id": "stairs",
+    "name": "Stairs",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/c2e6fe5d974c1007277ed4a4a098d24188ae4a5ea589fbbaa1b61c3348663f7b.glb"
+  },
+  {
+    "id": "stairsCorner",
+    "name": "Stairscorner",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "corner"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/d5985a712bbb3574444d2178376f00c8daef8616b2141d8dd0a824cace2db118.glb"
+  },
+  {
+    "id": "stairsOpen",
+    "name": "Stairsopen",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "primitive:stairsOpen"
+  },
+  {
+    "id": "stairsOpenSingle",
+    "name": "Stairsopensingle",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/3f4c8291c6bf31644189394127094121d014936d3cace21482e766718faa1050.glb"
+  },
+  {
+    "id": "stoolBar",
+    "name": "Stoolbar",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/a7f63660ceb80d0ac3250c241dd424ca47a0f2848339b0be0ce56d38fe8501ea.glb"
+  },
+  {
+    "id": "stoolBarSquare",
+    "name": "Stoolbarsquare",
+    "tags": [
+      "accent",
+      "seating"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/3d615ad547189d78438ecf78f8bdeb434abddfa7b17482effcf3ebf46bb395d1.glb"
+  },
+  {
+    "id": "tableCloth",
+    "name": "Tablecloth",
+    "tags": [
+      "accent",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/8e8d12b0ace3bba9d5def955bed5c12aab4786ef88f4c81a004ef909c8692fa3.glb"
+  },
+  {
+    "id": "tableCoffeeGlass",
+    "name": "Tablecoffeeglass",
+    "tags": [
+      "accent",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/2f34504c88cb9d1559df22efe7eed87d9bcf27a8d22a330a2eab0c42f7afab90.glb"
+  },
+  {
+    "id": "tableCoffeeGlassSquare",
+    "name": "Tablecoffeeglasssquare",
+    "tags": [
+      "accent",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/7a3ef0136a798a48c6dd267e447290e099e2872da0fcd7a4cda2fcc98f345007.glb"
+  },
+  {
+    "id": "tableCoffeeSquare",
+    "name": "Tablecoffeesquare",
+    "tags": [
+      "accent",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/ee71a7ba0de1254f9ea9a4c43ac0893414144c86fef8bf373209f817ab130d75.glb"
+  },
+  {
+    "id": "tableCrossCloth",
+    "name": "Tablecrosscloth",
+    "tags": [
+      "accent",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/0c7c0c7b85f07a2921543aabb5d871be927ad7ff746bfbfed74a88c47d9864b9.glb"
+  },
+  {
+    "id": "tableGlass",
+    "name": "Tableglass",
+    "tags": [
+      "accent",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/b78f9a5d8f0bf060fbb97bc9436ee013ca3104b370c505b61af3b39b6c2146f7.glb"
+  },
+  {
+    "id": "tableRound",
+    "name": "Tableround",
+    "tags": [
+      "accent",
+      "surface"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/753979a4be4200b50ff49cd55c567ed1ec19fc278a67ec5d21e7f8153ee92305.glb"
+  },
+  {
+    "id": "televisionAntenna",
+    "name": "Televisionantenna",
+    "tags": [
+      "accent",
+      "media"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/8545b94dfc195ce270e0d3809018304bf42c44335a7a318a9ef7eb8f8e0c9f27.glb"
+  },
+  {
+    "id": "televisionVintage",
+    "name": "Televisionvintage",
+    "tags": [
+      "accent",
+      "media"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor",
+        "wall"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/cf30f397c462bb3d90871b67df46a042e6312c87a1d4d8b90cc92d9bfaadf6f5.glb"
+  },
+  {
+    "id": "toaster",
+    "name": "Toaster",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/5e0e911645efeae64ce14d52e54d5086aa7d457d995be1c556790ce6674fc289.glb"
+  },
+  {
+    "id": "toilet",
+    "name": "Toilet",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/e88be8b2763e2beda9218962fe30532d63f5ead95f2001472e21fca1e2bd5f6e.glb"
+  },
+  {
+    "id": "toiletSquare",
+    "name": "Toiletsquare",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/b8b56747e5d2c0ff5f06cf92355ba4ba332ea978d9181d1126c624adeee26b2c.glb"
+  },
+  {
+    "id": "trashcan",
+    "name": "Trashcan",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/ad2e0b479191b607ad5c0a5793f388ca991ca0fef7f9be1657d3cb849aea1116.glb"
+  },
+  {
+    "id": "tv_modern",
+    "name": "Tv Modern",
+    "tags": [
+      "accent",
+      "media"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor",
+        "wall"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/aa68b6e514aa055ee880430b50c97e4bfd94014affd266796239999b2a2edc3e.glb"
+  },
+  {
+    "id": "wall",
+    "name": "Wall",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/53def0435447abc79c33cdbe4e9fc0d062096c2c31a2b8d35eec5127d4bceab2.glb"
+  },
+  {
+    "id": "wallCorner",
+    "name": "Wallcorner",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "corner"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/6cd7025ecdae0bf7206ec5beeb9f751bc0df63127cd467a3aa7e8506db3d1fd1.glb"
+  },
+  {
+    "id": "wallCornerRond",
+    "name": "Wallcornerrond",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "corner"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/a834c2ae948cc2dcea1efd8e64d1e32901c17e9b10bc5cba1ea10c64466b922b.glb"
+  },
+  {
+    "id": "wallDoorway",
+    "name": "Walldoorway",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/febc39b3ac35c4d5c7a5f3e3233ab89f1bcbfdd40d0da2b5f8b5d3bc10c58b1a.glb"
+  },
+  {
+    "id": "wallDoorwayWide",
+    "name": "Walldoorwaywide",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/e16b6f178c90da1be5b4f1c48ddccb510f78fd106dbe67d7ffd09acda57fdc02.glb"
+  },
+  {
+    "id": "wallHalf",
+    "name": "Wallhalf",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/75b02f4b419e8cf39014d100779de2b51666b5a70babe7ab140eb0cfecc70407.glb"
+  },
+  {
+    "id": "wallWindow",
+    "name": "Wallwindow",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/b53079aa5e3c7732b4634d6dde988b34cb8a77afac4b69b14829d0edbe7c1fb5.glb"
+  },
+  {
+    "id": "wallWindowSlide",
+    "name": "Wallwindowslide",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "wall"
+      ],
+      "against": [
+        "wall"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/23ae0e01fd5e0533ddc297455aeb400367f6e7e190614ded33a543a7da942d26.glb"
+  },
+  {
+    "id": "washer",
+    "name": "Washer",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "primitive:washer"
+  },
+  {
+    "id": "washerDryerStacked",
+    "name": "Washerdryerstacked",
+    "tags": [
+      "accent"
+    ],
+    "room_types": [
+      "bedroom",
+      "living_room"
+    ],
+    "placement": {
+      "surfaces": [
+        "floor"
+      ],
+      "against": [
+        "none"
+      ],
+      "exclusive_with": []
+    },
+    "footprint": {
+      "w": 0.6,
+      "d": 0.6,
+      "h": 0.75
+    },
+    "clearance": {
+      "front": 0.3,
+      "sides": 0.1,
+      "back": 0.1
+    },
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/803f4c07958f5dc0ec9bc81b546fe223fb5a8b6ece93b3903d0e84e346e51140.glb"
   }
 ]

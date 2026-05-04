@@ -45,13 +45,16 @@ DROP_PRIORITY: dict[str, int] = {
     "desk": 10,
     "desk_compact": 10,
     "filing_cabinet": 5,
+    "ottoman": 5,
+    "china_cabinet": 6,
+    "console_table": 4,
     # Misc
     "corner_shelf": 2,
     "mirror_wall": 1,
 }
 
 # Items that can share a slot/space without being dropped
-COOCCUPY_ALLOW_TAGS: set[str] = {"lighting", "accent", "plant", "rug", "shelf"}
+COOCCUPY_ALLOW_TAGS: set[str] = {"lighting", "accent", "plant", "rug", "shelf", "media"}
 
 COOCCUPY_ALLOW: set[frozenset[str]] = {
     frozenset({"rug", "coffee_table"}),
@@ -60,9 +63,27 @@ COOCCUPY_ALLOW: set[frozenset[str]] = {
     frozenset({"bed_double", "nightstand"}),
     frozenset({"bed_queen", "nightstand"}),
     frozenset({"bed_single", "nightstand"}),
+    frozenset({"bed_double", "ottoman"}),
+    frozenset({"bed_queen", "ottoman"}),
+    frozenset({"bed_single", "ottoman"}),
+    frozenset({"rug", "sofa_3seat"}),
+    frozenset({"rug", "loveseat"}),
+    frozenset({"rug", "sectional_sofa"}),
+    frozenset({"rug", "bed_double"}),
+    frozenset({"rug", "bed_queen"}),
+    frozenset({"rug", "bed_single"}),
+    frozenset({"desk", "office_chair"}),
     frozenset({"desk", "chair"}),
     frozenset({"desk", "seating"}),
     frozenset({"desk", "lighting"}),
+    frozenset({"desk", "accent"}),
+    frozenset({"desk", "media"}),
+    frozenset({"surface", "accent"}),
+    frozenset({"surface", "media"}),
+    frozenset({"media", "media"}),
+    frozenset({"media", "storage"}),
+    frozenset({"lighting", "storage"}),
+    frozenset({"dining", "chair"}),
 }
 
 SLOT_KINDS: dict[str, str] = {
@@ -156,6 +177,30 @@ def _wall_prefix(slot: str) -> str | None:
     return None
 
 
+def _apply_vertical_stack(
+    candidate: ResolvedItem,
+    placed: list[ResolvedItem],
+    catalog_item: CatalogItem,
+    catalog_map: dict[str, CatalogItem],
+) -> None:
+    """Apply vertical offset if the candidate should sit on top of an existing item."""
+    # But DO NOT stack rugs or floor lamps on tables.
+    c_tags = set(catalog_item.tags)
+    if "rug" in c_tags or "floor_lamp" in c_tags:
+        return
+
+    for existing in placed:
+        if existing.slot == candidate.slot:
+            existing_item = catalog_map.get(existing.catalogId)
+            if existing_item:
+                e_tags = set(existing_item.tags)
+                # Elevate if the existing item is a surface/desk/stand
+                if any(t in e_tags for t in ("desk", "surface", "media", "storage")):
+                    new_pos = (candidate.position[0], existing_item.footprint.h, candidate.position[2])
+                    candidate.position = new_pos
+                    break
+
+
 def _try_place(
     item: LayoutItemLLM,
     slot: str,
@@ -202,9 +247,16 @@ def _try_place(
             return "DUPLICATE_ITEM"
 
         # 2b. Redundant twins in same zone (e.g. two floor lamps)
-        # Allow multiples for chairs, stools, or if specifically allowed
+        # Allow multiples for chairs, stools, decor, and small items
         if candidate.catalogId == existing.catalogId and candidate.zone == existing.zone:
-            if "chair" not in catalog_item.tags and "stool" not in catalog_item.tags:
+            c_tags = set(catalog_item.tags)
+            allow_tags = {"chair", "stool", "lighting", "plant", "accent", "surface"}
+            is_allowed = bool(c_tags & allow_tags)
+            # Also allow non-large seating (like armchairs)
+            if "seating" in c_tags and "large" not in c_tags:
+                is_allowed = True
+            
+            if not is_allowed:
                 return "REDUNDANT_ZONE_ITEM"
 
         # 3. Hero item exclusivity (e.g., only one bed per layout)
@@ -225,16 +277,17 @@ def _try_place(
         c_tags = set(catalog_item.tags)
         e_tags = set(existing_item.tags)
         for allowed in COOCCUPY_ALLOW:
-            if any(t in c_tags for t in allowed) and any(t in e_tags for t in allowed):
-                can_ignore = True
-                break
+            allowed_list = list(allowed)
+            if len(allowed_list) == 2:
+                t1, t2 = allowed_list
+                if (t1 in c_tags and t2 in e_tags) or (t2 in c_tags and t1 in e_tags):
+                    can_ignore = True
+                    break
         if can_ignore:
             continue
 
-        # 5. Tag-based co-occupancy (Rugs only for now)
-        c_tags = set(catalog_item.tags)
-        e_tags = set(existing_item.tags)
-        if "rug" in c_tags or "rug" in e_tags:
+        # 5. Tag-based co-occupancy
+        if (c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS):
             continue
 
         if _aabb_overlap(candidate, existing, catalog_item, existing_item, margin=margin):
@@ -377,6 +430,7 @@ def resolve(
         # Step 5–6: resolve + AABB check
         result = _try_place(item, slot, None, room, catalog_item, placed, catalog_map, margin)
         if isinstance(result, ResolvedItem):
+            _apply_vertical_stack(result, placed, catalog_item, catalog_map)
             placed.append(result)
             occupied[slot] = item.catalogId
         else:
@@ -387,6 +441,7 @@ def resolve(
                 for t_alt in _NUDGE_T:
                     res = _try_place(item, slot, t_alt, room, catalog_item, placed, catalog_map, margin)
                     if isinstance(res, ResolvedItem):
+                        _apply_vertical_stack(res, placed, catalog_item, catalog_map)
                         placed.append(res)
                         nudged = True
                         break

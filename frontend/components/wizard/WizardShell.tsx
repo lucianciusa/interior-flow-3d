@@ -244,7 +244,7 @@ export default function WizardShell() {
             value={roomType}
             onChange={(rt: RoomType) => setRoomType(rt)}
             onNext={() => setPhase("step1")}
-            onBack={handleBackToDashboard}
+            onBack={() => router.back()}
           />
         )}
         {phase === "step1" && (

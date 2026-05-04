@@ -63,7 +63,9 @@ export default function ResultView({
     setSelected(null);
   }, [setSelected]);
 
-  const showSwap = mode === "saved" && layoutId;
+  useEffect(() => {
+    setSwapOpen(false);
+  }, [selected]);
 
   // Shared route renders sidebar inline, app route uses shell's inspector space
   const isInline = mode === "shared";
@@ -95,27 +97,27 @@ export default function ResultView({
             <Scene layout={layout} dims={dims} hideWalls={hideWalls} captureRef={captureRef} />
           </div>
         </Suspense>
-        <ItemPopover />
-        {showSwap && selected && (
-          <>
-            <Button
-              size="sm"
-              onClick={() => setSwapOpen((v) => !v)}
-              className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 pointer-events-auto"
-            >
-              {swapOpen ? t("hide_replacements") : t("replace_item")}
-            </Button>
-            {swapOpen && layoutId && (
-                <div className="pointer-events-auto">
-                  <SwapPopover
-                    item={selected}
-                    layoutId={layoutId}
-                    roomType={roomType}
-                    onClose={() => setSwapOpen(false)}
-                  />
-                </div>
-            )}
-          </>
+        <ItemPopover 
+          showReplace={true} 
+          isSaved={!!layoutId}
+          onReplace={() => {
+            if (!layoutId) {
+              onSave?.();
+              return;
+            }
+            setSwapOpen((v) => !v);
+          }}
+          isReplacing={swapOpen}
+        />
+        {swapOpen && selected && layoutId && (
+          <div className="pointer-events-auto">
+            <SwapPopover
+              item={selected}
+              layoutId={layoutId}
+              roomType={roomType}
+              onClose={() => setSwapOpen(false)}
+            />
+          </div>
         )}
       </div>
       {/* Sidebars with Tab Toggles */}
