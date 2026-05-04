@@ -1,9 +1,8 @@
 "use client";
 
-import { Suspense, useEffect, useMemo } from "react";
-import * as THREE from "three";
+import { Suspense, useEffect } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
-import { Bounds, OrbitControls, PerspectiveCamera, Environment, useGLTF } from "@react-three/drei";
+import { Bounds, OrbitControls, PerspectiveCamera, useGLTF } from "@react-three/drei";
 
 import { configureLoaders } from "@/lib/loaders";
 import { CameraController3D } from "@/components/viewer/CameraPresets";
@@ -29,7 +28,6 @@ export default function Scene({ layout, dims, hideWalls = false, captureRef }: S
       }
     });
   }, [layout.items]);
-
 
   return (
     <WebGLFallback
@@ -105,4 +103,3 @@ function SceneControls() {
     />
   );
 }
-

@@ -5,7 +5,14 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useLanguage } from "@/lib/stores/useLanguage";
 
-export default function ItemPopover() {
+interface ItemPopoverProps {
+  onReplace?: () => void;
+  showReplace?: boolean;
+  isReplacing?: boolean;
+  isSaved?: boolean;
+}
+
+export default function ItemPopover({ onReplace, showReplace, isReplacing, isSaved }: ItemPopoverProps) {
   const { t } = useLanguage();
   const item = useViewerStore((s) => s.selectedItem);
   const clear = useViewerStore((s) => s.setSelectedItem);
@@ -29,10 +36,22 @@ export default function ItemPopover() {
         </Button>
       </div>
       <p className="mb-2 text-xs text-muted-foreground">{t(item.slot)}</p>
-      <p className="mb-2 text-xs text-muted-foreground">
+      <p className="mb-4 text-xs text-muted-foreground">
         {item.footprint.w}m × {item.footprint.d}m × {item.footprint.h}m
       </p>
-      {item.rationale && <p className="text-sm italic text-foreground">{item.rationale}</p>}
+      
+      {item.rationale && <p className="mb-4 text-sm italic text-foreground">{item.rationale}</p>}
+
+      {showReplace && onReplace && (
+        <Button 
+          size="sm" 
+          variant={isSaved ? "secondary" : "outline"}
+          className="w-full"
+          onClick={onReplace}
+        >
+          {!isSaved ? t("save_to_replace") : (isReplacing ? t("hide_replacements") : t("replace_item"))}
+        </Button>
+      )}
     </div>
   );
 }

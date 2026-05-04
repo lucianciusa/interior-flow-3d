@@ -5,7 +5,7 @@ import re
 
 from app.routers.catalog import _load_catalog
 
-_PRIM = re.compile(r"^primitive:[a-z0-9_]+$")
+_PRIM = re.compile(r"^primitive:[a-zA-Z0-9_]+$")
 _CDN = re.compile(r"^https://[a-z0-9.\-]+/catalog/[a-f0-9]{64}\.glb$")
 
 

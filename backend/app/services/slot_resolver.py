@@ -104,8 +104,9 @@ def _slot_position(
         return (0.0, y, 0.0), 0.0
 
     if slot == "center_front":
-        # Usually 1.3m in front of center, but clamp for small rooms
-        z = min(1.3, room_l * 0.35)
+        # Target ~1.1m from center for typical sofa clearance (0.5m half-depth + 0.6m gap)
+        # Scale slightly with room size but keep it anchored to the center seating
+        z = max(0.9, min(1.2, room_l * 0.25))
         return (0.0, y, z), 0.0
 
     if slot == "entry":

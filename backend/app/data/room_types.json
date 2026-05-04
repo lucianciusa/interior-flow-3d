@@ -663,58 +663,64 @@
     ],
     "slot_accepted_tags": {
       "north_wall_left": [
-        "desk",
         "storage",
         "shelf",
         "accent",
         "lighting",
         "seating",
-        "media"
+        "media",
+        "desk",
+        "chair"
       ],
       "north_wall_center": [
-        "desk",
         "storage",
         "shelf",
         "seating",
         "media",
         "accent",
-        "lighting"
+        "lighting",
+        "desk",
+        "chair"
       ],
       "north_wall_right": [
         "storage",
         "shelf",
         "accent",
         "lighting",
-        "desk",
         "seating",
-        "media"
+        "media",
+        "desk",
+        "chair"
       ],
       "east_wall_left": [
         "storage",
         "shelf",
         "accent",
         "lighting",
-        "desk",
         "seating",
-        "media"
+        "media",
+        "desk",
+        "chair"
       ],
       "east_wall_center": [
         "storage",
         "shelf",
-        "desk",
         "seating",
         "media",
         "accent",
-        "lighting"
+        "lighting",
+        "desk",
+        "chair"
       ],
       "east_wall_right": [
         "storage",
         "shelf",
         "accent",
         "lighting",
-        "desk",
         "seating",
-        "media"
+        "media",
+        "desk",
+        "chair"
       ],
       "south_wall_left": [
         "storage",
@@ -722,53 +728,59 @@
         "accent",
         "lighting",
         "seating",
+        "media",
         "desk",
-        "media"
+        "chair"
       ],
       "south_wall_center": [
         "storage",
         "shelf",
         "seating",
-        "desk",
         "media",
         "accent",
-        "lighting"
+        "lighting",
+        "desk",
+        "chair"
       ],
       "south_wall_right": [
         "storage",
         "shelf",
         "accent",
         "lighting",
-        "desk",
         "seating",
-        "media"
+        "media",
+        "desk",
+        "chair"
       ],
       "west_wall_left": [
         "storage",
         "shelf",
         "accent",
         "lighting",
-        "desk",
         "seating",
-        "media"
+        "media",
+        "desk",
+        "chair"
       ],
       "west_wall_center": [
         "storage",
         "shelf",
-        "desk",
         "seating",
         "media",
         "accent",
-        "lighting"
+        "lighting",
+        "desk",
+        "chair"
       ],
       "west_wall_right": [
         "storage",
         "shelf",
         "accent",
         "lighting",
-        "desk",
         "seating",
-        "media"
+        "media",
+        "desk",
+        "chair"
       ],
       "corner_NE": [
         "lighting",
@@ -828,8 +840,10 @@
     },
     "allowed_zones": [
       "work_zone",
+      "seating_zone",
       "storage_zone",
-      "reading_nook"
+      "reading_nook",
+      "accent_zone"
     ],
     "default_zone": "work_zone",
     "dim_bounds": {

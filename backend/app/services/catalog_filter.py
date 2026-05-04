@@ -1,6 +1,6 @@
 from app.models.catalog import CatalogItem, RoomType
 
-MAX_CANDIDATES = 15
+MAX_CANDIDATES = 150
 
 
 def filter_catalog(

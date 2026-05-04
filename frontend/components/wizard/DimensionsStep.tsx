@@ -20,9 +20,9 @@ export default function DimensionsStep({ roomType, initial, onNext, onBack }: Di
   const { t } = useLanguage();
   const bounds = ROOM_TYPES[roomType].dim_bounds;
   const schema = z.object({
-    width_m: z.number().min(bounds.width_m[0]).max(bounds.width_m[1]),
-    length_m: z.number().min(bounds.length_m[0]).max(bounds.length_m[1]),
-    height_m: z.number().min(bounds.height_m[0]).max(bounds.height_m[1]),
+    width_m: z.coerce.number().min(bounds.width_m[0]).max(bounds.width_m[1]),
+    length_m: z.coerce.number().min(bounds.length_m[0]).max(bounds.length_m[1]),
+    height_m: z.coerce.number().min(bounds.height_m[0]).max(bounds.height_m[1]),
   });
 
   const {
@@ -59,7 +59,8 @@ export default function DimensionsStep({ roomType, initial, onNext, onBack }: Di
               type="number"
               inputMode="decimal"
               step={"step" in rest ? rest.step : "0.5"}
-              {...register(name, { valueAsNumber: true })}
+              onFocus={(e) => e.target.select()}
+              {...register(name)}
               className={cn(
                 "flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm text-foreground ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
                 errors[name] ? "border-destructive focus-visible:ring-destructive" : "border-input",
