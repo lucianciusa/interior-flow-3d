@@ -99,7 +99,7 @@ def _llm_payload(rt: str, style: str) -> dict[str, Any]:
         "palette": _PALETTE,
         "zones": [{"id": "zone1", "kind": "default", "itemBudget": len(items)}],
         "items": items,
-        "styleEmphasis": f"Distinctive {style} features including characteristic textures and color accents.",
+        "styleEmphasis": f"{style} style with focused textures and color accents.",
         "designExplanation": (
             f"I shaped this {style} {rt.replace('_', ' ')} around its anchor piece "
             "while leaving room for breathing space and natural circulation."
