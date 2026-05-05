@@ -75,10 +75,7 @@ class SupabaseRest:
     def _one(self, rows: Any) -> dict[str, Any]:
         if not rows:
             raise SupabaseNotFound("Expected at least one row, got none")
-        if isinstance(rows, list):
-            res = rows[0]
-        else:
-            res = rows
+        res = rows[0] if isinstance(rows, list) else rows
         if not isinstance(res, dict):
             raise SupabaseError(f"Expected dict from Supabase, got {type(res)}")
         return res
