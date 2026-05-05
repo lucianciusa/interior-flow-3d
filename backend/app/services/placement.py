@@ -280,7 +280,7 @@ def _apply_vertical_stack(
             continue
         if not (set(existing_item.tags) & _STACKABLE_SURFACE_TAGS):
             continue
-        
+
         # In office, don't put plants on desks
         if room_type == "home_office" and is_plant and "desk" in existing_item.tags:
             continue
@@ -392,9 +392,7 @@ def _try_place(
                     break
 
         # 5. Tag-based co-occupancy (rugs)
-        if not can_cooccupy and (
-            (c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS)
-        ):
+        if not can_cooccupy and ((c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS)):
             can_cooccupy = True
 
         # Desktop items that will be stacked can skip AABB entirely
@@ -409,9 +407,7 @@ def _try_place(
             # Co-occupancy allowed but not a desktop item:
             # use strict physical-only overlap (no buffer) so desk+chair and
             # similar intentional pairings are never incorrectly rejected.
-            if _aabb_overlap(
-                candidate, existing, catalog_item, existing_item, cooccupy_mode=True
-            ):
+            if _aabb_overlap(candidate, existing, catalog_item, existing_item, cooccupy_mode=True):
                 return "AABB_COLLISION"
 
     return candidate
@@ -637,7 +633,7 @@ def resolve(
             if p.catalogId == "laptop" and p.slot != desk.slot:
                 # Move laptop to the same slot as the desk
                 p.slot = desk.slot
-                # Position will be updated by _apply_vertical_stack in a previous step? 
+                # Position will be updated by _apply_vertical_stack in a previous step?
                 # No, we need to re-run vertical stack or manually adjust.
                 desk_h = catalog_map[desk.catalogId].footprint.h
                 p.position = (desk.position[0], desk.position[1] + desk_h, desk.position[2])
@@ -646,17 +642,19 @@ def resolve(
     # Step 9: Ensure 4 Dining Chairs in Dining Room if table exists
     if request.roomType == "dining_room":
         tables = [
-            p for p in placed
+            p
+            for p in placed
             if "dining" in catalog_map[p.catalogId].tags
             and "surface" in catalog_map[p.catalogId].tags
         ]
         if tables:
             chair_cat = next(
                 (
-                    c for c in catalog
+                    c
+                    for c in catalog
                     if "dining_chair" in c.id or ("dining" in c.tags and "chair" in c.tags)
                 ),
-                None
+                None,
             )
             if chair_cat:
                 for suffix in ["N", "S", "E", "W"]:
@@ -672,11 +670,17 @@ def resolve(
                                 "Mandatory dining chair."
                                 if lang == "en"
                                 else "Silla de comedor obligatoria."
-                            )
+                            ),
                         )
                         result = _try_place(
-                            mock_chair, slot_name, None, room,
-                            chair_cat, placed, catalog_map, margin
+                            mock_chair,
+                            slot_name,
+                            None,
+                            room,
+                            chair_cat,
+                            placed,
+                            catalog_map,
+                            margin,
                         )
                         if isinstance(result, ResolvedItem):
                             placed.append(result)

@@ -130,10 +130,10 @@ def _slot_position(
             tz = -(0.45 + 0.25 + 0.02)
             rot = 0.0  # face south (+Z)
         elif slot == "dining_chair_S":
-            tz = (0.45 + 0.25 + 0.02)
+            tz = 0.45 + 0.25 + 0.02
             rot = math.pi  # face north (-Z)
         elif slot == "dining_chair_E":
-            tx = (0.7 + 0.25 + 0.02)
+            tx = 0.7 + 0.25 + 0.02
             rot = -math.pi / 2  # face west (-X)
         elif slot == "dining_chair_W":
             tx = -(0.7 + 0.25 + 0.02)

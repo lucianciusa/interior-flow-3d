@@ -167,7 +167,7 @@ class LayoutSummary(BaseModel):
     seed: int | None = None
     thumbnail_url: str | None = None
     created_at: str
-    
+
     # Relationships for dashboard organization
     project_id: str | None = None
     project_name: str | None = None
