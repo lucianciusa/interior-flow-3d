@@ -44,7 +44,7 @@ function GltfMesh({ model, footprint }: { model: string; footprint: ResolvedItem
       }
     });
     return clone;
-  }, [scene, model, footprint.w, footprint.h, footprint.d]);
+  }, [scene, footprint.w, footprint.h, footprint.d]);
 
   return <primitive object={scaledScene} />;
 }

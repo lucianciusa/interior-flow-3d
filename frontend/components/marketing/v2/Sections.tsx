@@ -214,8 +214,8 @@ export function TwoPass({ t }: { t?: typeof marketingTranslations.en.sections.tw
 
 /* ============ CATALOG / SWAP ============ */
 export function CatalogSwap({ t }: { t?: typeof marketingTranslations.en.sections.catalog | typeof marketingTranslations.es.sections.catalog }) {
-  if (!t) return null;
   const [active, setActive] = useState(0);
+  if (!t) return null;
   const tags = ["seating", "upholstered", "large", "media", "storage", "lighting", "accent", "wood", "fabric", "metal", "glass", "plant"];
   return (
     <div className="catalog-section">

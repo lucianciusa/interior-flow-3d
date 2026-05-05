@@ -84,37 +84,50 @@ export default function WizardShell() {
 
   const { language } = useLanguage();
 
-  const handleGenerate = async (params?: {
-    roomType?: RoomType;
-    dims?: RoomDims;
-    style?: Style;
-    preferences?: Preference[];
-    seed?: number;
-  }) => {
-    const activeStyle = params?.style || style;
-    if (!activeStyle) return;
+  const handleGenerate = useCallback(
+    async (params?: {
+      roomType?: RoomType;
+      dims?: RoomDims;
+      style?: Style;
+      preferences?: Preference[];
+      seed?: number;
+    }) => {
+      const activeStyle = params?.style || style;
+      if (!activeStyle) return;
 
-    const useSeed = params?.seed ?? Math.floor(Math.random() * 1_000_000);
-    setSeed(useSeed);
-    setPhase("generating");
-    setSaveState("idle");
-    
-    try {
-      const data = await generateAsync({
-        roomType: params?.roomType || roomType,
-        ...(params?.dims || dims),
-        style: activeStyle,
-        preferences: params?.preferences || preferences,
-        seed: useSeed,
-        language,
-      });
-      setLayout(data);
-      setPhase("result");
-    } catch (err) {
-      console.error("Generation failed:", err);
-      setPhase("step3");
-    }
-  };
+      const useSeed = params?.seed ?? Math.floor(Math.random() * 1_000_000);
+      setSeed(useSeed);
+      setPhase("generating");
+      setSaveState("idle");
+
+      try {
+        const data = await generateAsync({
+          roomType: params?.roomType || roomType,
+          ...(params?.dims || dims),
+          style: activeStyle,
+          preferences: params?.preferences || preferences,
+          seed: useSeed,
+          language,
+        });
+        setLayout(data);
+        setPhase("result");
+      } catch (err) {
+        console.error("Generation failed:", err);
+        setPhase("step3");
+      }
+    },
+    [
+      style,
+      setSeed,
+      setPhase,
+      generateAsync,
+      roomType,
+      dims,
+      preferences,
+      language,
+      setLayout,
+    ],
+  );
 
   const hasProcessedAutoRef = useRef(false);
 

@@ -36,7 +36,6 @@ const DIM_BOUNDS: Record<string, { w: [number, number], l: [number, number], h: 
 import { marketingTranslations } from "@/lib/marketing-translations";
 
 export default function Wizard({ t }: { t?: typeof marketingTranslations.en.wizard_demo | typeof marketingTranslations.es.wizard_demo }) {
-  if (!t) return null;
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [roomType, setRoomType] = useState("living_room");
@@ -44,6 +43,8 @@ export default function Wizard({ t }: { t?: typeof marketingTranslations.en.wiza
   const [style, setStyle] = useState("scandinavian");
   const [prefs, setPrefs] = useState<string[]>(["more_storage"]);
   const [loading, setLoading] = useState(false);
+
+  if (!t) return null;
 
   function handleRoomTypeChange(id: string) {
     setRoomType(id);

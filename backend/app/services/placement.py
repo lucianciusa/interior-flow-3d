@@ -162,7 +162,9 @@ def _aabb_overlap(
     """
     # Rugs are flat on the floor; everything sits on top of them — no collision with non-rugs.
     # However, we allow collision detection between two rugs to handle stacking/layering.
-    if ("rug" in a_cat.tags and "rug" not in b_cat.tags) or ("rug" in b_cat.tags and "rug" not in a_cat.tags):
+    is_a_rug = "rug" in a_cat.tags
+    is_b_rug = "rug" in b_cat.tags
+    if (is_a_rug and not is_b_rug) or (is_b_rug and not is_a_rug):
         return False
 
     ahx, ahz = _half_extents(a)
@@ -783,11 +785,16 @@ def resolve(
                 chair_p.rotation_y = chair_rot
 
     # Step 11: Handle rug stacking to prevent z-fighting
-    rug_items = [p for p in placed if p.catalogId in catalog_map and "rug" in catalog_map[p.catalogId].tags]
+    rug_items = [
+        p for p in placed
+        if p.catalogId in catalog_map and "rug" in catalog_map[p.catalogId].tags
+    ]
     if len(rug_items) > 1:
         # Sort rugs by footprint area (descending) so larger rugs stay at the bottom
         rug_items.sort(
-            key=lambda r: catalog_map[r.catalogId].footprint.w * catalog_map[r.catalogId].footprint.d,
+            key=lambda r: (
+                catalog_map[r.catalogId].footprint.w * catalog_map[r.catalogId].footprint.d
+            ),
             reverse=True
         )
         
@@ -799,12 +806,21 @@ def resolve(
             for j in range(i):
                 other = rug_items[j]
                 # Use a small margin to detect overlap even if they just touch
-                if _aabb_overlap(rug, other, catalog_map[rug.catalogId], catalog_map[other.catalogId], margin=0.0, cooccupy_mode=True):
+                if _aabb_overlap(
+                    rug,
+                    other,
+                    catalog_map[rug.catalogId],
+                    catalog_map[other.catalogId],
+                    margin=0.0,
+                    cooccupy_mode=True,
+                ):
                     # Stack it slightly higher than the floor (2mm per layer)
                     # We use i to ensure each rug has a unique, deterministic height
                     new_y = 0.002 * i
                     rug.position = (rug.position[0], new_y, rug.position[2])
-                    warnings.append(f"Stacked rug {rug.catalogId} slightly higher to prevent z-fighting.")
+                    warnings.append(
+                        f"Stacked rug {rug.catalogId} slightly higher to prevent z-fighting."
+                    )
                     break
 
     return Layout(
