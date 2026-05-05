@@ -38,22 +38,33 @@ pnpm dev                                  # http://localhost:3000
 
 ```bash
 supabase start
-supabase db reset                         # applies migrations/0001_init.sql
+supabase db reset     # applies all migrations (0001_init → 0004_rate_limits)
 ```
 
 ## Required env vars
 
-See `.env.example` files in `backend/` and `frontend/`. Backend reads Azure OpenAI + Supabase JWKS configuration; frontend reads Supabase public keys + the FastAPI base URL. Names are documented in `.claude/PRD.md` §9.
+See `.env.example` files in `backend/` and `frontend/`.
 
 ### Backend
 
 | Var | Purpose |
 |-----|---------|
-| `AZURE_OPENAI_ENDPOINT` / `_KEY` / `_DEPLOYMENT` | LLM client |
+| `AZURE_OPENAI_ENDPOINT` | Azure OpenAI resource endpoint |
+| `AZURE_OPENAI_KEY` | Azure OpenAI API key |
+| `AZURE_OPENAI_DEPLOYMENT` | Model deployment name (default: `gpt-4o`) |
+| `AZURE_OPENAI_API_VERSION` | API version (default: `2024-10-21`) |
 | `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_JWKS_URL` | JWT verify key set (typically `<URL>/auth/v1/.well-known/jwks.json`) |
+| `SUPABASE_JWKS_URL` | JWT verify keyset (`<URL>/auth/v1/.well-known/jwks.json`) |
 | `SUPABASE_ANON_KEY` | Forwarded to PostgREST as `apikey` |
-| `CORS_ORIGINS` | Comma-separated origins allowed by FastAPI |
+| `SUPABASE_SERVICE_ROLE_KEY` | Used only by the share-token security-definer RPC |
+| `SHARE_TOKEN_SECRET` | HMAC secret for signed share links |
+| `SHARE_TOKEN_TTL_DAYS` | Share link expiry in days (default: `30`) |
+| `SHARE_LINK_BASE_URL` | Public domain for share URLs (e.g. `https://your-app.com`) |
+| `CATALOG_VERSION` | Version stamp on generated layouts (e.g. `v1.phase6`) |
+| `CDN_BASE_URL` | Front Door CDN base URL serving catalog GLBs + HDRI |
+| `AZURE_STORAGE_ACCOUNT` | Storage account name hosting `catalog` and `hdri` containers |
+| `CORS_ORIGINS` | Comma-separated allowed origins |
+| `LOG_LEVEL` | Logging level (default: `info`) |
 
 ### Frontend
 
@@ -62,6 +73,7 @@ See `.env.example` files in `backend/` and `frontend/`. Backend reads Azure Open
 | `NEXT_PUBLIC_API_BASE_URL` | FastAPI base URL |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anon key |
+| `NEXT_PUBLIC_HDRI_URL` | KTX2-compressed HDRI for R3F scene (~2 MB, served from CDN) |
 
 ## Supabase setup
 
@@ -95,7 +107,7 @@ infra/      Azure Bicep (Container Apps + Key Vault)
 
 ## Demo seeds
 
-Reproducible seed values for stage demos: see [`docs/demo-seeds.md`](docs/demo-seeds.md). Use `?seed=<value>` on `/app` to pre-fill the wizard.
+Pass `?seed=<integer>` on `/app` to pre-fill the wizard with a reproducible seed. The seed is forwarded to the generation pipeline; saved layouts also embed the seed for playback.
 
 ## Phase status
 
