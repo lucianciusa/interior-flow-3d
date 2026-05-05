@@ -7,7 +7,9 @@ from app.models.layout import (
     LayoutItemLLM,
     MergedLayoutLLM,
     ResolvedItem,
+    SlotId,
 )
+from typing import cast, Any, Literal
 from app.models.room_type import RoomTypeProfile
 from app.models.style_profile import StyleProfile
 from app.services.slot_resolver import Footprint, RoomDims, resolve_slot
@@ -615,10 +617,10 @@ def resolve(
                 c for c in catalog if c.id == "office_chair" or "office_chair" in c.tags
             ]
             if office_chairs:
-                chair_cat = office_chairs[0]
+                office_chair_cat = office_chairs[0]
                 # Create a mock LLM item for the chair
                 mock_item = LayoutItemLLM(
-                    catalogId=chair_cat.id,
+                    catalogId=office_chair_cat.id,
                     slot="desk_chair",
                     facing="auto",
                     zone="work_zone",
@@ -630,7 +632,7 @@ def resolve(
                 )
                 # Try to place it
                 result = _try_place(
-                    mock_item, "desk_chair", None, room, chair_cat, placed, catalog_map, margin
+                    mock_item, "desk_chair", None, room, office_chair_cat, placed, catalog_map, margin
                 )
                 if isinstance(result, ResolvedItem):
                     placed.append(result)
@@ -689,7 +691,7 @@ def resolve(
             tw = table_cat.footprint.d if is_rotated else table_cat.footprint.w
             td = table_cat.footprint.w if is_rotated else table_cat.footprint.d
 
-            chair_cat = next(
+            dining_chair_cat = next(
                 (
                     c
                     for c in catalog
@@ -697,8 +699,8 @@ def resolve(
                 ),
                 None,
             )
-            if chair_cat:
-                chw, chd = chair_cat.footprint.w, chair_cat.footprint.d
+            if dining_chair_cat:
+                chw, chd = dining_chair_cat.footprint.w, dining_chair_cat.footprint.d
                 # Offsets from table center to chair centers
                 # We add 2cm clearance
                 z_off = td / 2 + chd / 2 + 0.02
@@ -720,8 +722,8 @@ def resolve(
                         wz = table.position[2] + rel_pos[2]
 
                         mock_chair = ResolvedItem(
-                            catalogId=chair_cat.id,
-                            slot=slot_name,
+                            catalogId=dining_chair_cat.id,
+                            slot=cast(SlotId, slot_name),
                             facing="center",
                             zone="dining_zone",
                             rationale=(
@@ -731,8 +733,8 @@ def resolve(
                             ),
                             position=(wx, 0.0, wz),
                             rotation_y=rot,
-                            footprint={"w": chw, "d": chd, "h": chair_cat.footprint.h},
-                            model=chair_cat.model,
+                            footprint={"w": chw, "d": chd, "h": dining_chair_cat.footprint.h},
+                            model=dining_chair_cat.model,
                         )
 
                         # Use a more lenient check for mandatory chairs — only check room bounds
@@ -776,10 +778,10 @@ def resolve(
             sin_r = math.sin(desk_rot)
             # offset = desk half-depth + chair half-depth + small gap
             for chair_p in chair_items:
-                chair_cat = catalog_map.get(chair_p.catalogId)
-                if not chair_cat:
+                p_chair_cat = catalog_map.get(chair_p.catalogId)
+                if not p_chair_cat:
                     continue
-                offset = desk_cat.footprint.d / 2 + chair_cat.footprint.d / 2 + 0.05
+                offset = desk_cat.footprint.d / 2 + p_chair_cat.footprint.d / 2 + 0.05
                 # Position chair in front of desk (the open/user side)
                 # The desk's "front" is in the direction it faces (desk_rot)
                 cx = dx + sin_r * offset
