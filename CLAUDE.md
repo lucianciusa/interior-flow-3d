@@ -81,7 +81,7 @@ uv sync                              # or: pip install -e .
 uv run uvicorn app.main:app --reload # FastAPI on :8000
 uv run pytest                        # all backend tests
 uv run pytest tests/test_resolver.py # slot resolver tests only
-uv run pytest tests/test_two_pass.py # two-pass orchestration tests
+uv run pytest tests/test_llm_mock.py  # two-pass orchestration tests (mocked LLM)
 uv run ruff check .
 uv run ruff format .
 uv run mypy app
@@ -148,6 +148,8 @@ interior-flow-3d/
 │   │   │   ├── projects.py                   # CRUD
 │   │   │   ├── rooms.py                      # CRUD
 │   │   │   ├── layouts.py                    # CRUD + duplicate + share
+│   │   │   ├── swap.py                       # POST /layouts/{id}/items/{catalogId}/swap
+│   │   │   ├── templates.py                  # GET /templates
 │   │   │   └── share.py                      # GET /share/{token}
 │   │   ├── models/                           # Pydantic v2 schemas (the contract)
 │   │   │   ├── layout.py                     # zones + items + catalog_version
@@ -161,7 +163,9 @@ interior-flow-3d/
 │   │   │   ├── placement.py                  # AABB pass, exclusivity, drop-priority
 │   │   │   ├── catalog_filter.py             # tag + room-type pre-prompt filter
 │   │   │   ├── style_profiles.py             # StyleProfile loader
-│   │   │   ├── rate_limit.py                 # IP middleware (Postgres-backed)
+│   │   │   ├── room_types.py                 # RoomTypeProfile loader
+│   │   │   ├── zones.py                      # zone helpers
+│   │   │   ├── share_tokens.py               # HMAC sign/verify for share links
 │   │   │   └── supabase.py                   # JWT verify + DB writes + share-fn calls
 │   │   ├── data/
 │   │   │   ├── catalog.json                  # ~40 tagged items
@@ -173,13 +177,19 @@ interior-flow-3d/
 │   │       └── system_pass2.md               # items per zone
 │   ├── tests/
 │   │   ├── test_resolver.py                  # every slot, edge dimensions, all 4 room types
+│   │   ├── test_resolver_room_types.py       # per-room-type resolver coverage
 │   │   ├── test_placement.py                 # exclusivity, AABB, drop, zone essentialness
+│   │   ├── test_pipeline_combos.py           # full pipeline across room × style combos
 │   │   ├── test_zones.py                     # zone schema + room-type compat
-│   │   ├── test_two_pass.py                  # mocked LLM, both passes, parallel exec
+│   │   ├── test_room_types.py                # RoomTypeProfile loader
 │   │   ├── test_catalog_filter.py            # tag/room-type filter correctness
+│   │   ├── test_catalog_assets.py            # per-asset budget checks
 │   │   ├── test_style_profiles.py
+│   │   ├── test_llm_mock.py                  # mocked LLM, both passes, parallel exec
 │   │   ├── test_share_tokens.py              # HMAC, expiry, revoke
-│   │   ├── test_rate_limit.py                # IP counter
+│   │   ├── test_auth_deps.py                 # JWT verify dependency
+│   │   ├── test_healthz.py
+│   │   ├── test_routes_{generate,projects,rooms,layouts,layouts_variants,share,swap}.py
 │   │   └── test_rls_cross_user.py            # extended to projects + share
 │   ├── pyproject.toml
 │   └── Dockerfile
@@ -292,11 +302,13 @@ Persistence is a separate authenticated call (`POST /layouts`). `/generate-layou
 - **Patterns:**
   - Resolver tests cover every slot × representative footprint × edge dimensions (per room type) (min 2×2×2.2, max 12×12×4 living; tighter bounds bedroom/dining/office).
   - Placement tests fixture LLM output and assert no overlapping AABBs, all wall items flush within `StyleProfile.wall_flush_tolerance`, all `catalogId`s in catalog, all `slot`s in enum for the room type, all items' tags accepted by their assigned zone.
-  - Two-pass tests mock both Pass 1 and Pass 2 calls; assert prompt contents (zone enum scoped to room type, candidate catalog filtered, no full catalog leak), schema validation per pass, parallel execution via `asyncio.gather`, per-zone retry isolation.
+  - LLM mock tests (`test_llm_mock.py`) mock both Pass 1 and Pass 2 calls; assert prompt contents (zone enum scoped to room type, candidate catalog filtered, no full catalog leak), schema validation per pass, parallel execution via `asyncio.gather`, per-zone retry isolation.
+  - Pipeline combo tests (`test_pipeline_combos.py`) run full pipeline across `room_type × style × preference` combos and assert no overlaps.
   - Catalog filter tests assert filter is deterministic, returns ≤15 items per `(room_type, style, zone)`, never returns mismatched-room-type items.
+  - Catalog asset tests verify per-item file budget (≤1 MB hard cap).
   - Share-token tests cover HMAC validity, expiry, revocation, and 404-on-bad-token (no leakage of token existence).
-  - Rate-limit tests cover anon 10/24h enforcement, sliding window, auth bypass.
   - RLS test uses two real Supabase JWTs (test users) and hits the deployed API across projects + rooms + layouts + share tokens.
+  - Route tests (`test_routes_*.py`) cover generate, projects, rooms, layouts, variants, share, and swap endpoints.
 - **Frontend testing (when added):** Vitest + React Testing Library for components; Playwright for the full anon-wizard → result → save → project-creation happy path, plus the share-link public-view path.
 
 ---

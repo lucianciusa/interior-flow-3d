@@ -1,8 +1,8 @@
 # Interior Flow 3D — Product Requirements Document
 
-**Version:** 1.0 (v1 in planning — MVP 0.1 shipped Phases 0–3)
-**Status:** v1 plan locked
-**Last Updated:** 2026-04-29
+**Version:** 1.0 (v1 shipped — all Phases 0–7 complete)
+**Status:** v1 feature-complete
+**Last Updated:** 2026-05-06
 **Owner:** Lucian
 
 ---
@@ -243,7 +243,7 @@ interior-flow-3d/
 ├── backend/                       # FastAPI
 │   ├── app/
 │   │   ├── main.py
-│   │   ├── routers/{catalog,generate,projects,rooms,layouts,share}.py
+│   │   ├── routers/{catalog,generate,projects,rooms,layouts,share,swap,templates}.py
 │   │   ├── models/{layout,room,project,catalog,share}.py     # Pydantic v2
 │   │   ├── services/
 │   │   │   ├── llm.py                         # Pass 1 + Pass 2 orchestration
@@ -251,7 +251,9 @@ interior-flow-3d/
 │   │   │   ├── placement.py                   # AABB + zone-aware drop
 │   │   │   ├── catalog_filter.py              # tag + room-type filter
 │   │   │   ├── style_profiles.py              # StyleProfile loader
-│   │   │   ├── rate_limit.py                  # IP middleware
+│   │   │   ├── room_types.py                  # RoomTypeProfile loader
+│   │   │   ├── zones.py                       # zone helpers
+│   │   │   ├── share_tokens.py                # HMAC sign/verify
 │   │   │   └── supabase.py
 │   │   ├── data/
 │   │   │   ├── catalog.json                   # tagged ~40 items
@@ -259,9 +261,12 @@ interior-flow-3d/
 │   │   │   ├── room_types.json                # slot instance sets per type
 │   │   │   └── templates.json                 # curated example projects
 │   │   └── prompts/{system_pass1.md, system_pass2.md}
-│   ├── tests/{test_resolver.py, test_placement.py, test_llm_mock.py,
-│   │          test_zones.py, test_two_pass.py, test_catalog_filter.py,
-│   │          test_rls_cross_user.py, test_share_tokens.py, test_rate_limit.py}
+│   ├── tests/{test_resolver.py, test_resolver_room_types.py, test_placement.py,
+│   │          test_zones.py, test_room_types.py, test_catalog_filter.py,
+│   │          test_catalog_assets.py, test_style_profiles.py, test_llm_mock.py,
+│   │          test_pipeline_combos.py, test_share_tokens.py, test_auth_deps.py,
+│   │          test_rls_cross_user.py, test_healthz.py,
+│   │          test_routes_{generate,projects,rooms,layouts,layouts_variants,share,swap}.py}
 │   ├── pyproject.toml
 │   └── Dockerfile
 ├── supabase/migrations/
@@ -879,7 +884,7 @@ MVP Phases 0–3 are shipped (see version 0.1 history). v1 adds Phases 4–7.
 - ✅ Latency budget verified: p95 < 10s end-to-end
 - ✅ All Layouts stamped with `catalog_version`
 
-**Validation:** generate 50+ layouts across all `room × style × preference` combos; assert zone coverage, no zone-essential drops, style-recognizable rationale text. Demo seed list (3–5 known-good seeds per style × room type) committed to `docs/demo-seeds.md`.
+**Validation:** generate 50+ layouts across all `room × style × preference` combos; assert zone coverage, no zone-essential drops, style-recognizable rationale text. Use `?seed=<integer>` on `/app` for repeatable demo runs.
 
 ### Total v1 budget
 
