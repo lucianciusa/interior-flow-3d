@@ -62,6 +62,8 @@ COOCCUPY_ALLOW: set[frozenset[str]] = {
     frozenset({"rug", "coffee_table"}),
     frozenset({"rug", "dining_table_4"}),
     frozenset({"rug", "dining_table_6"}),
+    frozenset({"dining_table_4", "dining_chair"}),
+    frozenset({"dining_table_6", "dining_chair"}),
     frozenset({"bed_double", "nightstand"}),
     frozenset({"bed_queen", "nightstand"}),
     frozenset({"bed_single", "nightstand"}),

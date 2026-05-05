@@ -19,6 +19,7 @@ VALID_LLM_JSON = {
             "rationale": "I anchored the sofa on the south wall for a clean sightline.",
         }
     ],
+    "styleEmphasis": "Minimalist forms with a focus on functional simplicity and high-quality materials.",
     "designExplanation": "I designed this minimal room with restraint and purpose.",
 }
 

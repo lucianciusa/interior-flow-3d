@@ -46,6 +46,9 @@ def _llm(items: list[LayoutItemLLM]) -> MergedLayoutLLM:
         palette=_PALETTE,
         zones=[Zone(id="z1", kind="seating_zone", itemBudget=6)],
         items=items,
+        styleEmphasis=(
+            "Clean lines, tapered legs, and a mix of light wood and neutral upholstery."
+        ),
         designExplanation=(
             "I arranged this scandinavian living room to maximize openness and "
             "natural light, placing the sofa centrally to anchor the seating zone."
@@ -65,10 +68,10 @@ def _item(catalog_id: str, slot: str, facing: str = "auto") -> LayoutItemLLM:
 # ── SLOT_KINDS completeness ───────────────────────────────────────────────────
 
 
-def test_slot_kinds_has_22_entries() -> None:
-    # 12 wall + 4 corner + 6 floor (center, center_front, entry, bed_center,
-    # table_center, desk_anchor) = 22
-    assert len(SLOT_KINDS) == 22
+def test_slot_kinds_has_27_entries() -> None:
+    # 12 wall + 4 corner + 11 floor (center, center_front, entry, bed_center,
+    # table_center, desk_anchor, desk_chair, 4x dining_chair) = 27
+    assert len(SLOT_KINDS) == 27
 
 
 # ── Happy path ────────────────────────────────────────────────────────────────
