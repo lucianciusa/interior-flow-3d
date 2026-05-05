@@ -31,7 +31,7 @@ export function QuotaBadge() {
       </span>
       <button className="flex h-5 items-center gap-1 rounded-full bg-primary pl-1.5 pr-2 text-[10px] font-semibold text-primary-foreground hover:opacity-90">
         <Lock size={10} className="opacity-80" />
-        Pro
+        {t("pro")}
       </button>
     </div>
   );

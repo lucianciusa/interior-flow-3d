@@ -157,7 +157,7 @@ export default function WizardShell() {
   }, [searchParams, setRoomType, setDims, setStyle, setPreferences, handleGenerate, roomType, dims, preferences]);
 
   const handleRegenerate = () => {
-    handleGenerate(Math.floor(Math.random() * 1_000_000));
+    handleGenerate({ seed: Math.floor(Math.random() * 1_000_000) });
   };
 
   const handleAdjust = () => {

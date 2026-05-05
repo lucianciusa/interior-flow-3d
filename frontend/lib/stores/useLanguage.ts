@@ -281,6 +281,7 @@ const DICTIONARY: Record<Language, Dictionary> = {
     desk_anchor: "Desk anchor",
     free_designs_project: "Free Designs",
     quick_room: "Quick Room",
+    pro: "Pro",
   },
   es: {
     dashboard: "Panel de Control",
@@ -557,6 +558,7 @@ const DICTIONARY: Record<Language, Dictionary> = {
     desk_anchor: "Ancla del escritorio",
     free_designs_project: "Diseños libres",
     quick_room: "Habitación rápida",
+    pro: "Profesional",
   },
 };
 

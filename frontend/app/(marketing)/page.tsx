@@ -5,8 +5,8 @@ import Link from "next/link";
 
 import { Nav } from "@/components/marketing/v2/Nav";
 import Wizard from "@/components/marketing/v2/Wizard";
+import { useAuthStore } from "@/lib/stores/auth";
 import {
-  Marquee,
   StylesShowcase,
   RoomsGrid,
   TwoPass,
@@ -26,68 +26,72 @@ const HeroScene = dynamic(() => import("@/components/marketing/v2/HeroScene"), {
   ssr: false,
 });
 
+import { useLanguage } from "@/lib/stores/useLanguage";
+import { marketingTranslations } from "@/lib/marketing-translations";
+
 export default function MarketingPage() {
+  const session = useAuthStore((s) => s.session);
+  const { language } = useLanguage();
+  const t = marketingTranslations[language] || marketingTranslations.en;
+
   return (
     <>
-      <Nav />
+      <Nav t={t.nav} />
 
       {/* HERO */}
       <section className="hero" id="top">
         <div className="container hero-inner">
           <div>
             <span className="hero-eyebrow">
-              <span className="hero-eyebrow-pill">NEW</span>
-              v1.0 · 4 rooms · 5 styles · ~40 items
+              <span className="hero-eyebrow-pill">{t.hero.eyebrowPill}</span>
+              {t.hero.eyebrow}
             </span>
             <h1>
-              Designed in <em>under 10&nbsp;seconds</em>. <br />Yours forever.
+              {t.hero.title1} <em>{t.hero.title2}</em>{t.hero.title3}
             </h1>
             <p className="hero-lede">
-              Interior Flow 3D is an AI design copilot that generates a real, browseable 3D scene from a few simple choices.
-              No CAD, no signup to try. Just a room you can walk into.
+              {t.hero.ledeBase}
+              {session ? ` ${t.hero.ledeSession}` : ` ${t.hero.ledeAnon}`}
             </p>
             <div className="hero-cta-row">
-              <a href="#wizard" className="btn btn-primary">Try it free, no signup →</a>
-              <a href="#how" className="btn btn-ghost">See how it works</a>
+              <a href="#wizard" className="btn btn-primary">{t.hero.ctaPrimary}</a>
+              <a href="#how" className="btn btn-ghost">{t.hero.ctaSecondary}</a>
             </div>
             <div className="hero-meta">
-              <span className="hero-meta-item">10 free generations / day</span>
-              <span className="hero-meta-item">Anonymous trial</span>
-              <span className="hero-meta-item">Light &amp; dark</span>
+              <span className="hero-meta-item">{t.hero.meta1}</span>
+              <span className="hero-meta-item">{t.hero.meta2}</span>
+              <span className="hero-meta-item">{t.hero.meta3}</span>
             </div>
           </div>
           <div className="hero-3d">
             <div className="hero-3d-chrome">
               <span className="hero-3d-tag">
-                <span className="hero-3d-tag-dot" />live · auto-orbit
+                <span className="hero-3d-tag-dot" />{t.hero.tagLive}
               </span>
-              <span className="hero-3d-tag">4×5m · scandinavian</span>
+              <span className="hero-3d-tag">{t.hero.tagDim}</span>
             </div>
             <div className="hero-3d-stage">
               <HeroScene />
             </div>
             <div className="hero-3d-rationale">
-              <span className="hero-3d-rationale-label">Rationale · sofa_3seat</span>
-              <strong>&ldquo;I placed the sofa against the south wall</strong> to face the window and ground the seating zone — the rug stretches under the coffee table to tie them together.&rdquo;
+              <span className="hero-3d-rationale-label">{t.hero.rationaleLabel}</span>
+              <strong>&ldquo;{t.hero.rationaleTextPrefix}</strong>{t.hero.rationaleTextSuffix}&rdquo;
             </div>
           </div>
         </div>
       </section>
 
-      <Marquee />
-
       {/* WIZARD */}
       <section className="section feature-anchor" id="wizard">
         <div className="container">
           <div className="section-head">
-            <span className="section-tag">The wizard</span>
-            <h2 className="section-title">Three decisions. One layout.</h2>
+            <span className="section-tag">{t.sections.wizard.tag}</span>
+            <h2 className="section-title">{t.sections.wizard.title}</h2>
             <p className="section-lede">
-              Design your dream room in just three simple steps. No design experience needed!
-              Try our interactive wizard below and see your ideas come to life.
+              {t.sections.wizard.lede}
             </p>
           </div>
-          <Wizard />
+          <Wizard t={t.wizard_demo} />
         </div>
       </section>
 
@@ -95,10 +99,10 @@ export default function MarketingPage() {
       <section className="section feature-anchor" id="styles" style={{ background: "var(--grad-section)" }}>
         <div className="container">
           <div className="section-head">
-            <span className="section-tag">5 styles</span>
-            <h2 className="section-title">Five hand-tuned design profiles.</h2>
+            <span className="section-tag">{t.sections.styles.tag}</span>
+            <h2 className="section-title">{t.sections.styles.title}</h2>
             <p className="section-lede">
-              Each style is carefully crafted by professional interior designers to create harmonious, beautiful spaces. From cozy Scandinavian to sleek Minimalist, find the perfect vibe for your home.
+              {t.sections.styles.lede}
             </p>
           </div>
           <StylesShowcase />
@@ -109,27 +113,27 @@ export default function MarketingPage() {
       <section className="section feature-anchor" id="rooms">
         <div className="container">
           <div className="section-head">
-            <span className="section-tag">4 room types</span>
-            <h2 className="section-title">Living, bedroom, dining, office.</h2>
+            <span className="section-tag">{t.sections.rooms.tag}</span>
+            <h2 className="section-title">{t.sections.rooms.title}</h2>
             <p className="section-lede">
-              Whether you are redesigning a cozy bedroom or a productive home office, our AI understands the unique flow of each space to suggest the perfect furniture arrangement.
+              {t.sections.rooms.lede}
             </p>
           </div>
-          <RoomsGrid />
+          <RoomsGrid t={t.wizard_demo.roomTypes} />
         </div>
       </section>
 
       {/* TWO-PASS */}
       <section className="section feature-anchor" id="how" style={{ background: "var(--grad-section)" }}>
         <div className="container">
-          <TwoPass />
+          <TwoPass t={t.sections.twopass} />
         </div>
       </section>
 
       {/* CATALOG / SWAP */}
       <section className="section feature-anchor" id="catalog">
         <div className="container">
-          <CatalogSwap />
+          <CatalogSwap t={t.sections.catalog} />
         </div>
       </section>
 
@@ -137,13 +141,13 @@ export default function MarketingPage() {
       <section className="section feature-anchor" id="hierarchy" style={{ background: "var(--grad-section)" }}>
         <div className="container">
           <div className="section-head">
-            <span className="section-tag">Project → Room → Layout</span>
-            <h2 className="section-title">Organize a whole home.</h2>
+            <span className="section-tag">{t.sections.hierarchy.tag}</span>
+            <h2 className="section-title">{t.sections.hierarchy.title}</h2>
             <p className="section-lede">
-              Plan your entire home effortlessly. Organize different rooms, save multiple design ideas for each space, and pick your favorites. Designing a full house has never been this easy.
+              {t.sections.hierarchy.lede}
             </p>
           </div>
-          <Hierarchy />
+          <Hierarchy t={t.sections.hierarchy} />
         </div>
       </section>
 
@@ -151,10 +155,10 @@ export default function MarketingPage() {
       <section className="section feature-anchor" id="compare">
         <div className="container">
           <div className="section-head">
-            <span className="section-tag">A/B compare</span>
-            <h2 className="section-title">Drag to compare two variants.</h2>
+            <span className="section-tag">{t.sections.compare.tag}</span>
+            <h2 className="section-title">{t.sections.compare.title}</h2>
             <p className="section-lede">
-              Can&apos;t decide between two looks? Use our smooth comparison slider to easily view different designs in the exact same space. Making the perfect choice is just a swipe away.
+              {t.sections.compare.lede}
             </p>
           </div>
           <CompareSlider />
@@ -164,7 +168,7 @@ export default function MarketingPage() {
       {/* RATIONALE */}
       <section className="section feature-anchor" id="rationale" style={{ background: "var(--grad-section)" }}>
         <div className="container">
-          <Rationale />
+          <Rationale t={t.sections.rationale} />
         </div>
       </section>
 
@@ -172,11 +176,10 @@ export default function MarketingPage() {
       <section className="section feature-anchor" id="share">
         <div className="container">
           <div className="section-head">
-            <span className="section-tag">Share</span>
-            <h2 className="section-title">Send a link. No signup needed.</h2>
+            <span className="section-tag">{t.sections.share.tag}</span>
+            <h2 className="section-title">{t.sections.share.title}</h2>
             <p className="section-lede">
-              Every layout has a public, read-only share URL. The recipient sees the same 3D scene + rationale you do —
-              no account, no app install. Revoke any time.
+              {t.sections.share.lede}
             </p>
           </div>
           <ShareDemo />
@@ -187,10 +190,10 @@ export default function MarketingPage() {
       <section className="section feature-anchor" id="theme" style={{ background: "var(--grad-section)" }}>
         <div className="container">
           <div className="section-head">
-            <span className="section-tag">Light &amp; dark</span>
-            <h2 className="section-title">Designed for both. Persisted per user.</h2>
+            <span className="section-tag">{t.sections.theme.tag}</span>
+            <h2 className="section-title">{t.sections.theme.title}</h2>
             <p className="section-lede">
-              Toggle in the top bar; we remember it. Every component, palette, and HDRI environment is tuned for both.
+              {t.sections.theme.lede}
             </p>
           </div>
           <ThemeDemo />
@@ -201,13 +204,13 @@ export default function MarketingPage() {
       <section className="section feature-anchor" id="templates">
         <div className="container">
           <div className="section-head">
-            <span className="section-tag">Template gallery</span>
-            <h2 className="section-title">Start from a curated example.</h2>
+            <span className="section-tag">{t.sections.templates.tag}</span>
+            <h2 className="section-title">{t.sections.templates.title}</h2>
             <p className="section-lede">
-              Looking for inspiration? Start with one of our professionally designed template rooms. Customize it to your liking and make it your own in seconds.
+              {t.sections.templates.lede}
             </p>
           </div>
-          <TemplatesGrid />
+          <TemplatesGrid t={t.sections.templates} />
         </div>
       </section>
 
@@ -215,13 +218,13 @@ export default function MarketingPage() {
       <section className="section feature-anchor" id="trust" style={{ background: "var(--grad-section)" }}>
         <div className="container">
           <div className="section-head">
-            <span className="section-tag">Built for trust</span>
-            <h2 className="section-title">The boring parts, done right.</h2>
+            <span className="section-tag">{t.sections.trust.tag}</span>
+            <h2 className="section-title">{t.sections.trust.title}</h2>
             <p className="section-lede">
-              Your designs are securely stored and completely private. Share them only when you want to, with links you can revoke at any time. No surprises, just peace of mind.
+              {t.sections.trust.lede}
             </p>
           </div>
-          <TrustGrid />
+          <TrustGrid t={t.sections.trust} />
         </div>
       </section>
 
@@ -229,30 +232,31 @@ export default function MarketingPage() {
       <section className="section feature-anchor" id="pricing">
         <div className="container">
           <div className="section-head" style={{ textAlign: "center" }}>
-            <span className="section-tag">Pricing</span>
+            <span className="section-tag">{t.sections.pricing.tag}</span>
             <h2 className="section-title" style={{ marginLeft: "auto", marginRight: "auto" }}>
-              Free during beta. Pro is coming.
+              {t.sections.pricing.title}
             </h2>
             <p className="section-lede" style={{ marginLeft: "auto", marginRight: "auto" }}>
-              Everything you need to design a home is free. Pro unlocks premium catalog items, higher-res exports, and priority queue.
+              {t.sections.pricing.lede}
             </p>
           </div>
-          <Pricing />
+          <Pricing t={t.sections.pricing} />
         </div>
       </section>
+
 
       {/* FINAL CTA */}
       <section className="section">
         <div className="container">
           <div className="cta-band">
-            <h2>Try it free. No signup.</h2>
-            <p>You&apos;ll have a 3D living room you can orbit in under 10 seconds. If you like it, save it. If you don&apos;t, close the tab.</p>
-            <a href="#wizard" className="btn">Start the wizard →</a>
+            <h2>{t.sections.final.title}</h2>
+            <p>{t.sections.final.copy}</p>
+            <a href="#wizard" className="btn">{t.sections.final.cta}</a>
           </div>
         </div>
       </section>
 
-      <MarketingFooter />
+      <MarketingFooter t={t.footer} />
     </>
   );
 }

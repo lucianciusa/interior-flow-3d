@@ -3,8 +3,29 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useAuthStore } from "@/lib/stores/auth";
+import { supabase } from "@/lib/supabase";
+import LoginModal from "@/components/auth/LoginModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { User, LayoutDashboard, LogOut } from "lucide-react";
+import { LanguageToggle } from "@/components/shell/LanguageToggle";
+import type { marketingTranslations } from "@/lib/marketing-translations";
 
-export function Nav() {
+export function Nav({ t }: { t: typeof marketingTranslations.en.nav | typeof marketingTranslations.es.nav }) {
+  const session = useAuthStore((s) => s.session);
+  const ready = useAuthStore((s) => s.ready);
+  const [loginOpen, setLoginOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
+
   return (
     <nav className="nav">
       <div className="container nav-inner">
@@ -14,19 +35,50 @@ export function Nav() {
           <span className="nav-pill">v1.0</span>
         </Link>
         <div className="nav-links">
-          <a href="#wizard">Wizard</a>
-          <a href="#styles">Styles</a>
-          <a href="#rooms">Rooms</a>
-          <a href="#how">How it works</a>
-          <a href="#hierarchy">Projects</a>
-          <a href="#pricing">Pricing</a>
+          <a href="#wizard">{t.wizard}</a>
+          <a href="#styles">{t.styles}</a>
+          <a href="#rooms">{t.rooms}</a>
+          <a href="#how">{t.how}</a>
+          <a href="#hierarchy">{t.projects}</a>
+          <a href="#pricing">{t.pricing}</a>
         </div>
         <div className="nav-cta">
+          <LanguageToggle />
           <ThemeToggle />
-          <Link href="/app" className="btn btn-text btn-sm">Sign in</Link>
-          <a href="#wizard" className="btn btn-primary btn-sm">Try it free</a>
+
+          {!ready ? (
+            <div className="w-[80px]" /> // Spacer to avoid layout shift
+          ) : session ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="btn btn-text btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <User size={14} />
+                {t.account}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => window.location.href = "/app"} className="flex items-center gap-2 cursor-pointer w-full">
+                  <LayoutDashboard size={14} />
+                  {t.dashboard}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2 text-red-600 focus:text-red-600 cursor-pointer">
+                  <LogOut size={14} />
+                  {t.signOut}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <button
+              onClick={() => setLoginOpen(true)}
+              className="btn btn-text btn-sm"
+            >
+              {t.signIn}
+            </button>
+          )}
+
+          <a href="#wizard" className="btn btn-primary btn-sm">{t.tryFree}</a>
         </div>
       </div>
+      <LoginModal open={loginOpen} onOpenChange={setLoginOpen} />
     </nav>
   );
 }
