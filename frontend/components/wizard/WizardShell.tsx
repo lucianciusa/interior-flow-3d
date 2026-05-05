@@ -116,9 +116,12 @@ export default function WizardShell() {
     }
   };
 
+  const hasProcessedAutoRef = useRef(false);
+
   useEffect(() => {
     const auto = searchParams?.get("auto");
-    if (auto === "true") {
+    if (auto === "true" && !hasProcessedAutoRef.current) {
+      hasProcessedAutoRef.current = true;
       const rt = searchParams.get("roomType") as RoomType;
       const w = parseFloat(searchParams.get("w") || "4");
       const l = parseFloat(searchParams.get("l") || "5");
@@ -157,7 +160,7 @@ export default function WizardShell() {
   }, [searchParams, setRoomType, setDims, setStyle, setPreferences, handleGenerate, roomType, dims, preferences]);
 
   const handleRegenerate = () => {
-    handleGenerate(Math.floor(Math.random() * 1_000_000));
+    handleGenerate({ seed: Math.floor(Math.random() * 1_000_000) });
   };
 
   const handleAdjust = () => {
