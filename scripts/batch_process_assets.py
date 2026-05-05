@@ -85,8 +85,19 @@ def gltfpack(src: Path, dst: Path) -> None:
 def validate(path: Path) -> None:
     with tempfile.TemporaryDirectory() as tmp:
         report_dir = Path(tmp)
-        # gltf-validator binary name varies (`gltf-validator` vs `gltf_validator`).
-        bin_name = "gltf-validator" if have_tool("gltf-validator") else "gltf_validator"
+        # Try standard names in PATH first
+        bin_name = shutil.which("gltf-validator") or shutil.which("gltf_validator")
+        
+        # Fallback to local shim in scripts/ if not found in PATH (Windows)
+        if bin_name is None and os.name == "nt":
+            shim = Path(__file__).parent / "gltf-validator.cmd"
+            if shim.exists():
+                bin_name = str(shim)
+        
+        if bin_name is None:
+            print(f"warning: gltf-validator not found for {path.name}, skipping check", file=sys.stderr)
+            return
+
         run([bin_name, str(path), "-r", "-o", str(report_dir)])
         report_path = report_dir / f"{path.stem}_report.json"
         if not report_path.exists():

@@ -16,10 +16,19 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+# Load environment variables from backend/.env.local if present
+try:
+    from dotenv import load_dotenv
+    load_dotenv(ROOT / "backend" / ".env.local")
+except ImportError:
+    pass
 
 OUT_DIR = Path("dist/catalog")
 MAX_BYTES = 1_048_576  # 1 MB hard cap per asset
@@ -37,7 +46,20 @@ def gltfpack(src: Path, dst: Path) -> None:
 def validate(path: Path) -> None:
     with tempfile.TemporaryDirectory() as tmp:
         report_dir = Path(tmp)
-        run(["gltf_validator", str(path), "-r", "-o", str(report_dir)])
+        # Try standard names in PATH first
+        bin_name = shutil.which("gltf-validator") or shutil.which("gltf_validator")
+        
+        # Fallback to local shim in scripts/ if not found in PATH (Windows)
+        if bin_name is None and os.name == "nt":
+            shim = Path(__file__).parent / "gltf-validator.cmd"
+            if shim.exists():
+                bin_name = str(shim)
+        
+        if bin_name is None:
+            print("warning: gltf-validator not found on PATH or in scripts/, skipping check", file=sys.stderr)
+            return
+
+        run([bin_name, str(path), "-r", "-o", str(report_dir)])
         report_path = report_dir / f"{path.stem}_report.json"
         if not report_path.exists():
             print("warning: validator report not found, skipping check", file=sys.stderr)

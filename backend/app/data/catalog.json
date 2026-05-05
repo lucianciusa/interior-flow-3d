@@ -4461,7 +4461,7 @@
   },
   {
     "id": "tv_modern",
-    "name": "Tv Modern",
+    "name": "TV Modern",
     "tags": [
       "accent",
       "media"
@@ -4476,21 +4476,21 @@
         "wall"
       ],
       "against": [
-        "none"
+        "wall"
       ],
       "exclusive_with": []
     },
     "footprint": {
-      "w": 0.6,
-      "d": 0.6,
-      "h": 0.75
+      "w": 1.11,
+      "d": 0.27,
+      "h": 0.65
     },
     "clearance": {
       "front": 0.3,
       "sides": 0.1,
-      "back": 0.1
+      "back": 0.05
     },
-    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/aa68b6e514aa055ee880430b50c97e4bfd94014affd266796239999b2a2edc3e.glb"
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/629bc19b1bd5448c22512b31093d0142d5f4cd56bad6e7464056c25d2aaf29a2.glb"
   },
   {
     "id": "wall",
