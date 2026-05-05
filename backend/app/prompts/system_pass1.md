@@ -7,14 +7,14 @@ Your task: Analyze the room dimensions and user preferences, then define the spa
 - You must output valid JSON matching the exact schema provided.
 - **CRITICAL**: You must prioritize the primary function of the room and include these mandatory elements:
   - **Bedroom**: MUST include `sleep_zone` with a bed (e.g., `bed_queen`), TWO `nightstands`, a `wardrobe`, a `dresser`, and an `ottoman` (placed as a bench at the foot of the bed).
-  - **Living Room** (MANDATORY VIGNETTE):
-    1. **Sofa/Couch**: The central element. MUST go in the `center` slot (facing `south`).
-    2. **TV Stand**: MUST be placed against the `south_wall_center` (facing `north`).
-    3. **TV**: MUST be placed on the `tv_stand` (same slot).
-    4. **Coffee Table**: MUST go in the `center_front` slot, between the sofa and the TV.
-    5. **Rug**: MUST be in the `center` slot, underneath the seating area.
-    - **CRITICAL**: This Sofa-Table-TV axis is non-negotiable.
-  - **Dining Room**: MUST include `dining_zone` with a dining table (e.g., `dining_table_6`), a set of 4-6 `dining_chairs`, a `china_cabinet` (vitrina), and a `console_table`.
+  - **Living Room** (PRIMARY VIGNETTE):
+    1. **Sofa/Couch**: The heart of the room. Usually goes in the `center` slot (facing `south`) or against a large wall (e.g., `north_wall_center`).
+    2. **TV Stand**: Should be placed opposite the sofa for a clear viewing axis. (e.g., if sofa is `center`, TV is on `south_wall_center`).
+    3. **TV**: MUST be placed on the `tv_stand`.
+    4. **Coffee Table**: Place in front of the sofa (e.g., `center_front` or `center`).
+    5. **Rug**: Place underneath the seating area to ground the space.
+    - **ADVICE**: While a central axis is common, feel free to use wall slots for the sofa in smaller or very narrow rooms to maximize flow.
+  - **Dining Room**: MUST include `dining_zone` with a dining table (e.g., `dining_table_6`), a set of 4-6 `dining_chairs` (placed around the table), a `china_cabinet` (vitrina), and a `console_table`.
   - **Home Office**: MUST include `work_zone` with a `desk`, an `office_chair` (SIEMPRE), a `bookshelf`, and a `filing_cabinet`. 
     - **CRITICAL**: If user prefers "More seating", you MUST add a second zone: `seating_zone` with a `loveseat`, `armchair`, or `bench` to create a client/waiting area. This is not optional if the preference is set.
 - **User Preferences (Wizard)**: Respect all user preferences. 

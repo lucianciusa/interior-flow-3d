@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { WaitlistModal } from "./WaitlistModal";
 
 /* ============ MARQUEE ============ */
 export function Marquee() {
@@ -544,9 +545,21 @@ export function Pricing() {
           <li>Early access to new room types</li>
           <li>Email support</li>
         </ul>
-        <button className="btn btn-primary">Join the waitlist</button>
+        <PricingWaitlistButton />
       </div>
     </div>
+  );
+}
+
+function PricingWaitlistButton() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button className="btn btn-primary" onClick={() => setOpen(true)}>
+        Join the waitlist
+      </button>
+      <WaitlistModal open={open} onOpenChange={setOpen} />
+    </>
   );
 }
 
@@ -576,54 +589,74 @@ export function MarketingFooter() {
   return (
     <footer className="footer">
       <div className="container">
-        <div className="footer-grid">
+        <div className="footer-grid" style={{ gridTemplateColumns: "1.2fr 1fr 1fr 1.5fr" }}>
           <div className="footer-col">
             <div className="footer-brand-row">
               <span className="nav-brand-mark" />
               <strong style={{ fontFamily: "Geist, sans-serif", fontWeight: 600 }}>Interior Flow 3D</strong>
             </div>
             <p className="footer-tagline">
-              AI-generated interior design that feels intentional, explainable, and instantly visualizable —
-              making professional design accessible to everyone.
+              AI-generated interior design that feels intentional, explainable, and instantly visualizable.
             </p>
           </div>
+          
           <div className="footer-col">
             <h4>Product</h4>
             <ul>
               <li><a href="#wizard">Wizard</a></li>
               <li><a href="#styles">Styles</a></li>
               <li><a href="#rooms">Rooms</a></li>
-              <li><a href="#templates">Templates</a></li>
               <li><a href="#pricing">Pricing</a></li>
             </ul>
           </div>
+
           <div className="footer-col">
             <h4>Features</h4>
             <ul>
               <li><a href="#how">Smart Layouts</a></li>
               <li><a href="#catalog">Easy Swapping</a></li>
-              <li><a href="#hierarchy">Home Planning</a></li>
-              <li><a href="#compare">Side-by-side Compare</a></li>
-              <li><a href="#share">Share with friends</a></li>
+              <li><a href="#compare">A/B Compare</a></li>
+              <li><a href="#share">Share</a></li>
             </ul>
           </div>
+
           <div className="footer-col">
-            <h4>Resources</h4>
-            <ul>
-              <li><a href="#trust">Privacy &amp; Security</a></li>
-              <li><a href="#">Help Center</a></li>
-              <li><a href="#">Design Tips</a></li>
-              <li><a href="#">Contact Support</a></li>
-            </ul>
-          </div>
-          <div className="footer-col">
-            <h4>Company</h4>
-            <ul>
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Careers</a></li>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms of Service</a></li>
-            </ul>
+            <h4>Connect</h4>
+            <div className="footer-social-grid" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              <div>
+                <div style={{ fontSize: "12px", color: "var(--ink-3)", marginBottom: "8px", fontFamily: "Geist Mono, monospace", textTransform: "uppercase", letterSpacing: "0.05em" }}>Repository</div>
+                <div style={{ display: "flex", gap: "12px" }}>
+                  <a href="#" className="social-link" title="GitHub Repository">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                  </a>
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                <div>
+                  <div style={{ fontSize: "12px", color: "var(--ink-3)", marginBottom: "8px", fontFamily: "Geist Mono, monospace", textTransform: "uppercase", letterSpacing: "0.05em" }}>Lucian Ciusa</div>
+                  <div style={{ display: "flex", gap: "12px" }}>
+                    <a href="#" className="social-link" title="GitHub">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                    </a>
+                    <a href="#" className="social-link" title="LinkedIn">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                    </a>
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: "12px", color: "var(--ink-3)", marginBottom: "8px", fontFamily: "Geist Mono, monospace", textTransform: "uppercase", letterSpacing: "0.05em" }}>Mario García</div>
+                  <div style={{ display: "flex", gap: "12px" }}>
+                    <a href="#" className="social-link" title="GitHub">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                    </a>
+                    <a href="#" className="social-link" title="LinkedIn">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div className="footer-bottom">

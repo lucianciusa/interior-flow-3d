@@ -84,19 +84,27 @@ export default function WizardShell() {
 
   const { language } = useLanguage();
 
-  const handleGenerate = async (newSeed?: number) => {
-    if (!style) return;
-    const useSeed = newSeed ?? Math.floor(Math.random() * 1_000_000);
+  const handleGenerate = async (params?: {
+    roomType?: RoomType;
+    dims?: RoomDims;
+    style?: Style;
+    preferences?: Preference[];
+    seed?: number;
+  }) => {
+    const activeStyle = params?.style || style;
+    if (!activeStyle) return;
+
+    const useSeed = params?.seed ?? Math.floor(Math.random() * 1_000_000);
     setSeed(useSeed);
     setPhase("generating");
     setSaveState("idle");
     
     try {
       const data = await generateAsync({
-        roomType,
-        ...dims,
-        style,
-        preferences,
+        roomType: params?.roomType || roomType,
+        ...(params?.dims || dims),
+        style: activeStyle,
+        preferences: params?.preferences || preferences,
         seed: useSeed,
         language,
       });
@@ -104,10 +112,49 @@ export default function WizardShell() {
       setPhase("result");
     } catch (err) {
       console.error("Generation failed:", err);
-      // Fallback to step 3 so user isn't stuck
       setPhase("step3");
     }
   };
+
+  useEffect(() => {
+    const auto = searchParams?.get("auto");
+    if (auto === "true") {
+      const rt = searchParams.get("roomType") as RoomType;
+      const w = parseFloat(searchParams.get("w") || "4");
+      const l = parseFloat(searchParams.get("l") || "5");
+      const h = parseFloat(searchParams.get("h") || "2.6");
+      const st = searchParams.get("style") as Style;
+      const pr = (searchParams.get("prefs") || "").split(",").filter(Boolean) as Preference[];
+
+      const newDims = { width_m: w, length_m: l, height_m: h };
+      
+      if (rt) setRoomType(rt);
+      setDims(newDims);
+      if (st) setStyle(st);
+      if (pr.length > 0) setPreferences(pr);
+      
+      // Clear URL params
+      const url = new URL(window.location.href);
+      url.searchParams.delete("auto");
+      url.searchParams.delete("roomType");
+      url.searchParams.delete("w");
+      url.searchParams.delete("l");
+      url.searchParams.delete("h");
+      url.searchParams.delete("style");
+      url.searchParams.delete("prefs");
+      window.history.replaceState({}, "", url.toString());
+
+      // Execute immediately with local vars to avoid waiting for store sync
+      if (st) {
+        void handleGenerate({
+          roomType: rt || roomType,
+          dims: newDims,
+          style: st,
+          preferences: pr.length > 0 ? pr : preferences,
+        });
+      }
+    }
+  }, [searchParams, setRoomType, setDims, setStyle, setPreferences, handleGenerate, roomType, dims, preferences]);
 
   const handleRegenerate = () => {
     handleGenerate(Math.floor(Math.random() * 1_000_000));

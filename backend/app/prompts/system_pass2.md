@@ -46,30 +46,29 @@ Your task: Populate a specific zone with furniture pieces.
   - `west_wall` is LEFT. `east_wall` is RIGHT.
 - **Living Room Alignment**: 
   - If a `sofa` is in `center`, it should usually face `south_wall` (front).
-  - A `coffee_table` MUST be in front of the sofa. (e.g., Sofa in `center` facing `south_wall` -> Table in `center_front`).
+  - A `coffee_table` should be placed near the sofa (e.g., `center_front` if sofa is in `center`).
   - **Symmetry**: If you place one side table/lamp, try to place a matching one on the opposite side if space allows.
-- **Living Room "Core Vignette"**:
-  - You MUST create a tight conversation & media axis.
-  - **Sofa**: Place a large sofa (e.g., `sofa_3seat`) in the `center` slot (facing south).
-  - **Coffee Table**: Place the `coffee_table` in the `center_front` slot directly in front of the sofa.
-  - **TV Stand**: Place the `tv_stand` on the `south_wall_center` (facing north).
-  - **TV**: Place the `tv_modern` (or `televisionVintage`) in the SAME `south_wall_center` slot. The system will automatically place it ON TOP of the stand.
-  - **Rug**: Place a `rug` in the `center` slot to anchor the whole vignette.
-  - Doing this ensures the seating area is grouped tightly together, regardless of how large the room is.
-  - **Home Office "Work Vignette"**:
+- **Living Room Vignette**:
+  - Create a functional conversation & media axis.
+  - **Sofa**: Place a large sofa (e.g., `sofa_3seat`) in the `center` slot (facing south) OR against a primary wall.
+  - **Coffee Table**: Place the `coffee_table` in front of the sofa.
+  - **TV Stand**: Place the `tv_stand` on the wall opposite the sofa.
+  - **TV**: Place the `tv_modern` (or `televisionVintage`) in the SAME slot as the `tv_stand`. The system will automatically place it ON TOP.
+  - **Rug**: Place a `rug` in the `center` or under the main seating to anchor the vignette.
+- **Home Office "Work Vignette"**:
   - **Desk & Chair**: The `desk` and `office_chair` MUST be treated as a single unit. YOU MUST ALWAYS INCLUDE AN OFFICE CHAIR IF YOU INCLUDE A DESK.
-    - Desk goes in `north_wall_center` or `north_wall_left`.
+    - Desk goes in `north_wall_center`, `north_wall_left`, or `east_wall_center`.
     - Chair goes in `desk_chair` (facing the desk).
-  - **Lamp**: The `desk_lamp` or `floor_lamp` MUST be in `desk_anchor` (beside the desk).
+  - **Lamp**: The `desk_lamp` or `floor_lamp` should be in `desk_anchor` (beside the desk).
   - **Tech**: If a desk is present, EXACTLY ONE tech item (`laptop` or `monitor`) MUST be placed in the `desk_anchor` slot. Never place two.
-- **Bedroom "Sleep Vignette"**:
-  - **Bed**: Place the `bed_queen` (or similar) in `bed_center` or against the `north_wall_center`.
-  - **Nightstands**: Place TWO `nightstands` in the `north_wall_left` and `north_wall_right` slots (flanking the bed).
-  - **Ottoman**: Place the `ottoman` at the foot of the bed using the `bed_center` slot (with nudge).
-  - **Dining Room "Dining Vignette"**:
+- **Bedroom Vignette**:
+  - **Bed**: Place the `bed_center` (preferred) or against `north_wall_center`.
+  - **Nightstands**: Place `nightstands` flanking the bed (e.g., `north_wall_left` and `north_wall_right`).
+  - **Ottoman**: Place the `ottoman` at the foot of the bed.
+- **Dining Room "Dining Vignette"**:
   - **Table & Chairs**: You MUST place a dining table in `table_center` and EXACTLY 4 `dining_chair` items around it.
     - Use `dining_chair_N`, `dining_chair_S`, `dining_chair_E`, and `dining_chair_W`.
-    - These slots are pre-configured to face the table correctly.
+    - These slots are pre-configured to face the table correctly. ALWAYS use `facing="center"` for these items to ensure they look at the table.
 - **Visual Balance & Coherence**: 
   - **Lamps**: 
     - **Floor Lamps** (tall): Can be on the floor, ideally in corners or next to seating.

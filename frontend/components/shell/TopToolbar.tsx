@@ -1,7 +1,7 @@
 import { Home, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
 
 import { QuotaBadge } from "./QuotaBadge";
 import { ThemeToggle } from "./ThemeToggle";
@@ -11,8 +11,17 @@ import { LanguageToggle } from "./LanguageToggle";
 import { useLanguage } from "@/lib/stores/useLanguage";
 
 export function TopToolbar({ isEdgeToEdge }: { isEdgeToEdge: boolean }) {
+  return (
+    <Suspense>
+      <TopToolbarContent isEdgeToEdge={isEdgeToEdge} />
+    </Suspense>
+  );
+}
+
+function TopToolbarContent({ isEdgeToEdge }: { isEdgeToEdge: boolean }) {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const reset = useWizardStore((s) => s.reset);
   const { language, t } = useLanguage();
 
@@ -22,9 +31,10 @@ export function TopToolbar({ isEdgeToEdge }: { isEdgeToEdge: boolean }) {
   const isApp = segments[0] === "app";
 
   // /app/projects/[id]/rooms/[id]/layouts/[id]
-  const projectId = segments[2];
-  const roomId = segments[4];
-  const layoutId = segments[6];
+  // Fallback to searchParams for the wizard (/app/new?projectId=...&roomId=...)
+  const projectId = segments[2] || searchParams.get("projectId");
+  const roomId = segments[4] || searchParams.get("roomId");
+  const layoutId = segments[6] || searchParams.get("layoutId");
 
   return (
     <header

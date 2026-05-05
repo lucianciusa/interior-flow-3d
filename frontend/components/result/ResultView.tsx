@@ -93,7 +93,7 @@ export default function ResultView({
             </div>
           }
         >
-          <div className="fixed inset-0 z-0 pointer-events-auto">
+          <div className="absolute inset-0 z-0 pointer-events-auto">
             <Scene layout={layout} dims={dims} hideWalls={hideWalls} captureRef={captureRef} />
           </div>
         </Suspense>

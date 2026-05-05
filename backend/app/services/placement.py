@@ -180,6 +180,7 @@ def _aabb_overlap(
 
         # 2. Specific Sofa-Table separation
         # If one is seating and other is surface (table), ensure they aren't touching
+        # This applies only when NOT in co-occupancy mode (e.g. Sofa vs Coffee Table)
         if ("seating" in a_cat.tags and "surface" in b_cat.tags) or (
             "surface" in a_cat.tags and "seating" in b_cat.tags
         ):
@@ -648,6 +649,13 @@ def resolve(
             and "surface" in catalog_map[p.catalogId].tags
         ]
         if tables:
+            table = tables[0]
+            table_cat = catalog_map[table.catalogId]
+            # Use world-space table dimensions based on rotation
+            is_rotated = abs(math.cos(table.rotation_y)) < 0.707
+            tw = table_cat.footprint.d if is_rotated else table_cat.footprint.w
+            td = table_cat.footprint.w if is_rotated else table_cat.footprint.d
+            
             chair_cat = next(
                 (
                     c
@@ -657,33 +665,49 @@ def resolve(
                 None,
             )
             if chair_cat:
-                for suffix in ["N", "S", "E", "W"]:
-                    slot_name = f"dining_chair_{suffix}"
+                chw, chd = chair_cat.footprint.w, chair_cat.footprint.d
+                # Offsets from table center to chair centers
+                # We add 2cm clearance
+                z_off = td / 2 + chd / 2 + 0.02
+                x_off = tw / 2 + chd / 2 + 0.02 # chairs on E/W are rotated 90deg, so depth is on X
+                
+                # Positions and rotations for the 4 sides relative to table center
+                side_configs = {
+                    "dining_chair_N": ((0, 0, -z_off), 0.0),
+                    "dining_chair_S": ((0, 0, z_off), math.pi),
+                    "dining_chair_E": ((x_off, 0, 0), -math.pi / 2),
+                    "dining_chair_W": ((-x_off, 0, 0), math.pi / 2),
+                }
+
+                for slot_name, (rel_pos, rot) in side_configs.items():
                     # Check if already placed in this slot
                     if not any(p.slot == slot_name for p in placed):
-                        mock_chair = LayoutItemLLM(
+                        # World position = table center + relative position
+                        wx = table.position[0] + rel_pos[0]
+                        wz = table.position[2] + rel_pos[2]
+                        
+                        mock_chair = ResolvedItem(
                             catalogId=chair_cat.id,
                             slot=slot_name,
-                            facing="auto",
+                            facing="center",
                             zone="dining_zone",
                             rationale=(
                                 "Mandatory dining chair."
                                 if lang == "en"
                                 else "Silla de comedor obligatoria."
                             ),
+                            position=(wx, 0.0, wz),
+                            rotation_y=rot,
+                            footprint={"w": chw, "d": chd, "h": chair_cat.footprint.h},
+                            model=chair_cat.model,
                         )
-                        result = _try_place(
-                            mock_chair,
-                            slot_name,
-                            None,
-                            room,
-                            chair_cat,
-                            placed,
-                            catalog_map,
-                            margin,
-                        )
-                        if isinstance(result, ResolvedItem):
-                            placed.append(result)
+                        
+                        # Use a more lenient check for mandatory chairs — only check room bounds
+                        hx, hz = _half_extents(mock_chair)
+                        if (abs(wx) + hx <= room.width_m / 2 + 0.05) and (
+                            abs(wz) + hz <= room.length_m / 2 + 0.05
+                        ):
+                            placed.append(mock_chair)
 
     return Layout(
         style=llm.style,

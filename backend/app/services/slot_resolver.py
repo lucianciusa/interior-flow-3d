@@ -122,21 +122,22 @@ def _slot_position(
 
     if slot.startswith("dining_chair_"):
         # Positioned around the table_center (0,0,0)
-        # Based on dining_table_4 (1.4m x 0.9m)
-        # We add 2cm gap + half chair depth (0.25m)
+        # Based on dining_table_6 (2.0m x 1.0m) as the largest common table
+        # N/S: half_depth(0.5) + half_chair(0.25) + gap(0.05) = 0.8
+        # E/W: half_width(1.0) + half_chair(0.25) + gap(0.05) = 1.3
         tx, tz = 0.0, 0.0
         rot = 0.0
         if slot == "dining_chair_N":
-            tz = -(0.45 + 0.25 + 0.02)
+            tz = -0.8
             rot = 0.0  # face south (+Z)
         elif slot == "dining_chair_S":
-            tz = 0.45 + 0.25 + 0.02
+            tz = 0.8
             rot = math.pi  # face north (-Z)
         elif slot == "dining_chair_E":
-            tx = 0.7 + 0.25 + 0.02
+            tx = 1.3
             rot = -math.pi / 2  # face west (-X)
         elif slot == "dining_chair_W":
-            tx = -(0.7 + 0.25 + 0.02)
+            tx = -1.3
             rot = math.pi / 2  # face east (+X)
         return (tx, y, tz), rot
 
