@@ -24,10 +24,18 @@ export default function LayoutCard({
   layout,
   selected = false,
   onSelect,
+  projectId,
+  roomId,
+  isCompareSelected,
+  onToggleCompare,
 }: {
   layout: LayoutSummary;
   selected?: boolean;
   onSelect?: (val: boolean) => void;
+  projectId?: string;
+  roomId?: string;
+  isCompareSelected?: boolean;
+  onToggleCompare?: (id: string) => void;
 }) {
   const { t } = useLanguage();
   const [confirmOpen, setConfirmOpen] = useState(false);

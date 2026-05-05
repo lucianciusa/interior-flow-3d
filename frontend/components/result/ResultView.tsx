@@ -102,7 +102,7 @@ export default function ResultView({
           isSaved={!!layoutId}
           onReplace={() => {
             if (!layoutId) {
-              onSave?.();
+              onSave?.("Design");
               return;
             }
             setSwapOpen((v) => !v);

@@ -29,6 +29,11 @@ SlotId = Literal[
     "bed_center",
     "table_center",
     "desk_anchor",
+    "desk_chair",
+    "dining_chair_N",
+    "dining_chair_S",
+    "dining_chair_E",
+    "dining_chair_W",
 ]
 Facing = Literal["auto", "north", "south", "east", "west", "center"]
 
@@ -151,7 +156,7 @@ class LayoutPatch(BaseModel):
 
 
 class LayoutSummary(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="ignore")
 
     id: str
     user_id: str
@@ -162,6 +167,11 @@ class LayoutSummary(BaseModel):
     seed: int | None = None
     thumbnail_url: str | None = None
     created_at: str
+    
+    # Relationships for dashboard organization
+    project_id: str | None = None
+    project_name: str | None = None
+    room_type: str | None = None
 
 
 class RoomDims(BaseModel):

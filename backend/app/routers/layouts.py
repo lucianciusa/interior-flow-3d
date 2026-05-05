@@ -75,7 +75,11 @@ async def list_layouts(
         rooms = rooms_raw[0] if isinstance(rooms_raw, list) and rooms_raw else (rooms_raw or {})
         
         projects_raw = rooms.get("projects")
-        projects = projects_raw[0] if isinstance(projects_raw, list) and projects_raw else (projects_raw or {})
+        projects = (
+            projects_raw[0]
+            if isinstance(projects_raw, list) and projects_raw
+            else (projects_raw or {})
+        )
         
         flat = {
             **r,

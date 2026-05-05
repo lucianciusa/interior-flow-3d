@@ -46,6 +46,7 @@ class ConversionRequest(BaseModel):
     length_m: float = Field(ge=2, le=12)
     height_m: float = Field(ge=2.2, le=4)
     layout: Layout
+    name: str | None = None
     thumbnail_url: str | None = None
 
 

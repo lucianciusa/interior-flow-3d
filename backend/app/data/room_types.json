@@ -457,6 +457,10 @@
       "corner_SE",
       "corner_SW",
       "table_center",
+      "dining_chair_N",
+      "dining_chair_S",
+      "dining_chair_E",
+      "dining_chair_W",
       "entry"
     ],
     "slot_accepted_tags": {
@@ -610,7 +614,11 @@
         "plant",
         "rug",
         "storage"
-      ]
+      ],
+      "dining_chair_N": ["chair", "dining", "seating"],
+      "dining_chair_S": ["chair", "dining", "seating"],
+      "dining_chair_E": ["chair", "dining", "seating"],
+      "dining_chair_W": ["chair", "dining", "seating"]
     },
     "allowed_zones": [
       "dining_zone",

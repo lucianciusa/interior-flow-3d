@@ -392,9 +392,10 @@ def _try_place(
                     break
 
         # 5. Tag-based co-occupancy (rugs)
-        if not can_cooccupy:
-            if (c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS):
-                can_cooccupy = True
+        if not can_cooccupy and (
+            (c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS)
+        ):
+            can_cooccupy = True
 
         # Desktop items that will be stacked can skip AABB entirely
         if can_cooccupy and candidate.catalogId in _DESKTOP_ITEMS:
@@ -540,11 +541,12 @@ def resolve(
                         res = _try_place(
                             item, slot, t_alt, room, catalog_item, placed, catalog_map, margin
                         )
-                        if isinstance(res, ResolvedItem):
-                            if _apply_vertical_stack(res, placed, catalog_item, catalog_map, request.roomType):
-                                placed.append(res)
-                                nudged = True
-                                break
+                        if isinstance(res, ResolvedItem) and _apply_vertical_stack(
+                            res, placed, catalog_item, catalog_map, request.roomType
+                        ):
+                            placed.append(res)
+                            nudged = True
+                            break
                 if not nudged:
                     # Drop lower-priority item between new and occupant
                     new_pri = DROP_PRIORITY.get(item.catalogId, 0)
@@ -570,7 +572,8 @@ def resolve(
                 placed.append(result)
                 occupied[slot] = item.catalogId
             else:
-                warnings.append(f"Dropped {item.catalogId}: no suitable surface found for stacking.")
+                msg = f"Dropped {item.catalogId}: no suitable surface found for stacking."
+                warnings.append(msg)
         else:
             # Try wall nudge
             prefix = _wall_prefix(slot)
@@ -580,11 +583,12 @@ def resolve(
                     res = _try_place(
                         item, slot, t_alt, room, catalog_item, placed, catalog_map, margin
                     )
-                    if isinstance(res, ResolvedItem):
-                        if _apply_vertical_stack(res, placed, catalog_item, catalog_map, request.roomType):
-                            placed.append(res)
-                            nudged = True
-                            break
+                    if isinstance(res, ResolvedItem) and _apply_vertical_stack(
+                        res, placed, catalog_item, catalog_map, request.roomType
+                    ):
+                        placed.append(res)
+                        nudged = True
+                        break
             if not nudged:
                 reason = result if isinstance(result, str) else "UNKNOWN_COLLISION"
                 warnings.append(m["collision"].format(id=item.catalogId, reason=reason, slot=slot))
@@ -599,7 +603,9 @@ def resolve(
 
         if has_desk and not has_chair:
             # Force-inject an office chair if missing
-            office_chairs = [c for c in catalog if c.id == "office_chair" or "office_chair" in c.tags]
+            office_chairs = [
+                c for c in catalog if c.id == "office_chair" or "office_chair" in c.tags
+            ]
             if office_chairs:
                 chair_cat = office_chairs[0]
                 # Create a mock LLM item for the chair
@@ -608,10 +614,16 @@ def resolve(
                     slot="desk_chair",
                     facing="auto",
                     zone="work_zone",
-                    rationale="Mandatory office chair for desk." if lang == "en" else "Silla de despacho obligatoria para el escritorio."
+                    rationale=(
+                        "Mandatory office chair for desk."
+                        if lang == "en"
+                        else "Silla de despacho obligatoria para el escritorio."
+                    ),
                 )
                 # Try to place it
-                result = _try_place(mock_item, "desk_chair", None, room, chair_cat, placed, catalog_map, margin)
+                result = _try_place(
+                    mock_item, "desk_chair", None, room, chair_cat, placed, catalog_map, margin
+                )
                 if isinstance(result, ResolvedItem):
                     placed.append(result)
                 else:
@@ -627,14 +639,22 @@ def resolve(
                 p.slot = desk.slot
                 # Position will be updated by _apply_vertical_stack in a previous step? 
                 # No, we need to re-run vertical stack or manually adjust.
-                p.position = (desk.position[0], desk.position[1] + catalog_map[desk.catalogId].footprint.h, desk.position[2])
+                desk_h = catalog_map[desk.catalogId].footprint.h
+                p.position = (desk.position[0], desk.position[1] + desk_h, desk.position[2])
                 warnings.append(f"Moved laptop to desk at {desk.slot}")
 
     # Step 9: Ensure 4 Dining Chairs in Dining Room if table exists
     if request.roomType == "dining_room":
-        tables = [p for p in placed if "dining" in catalog_map[p.catalogId].tags and "surface" in catalog_map[p.catalogId].tags]
+        tables = [
+            p for p in placed
+            if "dining" in catalog_map[p.catalogId].tags
+            and "surface" in catalog_map[p.catalogId].tags
+        ]
         if tables:
-            chair_cat = next((c for c in catalog if "dining_chair" in c.id or "dining" in c.tags and "chair" in c.tags), None)
+            chair_cat = next(
+                (c for c in catalog if "dining_chair" in c.id or "dining" in c.tags and "chair" in c.tags),
+                None
+            )
             if chair_cat:
                 for suffix in ["N", "S", "E", "W"]:
                     slot_name = f"dining_chair_{suffix}"
@@ -645,9 +665,15 @@ def resolve(
                             slot=slot_name,
                             facing="auto",
                             zone="dining_zone",
-                            rationale="Mandatory dining chair." if lang == "en" else "Silla de comedor obligatoria."
+                            rationale=(
+                                "Mandatory dining chair."
+                                if lang == "en"
+                                else "Silla de comedor obligatoria."
+                            )
                         )
-                        result = _try_place(mock_chair, slot_name, None, room, chair_cat, placed, catalog_map, margin)
+                        result = _try_place(
+                            mock_chair, slot_name, None, room, chair_cat, placed, catalog_map, margin
+                        )
                         if isinstance(result, ResolvedItem):
                             placed.append(result)
 
