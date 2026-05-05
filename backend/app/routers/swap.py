@@ -28,7 +28,7 @@ def _build_resolved(
         d=replacement.footprint.d,
         h=replacement.footprint.h,
         tags=replacement.tags,
-        surfaces=replacement.placement.surfaces,
+        surfaces=list(replacement.placement.surfaces),
     )
     transform = resolve_slot(
         target.slot,
@@ -99,7 +99,10 @@ async def swap_item(
                 pair = frozenset({new_item.catalogId, existing.catalogId})
                 if pair in placement.COOCCUPY_ALLOW and new_item.slot == existing.slot:
                     continue
-                if placement._aabb_overlap(new_item, existing):
+                existing_cat = catalog.get(existing.catalogId)
+                if existing_cat and placement._aabb_overlap(
+                    new_item, existing, replacement, existing_cat
+                ):
                     raise HTTPException(status_code=409, detail="swap_collides")
 
             new_items = list(current.items)

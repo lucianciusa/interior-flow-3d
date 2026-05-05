@@ -1,5 +1,6 @@
-from app.models.catalog import RoomType
 from pydantic import BaseModel, ConfigDict, Field
+
+from app.models.catalog import RoomType
 
 
 class RoomCreate(BaseModel):

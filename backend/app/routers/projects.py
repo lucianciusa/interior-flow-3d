@@ -123,18 +123,19 @@ async def convert_anon_layout(
             existing_projects = await sb.list_projects()
             known_free_names = {"Free Designs", "Diseños libres"}
             target_project = next(
-                (p for p in existing_projects if p["name"] in known_free_names), 
-                None
+                (p for p in existing_projects if p["name"] in known_free_names), None
             )
-            
+
             if target_project:
                 project_id = target_project["id"]
             else:
-                project_row = await sb.insert_project({
-                    "user_id": user.id, 
-                    "name": body.projectName,
-                    "thumbnail_url": body.thumbnail_url
-                })
+                project_row = await sb.insert_project(
+                    {
+                        "user_id": user.id,
+                        "name": body.projectName,
+                        "thumbnail_url": body.thumbnail_url,
+                    }
+                )
                 project_id = project_row["id"]
 
             try:

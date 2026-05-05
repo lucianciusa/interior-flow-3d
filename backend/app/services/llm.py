@@ -70,19 +70,25 @@ def _build_pass1_messages(
     schema = Pass1LLM.model_json_schema()
 
     user_message = f"""Plan a {req.style} {req.roomType.replace("_", " ")}.
-
+    
 Dimensions: {req.width_m}m x {req.length_m}m x {req.height_m}m.
 Preferences: {prefs_str}
 Allowed Zones: {zones_str}
 Style Palette Hints: {", ".join(style_prof.palette_hints)}
 
-CRITICAL: You MUST output all 'designExplanation', 'styleEmphasis', and all 'palette' names in the following language: {req.language} (ISO 639-1 code). If language is 'es', everything MUST be in SPANISH. If 'en', everything MUST be in ENGLISH. Do NOT mix languages.
+CRITICAL: You MUST output all 'designExplanation', 'styleEmphasis', and all 'palette' names in
+the following language: {req.language} (ISO 639-1 code). If language is 'es', everything
+MUST be in SPANISH. If 'en', everything MUST be in ENGLISH. Do NOT mix languages.
 
 Output JSON matching this schema exactly:
 {json.dumps(schema, indent=2)}"""
 
     lang_name = "SPANISH" if req.language == "es" else "ENGLISH"
-    system_prompt = _load_pass1_prompt() + f"\n\nCRITICAL: All output text (designExplanation, styleEmphasis, palette names) MUST be in {lang_name}."
+    system_prompt = (
+        _load_pass1_prompt()
+        + "\n\nCRITICAL: All output text (designExplanation, styleEmphasis, palette names) "
+        + f"MUST be in {lang_name}."
+    )
 
     return [
         {"role": "system", "content": system_prompt},
@@ -115,13 +121,18 @@ Available Catalog Items for this zone (use these exact IDs):
 Available slots (use these exact names; only these are valid for this room type):
 {slots_str}
 
-CRITICAL: You MUST output all 'rationale' text in the following language: {req.language} (ISO 639-1 code). If language is 'es', everything MUST be in SPANISH. If 'en', everything MUST be in ENGLISH. Do NOT mix languages.
+CRITICAL: You MUST output all 'rationale' text in the following language: {req.language}
+(ISO 639-1 code). If language is 'es', everything MUST be in SPANISH. If 'en', everything
+MUST be in ENGLISH. Do NOT mix languages.
 
 Output JSON matching this schema exactly:
 {json.dumps(schema, indent=2)}"""
 
     lang_name = "SPANISH" if req.language == "es" else "ENGLISH"
-    system_prompt = _load_pass2_prompt() + f"\n\nCRITICAL: All output text (rationale) MUST be in {lang_name}."
+    system_prompt = (
+        _load_pass2_prompt()
+        + f"\n\nCRITICAL: All output text (rationale) MUST be in {lang_name}."
+    )
 
     return [
         {"role": "system", "content": system_prompt},
@@ -147,9 +158,7 @@ def _split_messages(
     return instructions, convo
 
 
-def _add_correction(
-    convo: list[dict[str, Any]], bad_json: str, error: str
-) -> list[dict[str, Any]]:
+def _add_correction(convo: list[dict[str, Any]], bad_json: str, error: str) -> list[dict[str, Any]]:
     return [
         *convo,
         {"role": "assistant", "content": bad_json},

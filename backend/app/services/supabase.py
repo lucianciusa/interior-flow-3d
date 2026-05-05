@@ -26,7 +26,9 @@ _LAYOUT_FULL_COLS = (
     "layout,rooms(width_m,length_m,height_m,room_type)"
 )
 _PROJECT_COLS = "id,user_id,name,default_style,default_palette,thumbnail_url,created_at"
-_ROOM_COLS = "id,user_id,project_id,name,room_type,width_m,length_m,height_m,thumbnail_url,created_at"
+_ROOM_COLS = (
+    "id,user_id,project_id,name,room_type,width_m,length_m,height_m,thumbnail_url,created_at"
+)
 
 
 class SupabaseRest:
@@ -74,8 +76,12 @@ class SupabaseRest:
         if not rows:
             raise SupabaseNotFound("Expected at least one row, got none")
         if isinstance(rows, list):
-            return rows[0]
-        return rows
+            res = rows[0]
+        else:
+            res = rows
+        if not isinstance(res, dict):
+            raise SupabaseError(f"Expected dict from Supabase, got {type(res)}")
+        return res
 
     # ── rooms ───────────────────────────────────────────────────────────────
     async def insert_room(self, row: dict[str, Any]) -> dict[str, Any]:

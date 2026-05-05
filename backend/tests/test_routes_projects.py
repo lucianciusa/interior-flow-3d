@@ -117,6 +117,7 @@ def test_conversion_happy_path(
         "layout": layout,
     }
     with respx.mock(base_url=supabase_settings.SUPABASE_URL) as mock:
+        mock.get("/rest/v1/projects").mock(return_value=Response(200, json=[]))
         mock.post("/rest/v1/projects").mock(return_value=Response(201, json=[_project_row()]))
         mock.post("/rest/v1/rooms").mock(
             return_value=Response(

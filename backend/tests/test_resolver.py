@@ -63,7 +63,7 @@ def approx_eq(a: float, b: float, tol: float = 1e-9) -> bool:
 def test_y_is_zero(slot: str, room: RoomDims) -> None:
     fp = FP_SMALL
     t = resolve_slot(slot, room, fp)
-    assert pytest.approx(t.position[1], abs=1e-9) == 0.0
+    assert pytest.approx(t.position[1], abs=1e-9) == fp.h / 2
 
 
 # ── Position within room bounds ───────────────────────────────────────────────

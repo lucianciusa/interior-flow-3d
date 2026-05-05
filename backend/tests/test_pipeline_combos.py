@@ -4,6 +4,7 @@ LLM. Assert no AABB overlaps and zones are stamped on every item."""
 from __future__ import annotations
 
 import itertools
+from typing import Any
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -16,7 +17,6 @@ STYLES = ["scandinavian", "minimal", "industrial"]
 
 # Tag-compatible LLM fixtures per room type. Use only ids known to be in the
 # catalog and slots known to be in each room's instance set.
-from typing import Any
 
 _FIXTURES: dict[str, list[dict[str, Any]]] = {
     "living_room": [
@@ -144,11 +144,12 @@ def test_combo_resolves_cleanly(client, rt: str, style: str) -> None:
             # Allow rug over anything
             if "rug" in pair:
                 continue
-                
+
             from app.routers.catalog import _load_catalog
+
             catalog_map = {item.id: item for item in _load_catalog().items}
-            a_cat = catalog_map[a.catalogId]  
-            b_cat = catalog_map[b.catalogId]  
+            a_cat = catalog_map[a.catalogId]
+            b_cat = catalog_map[b.catalogId]
 
             assert not _aabb_overlap(a, b, a_cat=a_cat, b_cat=b_cat, margin=0.0), (
                 f"{rt}/{style}: overlap {a.catalogId}@{a.slot} vs {b.catalogId}@{b.slot}"

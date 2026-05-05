@@ -18,7 +18,10 @@ PASS1_RESP = {
     },
     "zones": [{"id": "seating", "kind": "seating_zone", "itemBudget": 3}],
     "styleEmphasis": "Scandinavian minimalism",
-    "designExplanation": "I designed this Scandinavian room to maximize calm and openness. The sofa and TV stand face each other, leaving the walls free for breathing room.",
+    "designExplanation": (
+        "I designed this Scandinavian room to maximize calm and openness. The sofa and TV "
+        "stand face each other, leaving the walls free for breathing room."
+    ),
 }
 
 PASS2_RESP = {
@@ -79,10 +82,8 @@ def mock_settings():
 def _make_mock_response(content: str):
     from unittest.mock import MagicMock
 
-    choice = MagicMock()
-    choice.message.content = content
     resp = MagicMock()
-    resp.choices = [choice]
+    resp.output_text = content
     resp.usage.total_tokens = 500
     return resp
 
@@ -100,7 +101,7 @@ async def test_generate_happy_path(mock_settings):
 
     with patch("app.services.llm.AsyncAzureOpenAI") as MockClient:
         instance = MockClient.return_value
-        instance.chat.completions.create = AsyncMock(side_effect=side_effect)
+        instance.responses.create = AsyncMock(side_effect=side_effect)
         result = await generate(
             STD_REQUEST, mock_settings, CATALOG_ITEMS, LIVING_PROFILE, STYLE_PROFILE
         )

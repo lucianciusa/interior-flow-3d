@@ -28,6 +28,7 @@ class Footprint:
     d: float
     h: float
     tags: list[str] = field(default_factory=list)
+    surfaces: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -51,7 +52,7 @@ def _slot_position(
 ) -> tuple[tuple[float, float, float], float]:
     """Return (position_xyz, default_rotation_y) for a slot."""
     room_w, room_l = room.width_m, room.length_m
-    y = 0.0
+    y = fp.h / 2
 
     # ── Wall slots ───────────────────────────────────────────────────────────
     if slot.startswith("north_wall_"):
@@ -125,7 +126,7 @@ def _slot_position(
             x = room_w / 6
             z = -(room_l / 2 - 0.7)
             return (x, y, z), math.pi
-            
+
         # Against north wall, offset toward east third
         x = room_w / 6
         z = -(room_l / 2 - fp.d / 2 - 0.02)
@@ -134,8 +135,9 @@ def _slot_position(
     if slot == "desk_chair":
         # In front of the desk_anchor
         x = room_w / 6
-        # Offset from north wall: desk depth (approx 0.7) + chair space (approx 0.4 center-to-center)
-        # 1.1m ensures no collision with a 0.7m deep desk and 0.65m deep chair
+        # Offset from north wall: desk depth (approx 0.7) + chair space (approx 0.4 
+        # center-to-center). 1.1m ensures no collision with a 0.7m deep desk 
+        # and 0.65m deep chair.
         z = -(room_l / 2 - 1.1)
         return (x, y, z), math.pi
 

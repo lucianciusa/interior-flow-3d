@@ -54,7 +54,7 @@ DROP_PRIORITY: dict[str, int] = {
 }
 
 # Items that can share a slot/space without being dropped
-COOCCUPY_ALLOW_TAGS: set[str] = {"lighting", "accent", "plant", "rug", "shelf", "media"}
+COOCCUPY_ALLOW_TAGS: set[str] = {"rug"}
 
 COOCCUPY_ALLOW: set[frozenset[str]] = {
     frozenset({"rug", "coffee_table"}),
@@ -80,7 +80,7 @@ COOCCUPY_ALLOW: set[frozenset[str]] = {
     frozenset({"desk", "media"}),
     frozenset({"surface", "accent"}),
     frozenset({"surface", "media"}),
-    frozenset({"media", "media"}),
+    frozenset({"media"}),
     frozenset({"media", "storage"}),
     frozenset({"lighting", "storage"}),
     frozenset({"dining", "chair"}),
@@ -139,11 +139,7 @@ def _half_extents(item: ResolvedItem) -> tuple[float, float]:
 
 
 def _aabb_overlap(
-    a: ResolvedItem, 
-    b: ResolvedItem, 
-    a_cat: CatalogItem, 
-    b_cat: CatalogItem,
-    margin: float = 0.05
+    a: ResolvedItem, b: ResolvedItem, a_cat: CatalogItem, b_cat: CatalogItem, margin: float = 0.05
 ) -> bool:
     ahx, ahz = _half_extents(a)
     bhx, bhz = _half_extents(b)
@@ -153,19 +149,21 @@ def _aabb_overlap(
     # 1. Base buffer: prevent items from being within 10cm of each other
     # For large items or seating, increase to 40cm to allow for "walking space"
     dynamic_margin = 0.1
-    if ("large" in a_cat.tags or "seating" in a_cat.tags) and \
-       ("large" in b_cat.tags or "seating" in b_cat.tags):
+    if ("large" in a_cat.tags or "seating" in a_cat.tags) and (
+        "large" in b_cat.tags or "seating" in b_cat.tags
+    ):
         dynamic_margin = 0.4
-    
+
     # 2. Specific Sofa-Table separation
     # If one is seating and other is surface (table), ensure they aren't touching
-    if ("seating" in a_cat.tags and "surface" in b_cat.tags) or \
-       ("surface" in a_cat.tags and "seating" in b_cat.tags):
+    if ("seating" in a_cat.tags and "surface" in b_cat.tags) or (
+        "surface" in a_cat.tags and "seating" in b_cat.tags
+    ):
         dynamic_margin = 0.35
 
     overlap_x = abs(ax - bx) < (ahx + bhx + dynamic_margin)
     overlap_z = abs(az - bz) < (ahz + bhz + dynamic_margin)
-    
+
     return overlap_x and overlap_z
 
 
@@ -196,7 +194,11 @@ def _apply_vertical_stack(
                 e_tags = set(existing_item.tags)
                 # Elevate if the existing item is a surface/desk/stand
                 if any(t in e_tags for t in ("desk", "surface", "media", "storage")):
-                    new_pos = (candidate.position[0], existing_item.footprint.h, candidate.position[2])
+                    new_pos = (
+                        candidate.position[0],
+                        existing_item.footprint.h + (candidate.footprint["h"] / 2),
+                        candidate.position[2],
+                    )
                     candidate.position = new_pos
                     break
 
@@ -210,7 +212,7 @@ def _try_place(
     placed: list[ResolvedItem],
     catalog_map: dict[str, CatalogItem],
     margin: float,
-) -> ResolvedItem | None:
+) -> ResolvedItem | str:
     """Attempt to resolve slot and check AABB. Returns ResolvedItem or None on collision."""
     fp = Footprint(
         w=catalog_item.footprint.w,
@@ -255,7 +257,7 @@ def _try_place(
             # Also allow non-large seating (like armchairs)
             if "seating" in c_tags and "large" not in c_tags:
                 is_allowed = True
-            
+
             if not is_allowed:
                 return "REDUNDANT_ZONE_ITEM"
 
@@ -292,7 +294,7 @@ def _try_place(
 
         if _aabb_overlap(candidate, existing, catalog_item, existing_item, margin=margin):
             return "AABB_COLLISION"
-            
+
     return candidate
 
 
@@ -311,12 +313,18 @@ _MSGS = {
         "unknown_id": "CatalogId desconocido: {id!r} — descartado",
         "slot_invalid": "El espacio {slot!r} no es válido para {type!r} — descartado",
         "item_not_allowed": "El mueble {id!r} no está permitido en {type!r} — descartado",
-        "tags_not_accepted": "Las etiquetas de {id!r} ({tags!r}) no son aceptadas por {slot!r} — descartado",
+        "tags_not_accepted": (
+            "Las etiquetas de {id!r} ({tags!r}) no son aceptadas por {slot!r} — descartado"
+        ),
         "occupied": "Descartado {id!r}: el espacio {slot!r} está ocupado por {other!r}",
-        "replaced": "Descartado {other!r}: reemplazado por {id!r} (prioridad mayor) en {slot!r}",
+        "replaced": (
+            "Descartado {other!r}: reemplazado por {id!r} (prioridad mayor) en {slot!r}"
+        ),
         "collision": "Descartado {id!r}: {reason} en {slot!r}",
-        "placement_invalid": "El mueble {id!r} no está permitido en un espacio de tipo {kind} — descartado",
-    }
+        "placement_invalid": (
+            "El mueble {id!r} no está permitido en un espacio de tipo {kind} — descartado"
+        ),
+    },
 }
 
 
@@ -357,7 +365,11 @@ def resolve(
         # 3. Check tag intersection
         accepted = profile.slot_accepted_tags.get(item.slot, [])
         if not (set(catalog_item.tags) & set(accepted)):
-            warnings.append(m["tags_not_accepted"].format(id=item.catalogId, tags=catalog_item.tags, slot=item.slot))
+            warnings.append(
+                m["tags_not_accepted"].format(
+                    id=item.catalogId, tags=catalog_item.tags, slot=item.slot
+                )
+            )
             continue
         valid.append(item)
 
@@ -380,7 +392,7 @@ def resolve(
         # Step 4: slot exclusivity
         if slot in occupied:
             existing_id = occupied[slot]
-            
+
             # Check if current item can co-occupy with existing
             can_cooccupy = False
             if item.catalogId == existing_id:
@@ -390,17 +402,18 @@ def resolve(
                 if existing_item:
                     c_tags = set(catalog_item.tags)
                     e_tags = set(existing_item.tags)
-                    
+
                     # 1. Check hardcoded tag pairs in COOCCUPY_ALLOW
                     for allowed in COOCCUPY_ALLOW:
                         if any(t in c_tags for t in allowed) and any(t in e_tags for t in allowed):
                             can_cooccupy = True
                             break
-                    
+
                     # 2. Check general co-occupancy tags
-                    if not can_cooccupy:
-                        if (c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS):
-                            can_cooccupy = True
+                    if not can_cooccupy and (
+                        (c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS)
+                    ):
+                        can_cooccupy = True
 
             if not can_cooccupy:
                 # Try wall nudge before dropping
@@ -408,7 +421,9 @@ def resolve(
                 nudged = False
                 if prefix:
                     for t_alt in _NUDGE_T:
-                        res = _try_place(item, slot, t_alt, room, catalog_item, placed, catalog_map, margin)
+                        res = _try_place(
+                            item, slot, t_alt, room, catalog_item, placed, catalog_map, margin
+                        )
                         if isinstance(res, ResolvedItem):
                             placed.append(res)
                             nudged = True
@@ -418,13 +433,17 @@ def resolve(
                     new_pri = DROP_PRIORITY.get(item.catalogId, 0)
                     occ_pri = DROP_PRIORITY.get(existing_id, 0)
                     if new_pri <= occ_pri:
-                        warnings.append(m["occupied"].format(id=item.catalogId, slot=slot, other=existing_id))
-                        continue # Skip to next item
+                        warnings.append(
+                            m["occupied"].format(id=item.catalogId, slot=slot, other=existing_id)
+                        )
+                        continue  # Skip to next item
                     else:
                         # Remove existing from placed, replace with new
                         placed = [p for p in placed if p.catalogId != existing_id]
                         del occupied[slot]
-                        warnings.append(m["replaced"].format(other=existing_id, id=item.catalogId, slot=slot))
+                        warnings.append(
+                            m["replaced"].format(other=existing_id, id=item.catalogId, slot=slot)
+                        )
                         # Fall through to step 5-6
 
         # Step 5–6: resolve + AABB check
@@ -439,7 +458,9 @@ def resolve(
             nudged = False
             if prefix:
                 for t_alt in _NUDGE_T:
-                    res = _try_place(item, slot, t_alt, room, catalog_item, placed, catalog_map, margin)
+                    res = _try_place(
+                        item, slot, t_alt, room, catalog_item, placed, catalog_map, margin
+                    )
                     if isinstance(res, ResolvedItem):
                         _apply_vertical_stack(res, placed, catalog_item, catalog_map)
                         placed.append(res)

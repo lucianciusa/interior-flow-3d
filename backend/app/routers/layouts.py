@@ -39,9 +39,9 @@ async def create_layout(
             if body.is_primary:
                 # Clear any existing primary on this room before insert.
                 await sb.unset_other_primaries(body.roomId, except_layout_id=None)
-            
+
             row = await sb.insert_layout(payload)
-            
+
             # Also update the room's thumbnail to show this latest layout
             if body.thumbnail_url:
                 await sb.update_room(body.roomId, {"thumbnail_url": body.thumbnail_url})
