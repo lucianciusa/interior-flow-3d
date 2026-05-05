@@ -1,4 +1,5 @@
 import math
+from typing import cast
 
 from app.models.catalog import CatalogItem
 from app.models.layout import (
@@ -9,7 +10,6 @@ from app.models.layout import (
     ResolvedItem,
     SlotId,
 )
-from typing import cast, Any, Literal
 from app.models.room_type import RoomTypeProfile
 from app.models.style_profile import StyleProfile
 from app.services.slot_resolver import Footprint, RoomDims, resolve_slot
@@ -632,7 +632,14 @@ def resolve(
                 )
                 # Try to place it
                 result = _try_place(
-                    mock_item, "desk_chair", None, room, office_chair_cat, placed, catalog_map, margin
+                    mock_item,
+                    "desk_chair",
+                    None,
+                    room,
+                    office_chair_cat,
+                    placed,
+                    catalog_map,
+                    margin,
                 )
                 if isinstance(result, ResolvedItem):
                     placed.append(result)
