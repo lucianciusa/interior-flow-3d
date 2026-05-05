@@ -60,10 +60,10 @@ def approx_eq(a: float, b: float, tol: float = 1e-9) -> bool:
 
 @pytest.mark.parametrize("slot", ALL_SLOTS)
 @pytest.mark.parametrize("room", [ROOM_MIN, ROOM_MAX, ROOM_STD])
-def test_y_is_zero(slot: str, room: RoomDims) -> None:
+def test_y_is_ground(slot: str, room: RoomDims) -> None:
     fp = FP_SMALL
     t = resolve_slot(slot, room, fp)
-    assert pytest.approx(t.position[1], abs=1e-9) == fp.h / 2
+    assert pytest.approx(t.position[1], abs=1e-9) == 0.0
 
 
 # ── Position within room bounds ───────────────────────────────────────────────

@@ -37,7 +37,6 @@ function GltfMesh({ model, footprint }: { model: string; footprint: ResolvedItem
     clone.traverse((obj: any) => {
       if (obj.isMesh) {
         if (!obj.geometry) {
-          console.error(`Furniture: Mesh "${obj.name}" in model ${model} has no geometry. Providing empty fallback.`);
           obj.geometry = new THREE.BufferGeometry();
         }
         obj.castShadow = true;

@@ -11,7 +11,7 @@ import { useWizardStore } from "@/lib/stores/wizard";
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const phase = useWizardStore((s) => s.phase);
-  
+
   const isLayoutPage = pathname?.includes("/layouts/");
   const isResultPage = pathname?.includes("/result");
   const isFullWidthPage = isResultPage || isLayoutPage || (phase === "result" && pathname?.includes("/app/new"));
@@ -29,9 +29,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="flex flex-1 flex-col overflow-hidden relative">
           {/* Main Content Area */}
           <main
-            className={`flex-1 overflow-auto ${
-              isFullWidthPage ? "p-0 pointer-events-none" : "p-6 sm:p-8"
-            }`}
+            className={`flex-1 overflow-auto ${isFullWidthPage ? "p-0 pointer-events-none" : "p-6 sm:p-8"
+              }`}
           >
             {isFullWidthPage ? (
               children

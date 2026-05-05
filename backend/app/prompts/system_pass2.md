@@ -13,6 +13,7 @@ Your task: Populate a specific zone with furniture pieces.
   - `dining_zone` -> MUST have a `dining_table` and at least 4 `dining_chair` items.
   - `accent_zone` -> Use for `sideboard`, `china_cabinet` (vitrina), `console_table`, or `mirror`.
 - **Spatial Awareness**: Respect the room dimensions provided. If the room is small (e.g., < 10m²), prioritize essential items and avoid clutter.
+- **NO DUPLICATES**: Do NOT use the same `catalogId` more than once in the entire layout, UNLESS it is a `chair`, `stool`, `lamp`, `plant`, or small `decor` item. For example, never place two identical desks, two identical beds, or two identical wardrobes.
 - **Wizard Preferences**: 
   - "More space": Prioritize "Hero" items and leave at least 1.5m clearance in the center.
   - "More furniture": Fill all available slots and corners with decor (plants, lamps, rugs).
@@ -22,9 +23,11 @@ Your task: Populate a specific zone with furniture pieces.
   - Bed + 2 Nightstands + 2 Bedside Lamps + Rug (under bed).
   - Desk + Office Chair + Desk Lamp + Bookshelf (nearby wall).
 - Use ONLY catalog IDs listed in the user message. Do not hallucinate IDs.
+- **STYLE ALIGNMENT**: You MUST prioritize items that match the requested style (e.g., 'Modern', 'Industrial', 'Minimalist'). Check item names and tags for keywords related to the selected style.
+- **TECH LIMIT**: If a desk is present, you MUST include EXACTLY ONE tech item (ONE `laptop` OR ONE `monitor`). Never place both on the same desk.
 - Use ONLY slot names listed in the user message.
 - Select between 3 and 12 items for this zone (respecting the zone budget).
-  - **Budget Utilization**: If the budget is large (e.g., 10-12), you MUST add plenty of small decor: `books_decor`, `laptop`/`monitor` (if desk), `small_plant`, `table_lamp`. Do not leave a large budget unused.
+  - **Budget Utilization**: If the budget is large (e.g., 10-12), you MUST add plenty of small decor: `books_decor`, ONE `laptop` (if desk), `small_plant`, `table_lamp`. Do not leave a large budget unused.
 - Each slot holds one main item, but decor (rugs, lamps, plants) can co-occupy slots with furniture.
 - Provide a short `rationale` (max 140 chars) for why you chose each piece and location.
 - **Facing Logic**:
@@ -53,16 +56,20 @@ Your task: Populate a specific zone with furniture pieces.
   - **TV**: Place the `tv_modern` (or `televisionVintage`) in the SAME `south_wall_center` slot. The system will automatically place it ON TOP of the stand.
   - **Rug**: Place a `rug` in the `center` slot to anchor the whole vignette.
   - Doing this ensures the seating area is grouped tightly together, regardless of how large the room is.
-- **Home Office "Work Vignette"**:
-  - **Desk & Chair**: The `desk` and `office_chair` MUST be treated as a single unit. 
+  - **Home Office "Work Vignette"**:
+  - **Desk & Chair**: The `desk` and `office_chair` MUST be treated as a single unit. YOU MUST ALWAYS INCLUDE AN OFFICE CHAIR IF YOU INCLUDE A DESK.
     - Desk goes in `north_wall_center` or `north_wall_left`.
     - Chair goes in `desk_chair` (facing the desk).
   - **Lamp**: The `desk_lamp` or `floor_lamp` MUST be in `desk_anchor` (beside the desk).
-  - **Tech**: Add `laptop`, `monitor`, `keyboard`, and `mouse` to the `desk_anchor` (they can all co-occupy the desk area).
+  - **Tech**: If a desk is present, EXACTLY ONE tech item (`laptop` or `monitor`) MUST be placed in the `desk_anchor` slot. Never place two.
 - **Bedroom "Sleep Vignette"**:
   - **Bed**: Place the `bed_queen` (or similar) in `bed_center` or against the `north_wall_center`.
   - **Nightstands**: Place TWO `nightstands` in the `north_wall_left` and `north_wall_right` slots (flanking the bed).
   - **Ottoman**: Place the `ottoman` at the foot of the bed using the `bed_center` slot (with nudge).
+  - **Dining Room "Dining Vignette"**:
+  - **Table & Chairs**: You MUST place a dining table in `table_center` and EXACTLY 4 `dining_chair` items around it.
+    - Use `dining_chair_N`, `dining_chair_S`, `dining_chair_E`, and `dining_chair_W`.
+    - These slots are pre-configured to face the table correctly.
 - **Visual Balance & Coherence**: 
   - **Lamps**: 
     - **Floor Lamps** (tall): Can be on the floor, ideally in corners or next to seating.
@@ -70,4 +77,6 @@ Your task: Populate a specific zone with furniture pieces.
   - **Grouping**: Avoid scattering items randomly. Create clusters. A floor lamp belongs next to a chair or sofa, not in an empty corner alone.
   - **Overlap**: Use co-occupancy! Put a rug under the main furniture. Put a lamp on a side table or desk.
   - **Breathing Room**: Do not block the main circulation paths. Ensure at least 1m of clear space in front of any seating.
-  - **Decor**: Use `books_decor`, `small_plant`, and `accent` items to fill shelves and surfaces.
+  - **Decor**: 
+    - **Small Plants** (`small_plant`, `plant_small_2`): MUST be placed on a surface (bookshelf, nightstand, dresser, side table). If a desk has a laptop, try to place the plant on a DIFFERENT piece of furniture to avoid cluttering the workspace.
+    - **Floor Plants** (`plant_large`): Must be on the floor, ideally in corners.

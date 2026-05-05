@@ -164,7 +164,7 @@ async def convert_anon_layout(
                     {
                         "user_id": user.id,
                         "room_id": room_id,
-                        "name": "Untitled",
+                        "name": body.name or "Untitled",
                         "is_primary": True,
                         "style": body.layout.style,
                         "layout": body.layout.model_dump(),

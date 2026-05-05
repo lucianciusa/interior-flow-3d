@@ -15,7 +15,7 @@ Your task: Analyze the room dimensions and user preferences, then define the spa
     5. **Rug**: MUST be in the `center` slot, underneath the seating area.
     - **CRITICAL**: This Sofa-Table-TV axis is non-negotiable.
   - **Dining Room**: MUST include `dining_zone` with a dining table (e.g., `dining_table_6`), a set of 4-6 `dining_chairs`, a `china_cabinet` (vitrina), and a `console_table`.
-  - **Home Office**: MUST include `work_zone` with a `desk`, an `office_chair`, a `bookshelf`, and a `filing_cabinet`. 
+  - **Home Office**: MUST include `work_zone` with a `desk`, an `office_chair` (SIEMPRE), a `bookshelf`, and a `filing_cabinet`. 
     - **CRITICAL**: If user prefers "More seating", you MUST add a second zone: `seating_zone` with a `loveseat`, `armchair`, or `bench` to create a client/waiting area. This is not optional if the preference is set.
 - **User Preferences (Wizard)**: Respect all user preferences. 
   - "More space": Prioritize mandatory items, use compact versions (e.g., `desk_compact`), and leave central floor areas clear.

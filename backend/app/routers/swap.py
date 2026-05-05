@@ -21,7 +21,11 @@ router = APIRouter(prefix="/layouts", tags=["swap"])
 
 
 def _build_resolved(
-    target: ResolvedItem, replacement: CatalogItem, dims: dict[str, float]
+    target: ResolvedItem,
+    replacement: CatalogItem,
+    dims: dict[str, float],
+    placed: list[ResolvedItem],
+    catalog_map: dict[str, CatalogItem],
 ) -> ResolvedItem:
     fp = Footprint(
         w=replacement.footprint.w,
@@ -40,7 +44,7 @@ def _build_resolved(
         fp,
         target.facing,
     )
-    return ResolvedItem(
+    candidate = ResolvedItem(
         catalogId=replacement.id,
         slot=target.slot,
         facing=target.facing,
@@ -51,6 +55,9 @@ def _build_resolved(
         footprint={"w": fp.w, "d": fp.d, "h": fp.h},
         model=replacement.model,
     )
+    # Recalculate vertical position if it should be stacked
+    placement._apply_vertical_stack(candidate, placed, replacement, catalog_map)
+    return candidate
 
 
 @router.post("/{layout_id}/swap", response_model=LayoutRecord)
@@ -92,9 +99,8 @@ async def swap_item(
             if not compatible:
                 raise HTTPException(status_code=409, detail="slot_kind_mismatch")
 
-            new_item = _build_resolved(target, replacement, row["rooms"])
-
             others = [it for i, it in enumerate(current.items) if i != target_idx]
+            new_item = _build_resolved(target, replacement, row["rooms"], others, catalog)
             for existing in others:
                 pair = frozenset({new_item.catalogId, existing.catalogId})
                 if pair in placement.COOCCUPY_ALLOW and new_item.slot == existing.slot:

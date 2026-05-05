@@ -37,7 +37,8 @@ export default function RoomCard({
   const ROOM_FALLBACKS: Record<string, string> = {
     living_room: "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&q=80&w=800",
     bedroom: "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&q=80&w=800",
-    dining_room: "https://images.unsplash.com/photo-1617806118233-f8e137453f9c?auto=format&fit=crop&q=80&w=800",
+    dining_room: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&q=80&w=800",
+    diningRoom: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&q=80&w=800",
     home_office: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800",
   };
 
@@ -51,10 +52,10 @@ export default function RoomCard({
           className="block overflow-hidden rounded-xl border border-border transition hover:border-ring hover:shadow-md"
         >
           <div className="aspect-[3/2] w-full bg-muted overflow-hidden">
-            <img 
-              src={fallback} 
-              alt={room.name} 
-              className="h-full w-full object-cover transition-transform group-hover:scale-105" 
+            <img
+              src={fallback}
+              alt={room.name}
+              className="h-full w-full object-cover transition-transform group-hover:scale-105"
             />
           </div>
           <div className="p-4">

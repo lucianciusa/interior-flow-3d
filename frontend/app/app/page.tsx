@@ -10,7 +10,8 @@ import NewProjectDialog from "@/components/projects/NewProjectDialog";
 import ProjectGrid from "@/components/projects/ProjectGrid";
 import { StyleGallery } from "@/components/templates/StyleGallery";
 import { TemplateGallery } from "@/components/templates/TemplateGallery";
-import { useConvertAnonLayout, useListProjects, useDeleteProject } from "@/lib/api";
+import { useConvertAnonLayout, useListProjects, useDeleteProject, useListLayouts } from "@/lib/api";
+import LayoutGrid from "@/components/layouts/LayoutGrid";
 import { useAuthStore } from "@/lib/stores/auth";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -39,6 +40,7 @@ export default function DashboardPage() {
   const ready = useAuthStore((s) => s.ready);
   const router = useRouter();
   const { data, isLoading, isError, error } = useListProjects();
+  const { data: allLayouts, isLoading: layoutsLoading } = useListLayouts();
   const { mutateAsync: convertAnon } = useConvertAnonLayout();
 
   const [loginOpen, setLoginOpen] = useState(false);
@@ -150,8 +152,16 @@ export default function DashboardPage() {
   }
 
   const freeDesignsNames = [t("free_designs_project"), "Free Designs", "Diseños libres"];
-  const quickProjects = data?.filter(p => freeDesignsNames.includes(p.name)) || [];
-  const regularProjects = data?.filter(p => !freeDesignsNames.includes(p.name)) || [];
+  
+  // Filter out the container project from the main grid
+  const regularProjects = data?.filter(p => !freeDesignsNames.some(fn => fn.toLowerCase() === p.name.toLowerCase())) || [];
+  
+  // Filter layouts that belong to the "Free Designs" projects
+  const quickLayouts = allLayouts?.filter(l => {
+    if (!l.project_name) return false;
+    const name = l.project_name.toLowerCase().trim();
+    return freeDesignsNames.some(fn => fn.toLowerCase().trim() === name);
+  }) || [];
 
   return (
     <div className="w-full">
@@ -211,7 +221,7 @@ export default function DashboardPage() {
         </p>
       )}
       
-      {!isLoading && !isError && regularProjects.length === 0 && quickProjects.length === 0 && (
+      {!isLoading && !isError && regularProjects.length === 0 && quickLayouts.length === 0 && (
         <EmptyProjects onCreate={() => setNewOpen(true)} />
       )}
 
@@ -223,8 +233,8 @@ export default function DashboardPage() {
         />
       )}
 
-      {/* Quick Generations Section */}
-      {!isLoading && !isError && quickProjects.length > 0 && (
+      {/* Quick Generations Section - Individual Layouts */}
+      {!layoutsLoading && quickLayouts.length > 0 && (
         <div className="mt-12">
           <div className="mb-6">
             <h2 className="text-xl font-semibold tracking-tight font-display text-foreground">
@@ -234,8 +244,8 @@ export default function DashboardPage() {
               {t("quick_generate_desc")}
             </p>
           </div>
-          <ProjectGrid 
-            projects={quickProjects} 
+          <LayoutGrid 
+            layouts={quickLayouts} 
             selectedIds={selectedIds}
             onToggle={toggleOne}
           />

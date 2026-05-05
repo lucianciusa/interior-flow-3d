@@ -4,43 +4,34 @@ import Link from "next/link";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
-import { useDeleteLayout, useUpdateLayout } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { useDeleteLayout } from "@/lib/api";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import type { LayoutSummary } from "@/lib/types";
-
 import { useLanguage } from "@/lib/stores/useLanguage";
 
-type Props = {
-  layout: LayoutSummary;
-  projectId: string;
-  roomId: string;
-  isCompareSelected: boolean;
-  onToggleCompare: (id: string) => void;
-  selected?: boolean;
-  onSelect?: (val: boolean) => void;
-};
+function fmtDate(iso: string): string {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime())
+    ? iso
+    : d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+}
 
 export default function LayoutCard({
   layout,
-  projectId,
-  roomId,
-  isCompareSelected,
-  onToggleCompare,
   selected = false,
   onSelect,
-}: Props) {
+}: {
+  layout: LayoutSummary;
+  selected?: boolean;
+  onSelect?: (val: boolean) => void;
+}) {
   const { t } = useLanguage();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const { mutateAsync: deleteLayout, isPending } = useDeleteLayout();
-  const updateLayout = useUpdateLayout(layout.id);
-
-  const setPrimary = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (layout.is_primary) return;
-    void updateLayout.mutateAsync({ is_primary: true });
-  };
 
   const handleDelete = async () => {
     try {
@@ -51,31 +42,38 @@ export default function LayoutCard({
     }
   };
 
+  const fallback = "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800";
+
   return (
     <>
-      <div
-        className={cn(
-          "group relative overflow-hidden rounded-xl border transition",
-          isCompareSelected
-            ? "border-primary ring-2 ring-primary"
-            : "border-border hover:border-ring hover:shadow-md",
-        )}
-      >
-        <Link href={`/app/projects/${projectId}/rooms/${roomId}/layouts/${layout.id}`}>
+      <div className="relative group">
+        <Link
+          href={`/app/projects/${layout.project_id}/rooms/${layout.room_id}/layouts/${layout.id}`}
+          className="block overflow-hidden rounded-[14px] border border-border transition-shadow duration-150 hover:border-ring hover:shadow-[0_4px_16px_rgba(20,20,26,0.08)]"
+        >
           <div className="aspect-[3/2] w-full bg-muted overflow-hidden">
-            {layout.thumbnail_url ? (
-              <img 
-                src={layout.thumbnail_url} 
-                alt={layout.name} 
-                className="h-full w-full object-cover transition-transform group-hover:scale-105" 
-              />
-            ) : (
-              <div className="h-full w-full bg-gradient-to-br from-muted to-muted/50" />
-            )}
+            <img
+              src={layout.thumbnail_url || fallback}
+              alt={layout.name}
+              className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            />
+          </div>
+          <div className="p-4">
+            <div className="flex justify-between items-start">
+              <div>
+                <div className="text-sm font-medium font-display tracking-tight text-foreground group-hover:text-primary transition-colors">
+                  {layout.name}
+                </div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">
+                  {t(layout.room_type || "")} • {t(layout.style)}
+                </div>
+              </div>
+            </div>
+            <div className="text-[10px] text-muted-foreground mt-2">{fmtDate(layout.created_at)}</div>
           </div>
         </Link>
-        
-        {/* Selection Checkbox */}
+
+        {/* Checkbox */}
         <div className="absolute top-2 left-2 z-10">
           <input
             type="checkbox"
@@ -85,7 +83,7 @@ export default function LayoutCard({
           />
         </div>
 
-        {/* Delete Button */}
+        {/* Delete button */}
         <button
           type="button"
           onClick={(e) => {
@@ -97,38 +95,6 @@ export default function LayoutCard({
         >
           <Trash2 size={16} />
         </button>
-
-        <div className="flex items-start justify-between gap-2 p-3">
-          <div className="min-w-0 flex-1">
-            <div className="truncate text-sm font-medium text-foreground">{layout.name}</div>
-            <div className="text-xs text-muted-foreground">
-              {t(layout.style || "none")}
-            </div>
-          </div>
-          <div className="flex flex-col items-end gap-1">
-            {layout.is_primary ? (
-              <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-medium uppercase text-primary-foreground">
-                {t("primary")}
-              </span>
-            ) : (
-              <button
-                type="button"
-                onClick={setPrimary}
-                className="rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground hover:bg-muted transition-colors"
-              >
-                {t("set_primary")}
-              </button>
-            )}
-            <label className="flex items-center gap-1 text-[10px] text-muted-foreground">
-              <input
-                type="checkbox"
-                checked={isCompareSelected}
-                onChange={() => onToggleCompare(layout.id)}
-              />
-              {t("compare")}
-            </label>
-          </div>
-        </div>
       </div>
 
       <ConfirmDialog

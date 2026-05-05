@@ -278,7 +278,8 @@
     ],
     "room_types": [
       "living_room",
-      "dining_room"
+      "dining_room",
+      "home_office"
     ],
     "placement": {
       "surfaces": [
@@ -1029,14 +1030,16 @@
   },
   {
     "id": "dining_table_4",
-    "name": "Dining table for 4",
+    "name": "Executive Desk (Large)",
     "tags": [
       "dining",
       "surface",
-      "large"
+      "large",
+      "desk"
     ],
     "room_types": [
-      "dining_room"
+      "dining_room",
+      "home_office"
     ],
     "placement": {
       "surfaces": [
@@ -1346,7 +1349,7 @@
       "sides": 0.05,
       "back": 0.05
     },
-    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/3972a580cd8c4d8ecf26268a59e2fa65c0c84ab093cb145472d24dd0a5801bc5.glb"
+    "model": "https://interior-flow-endpoint-fkg2cxgbgbh3ffgy.a02.azurefd.net/catalog/14fe90e25b1ab467a450ff446b8a7fd50a8a752fd12ac5ebe6c3c9ee5016d281.glb"
   },
   {
     "id": "credenza",
@@ -1559,9 +1562,9 @@
       "exclusive_with": []
     },
     "footprint": {
-      "w": 0.6,
-      "d": 0.6,
-      "h": 0.75
+      "w": 0.3,
+      "d": 0.25,
+      "h": 0.3
     },
     "clearance": {
       "front": 0.3,
@@ -3240,9 +3243,9 @@
       "exclusive_with": []
     },
     "footprint": {
-      "w": 0.6,
-      "d": 0.6,
-      "h": 0.75
+      "w": 0.38,
+      "d": 0.26,
+      "h": 0.22
     },
     "clearance": {
       "front": 0.3,
@@ -3370,9 +3373,9 @@
       "exclusive_with": []
     },
     "footprint": {
-      "w": 0.6,
-      "d": 0.6,
-      "h": 0.75
+      "w": 0.55,
+      "d": 0.15,
+      "h": 0.4
     },
     "clearance": {
       "front": 0.3,
@@ -4201,14 +4204,16 @@
   },
   {
     "id": "tableGlass",
-    "name": "Tableglass",
+    "name": "Modern Glass Desk",
     "tags": [
       "accent",
-      "surface"
+      "surface",
+      "desk"
     ],
     "room_types": [
       "bedroom",
-      "living_room"
+      "living_room",
+      "home_office"
     ],
     "placement": {
       "surfaces": [
@@ -4233,14 +4238,16 @@
   },
   {
     "id": "tableRound",
-    "name": "Tableround",
+    "name": "Round Meeting Desk",
     "tags": [
       "accent",
-      "surface"
+      "surface",
+      "desk"
     ],
     "room_types": [
       "bedroom",
-      "living_room"
+      "living_room",
+      "home_office"
     ],
     "placement": {
       "surfaces": [

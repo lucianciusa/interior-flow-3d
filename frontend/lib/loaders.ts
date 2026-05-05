@@ -19,6 +19,5 @@ export function configureLoaders(gl: WebGLRenderer) {
     useGLTFHook.setDecoderConfig({ ktx2, meshopt: MeshoptDecoder });
   } else {
     // Legacy workaround or direct extend if API lacks setDecoderConfig
-    console.warn("drei useGLTF missing setDecoderConfig");
   }
 }

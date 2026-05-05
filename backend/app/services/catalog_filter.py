@@ -18,6 +18,9 @@ def filter_catalog(
             continue
         if accepted_tags is not None and not (set(item.tags) & set(accepted_tags)):
             continue
+        # Exclude items with 'primitive:' models as they lack high-quality renders
+        if item.model.startswith("primitive:"):
+            continue
         out.append(item)
     out.sort(key=lambda i: i.id)
     return out[:MAX_CANDIDATES]

@@ -20,7 +20,10 @@ class SupabaseConflict(SupabaseError):
     """Unique constraint or other Postgres conflict (HTTP 409)."""
 
 
-_LAYOUT_SUMMARY_COLS = "id,user_id,room_id,name,is_primary,style,seed,thumbnail_url,created_at"
+_LAYOUT_SUMMARY_COLS = (
+    "id,user_id,room_id,name,is_primary,style,seed,thumbnail_url,created_at,"
+    "rooms(project_id,room_type,projects(name))"
+)
 _LAYOUT_FULL_COLS = (
     "id,user_id,room_id,name,is_primary,style,seed,thumbnail_url,created_at,"
     "layout,rooms(width_m,length_m,height_m,room_type)"

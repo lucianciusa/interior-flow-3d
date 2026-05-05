@@ -10,7 +10,7 @@ import DimensionsStep from "@/components/wizard/DimensionsStep";
 import PreferencesStep from "@/components/wizard/PreferencesStep";
 import StyleStep from "@/components/wizard/StyleStep";
 
-import { useConvertAnonLayout, useGenerateLayout, useSaveLayout } from "@/lib/api";
+import { useConvertAnonLayout, useGenerateLayout, useGetRoom, useSaveLayout } from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth";
 import { useWizardStore } from "@/lib/stores/wizard";
 import { useLanguage } from "@/lib/stores/useLanguage";
@@ -69,6 +69,19 @@ export default function WizardShell() {
     }
   }, [isQuickFlow, phase, setPhase]);
 
+  // Fetch room dims if we're in a specific room but dims are default
+  const { data: existingRoom } = useGetRoom(roomId);
+  useEffect(() => {
+    if (existingRoom && roomId) {
+      setRoomType(existingRoom.room_type as RoomType);
+      setDims({
+        width_m: existingRoom.width_m,
+        length_m: existingRoom.length_m,
+        height_m: existingRoom.height_m,
+      });
+    }
+  }, [existingRoom, roomId, setRoomType, setDims]);
+
   const { language } = useLanguage();
 
   const handleGenerate = async (newSeed?: number) => {
@@ -104,23 +117,23 @@ export default function WizardShell() {
     setPhase("step3");
   };
 
-  const persist = useCallback(async () => {
+  const persist = useCallback(async (customName?: string) => {
     if (!layout || !style) return;
     setSaveState("saving");
     setSaveError(null);
+    const finalName = customName || "New Layout";
     try {
       const screenshot = captureRef.current ? captureRef.current() : null;
       if (roomId && projectId) {
         const result = await saveExisting({
           roomId,
           layout,
-          name: "New Layout",
+          name: finalName,
           thumbnail_url: screenshot,
         });
         setSaveState("saved");
-        router.push(
-          `/app/projects/${projectId}/rooms/${roomId}/layouts/${result.id}`,
-        );
+        const targetUrl = `/app/projects/${projectId}/rooms/${roomId}/layouts/${result.id}`;
+        router.push(targetUrl);
       } else {
         const result = await convertAnon({
           projectName: t("free_designs_project"),
@@ -128,12 +141,12 @@ export default function WizardShell() {
           roomType,
           ...dims,
           layout,
+          name: finalName,
           thumbnail_url: screenshot,
         });
         setSaveState("saved");
-        router.push(
-          `/app/projects/${result.project_id}/rooms/${result.room_id}/layouts/${result.layout_id}`,
-        );
+        const targetUrl = `/app/projects/${result.project_id}/rooms/${result.room_id}/layouts/${result.layout_id}`;
+        router.push(targetUrl);
       }
     } catch (e) {
       setSaveState("idle");
@@ -141,7 +154,7 @@ export default function WizardShell() {
     }
   }, [layout, style, dims, roomType, t, convertAnon, saveExisting, roomId, projectId, router]);
 
-  const handleSave = () => {
+  const handleSave = (name: string) => {
     if (!layout || !style) return;
     if (!session) {
       try {
@@ -153,6 +166,7 @@ export default function WizardShell() {
             roomType,
             ...dims,
             layout,
+            name,
           }),
         );
       } catch {
@@ -162,7 +176,7 @@ export default function WizardShell() {
       setLoginOpen(true);
       return;
     }
-    void persist();
+    void persist(name);
   };
 
   const handleLoginOpenChange = (open: boolean) => {

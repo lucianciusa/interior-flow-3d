@@ -52,7 +52,7 @@ def _slot_position(
 ) -> tuple[tuple[float, float, float], float]:
     """Return (position_xyz, default_rotation_y) for a slot."""
     room_w, room_l = room.width_m, room.length_m
-    y = fp.h / 2
+    y = 0.0
 
     # ── Wall slots ───────────────────────────────────────────────────────────
     if slot.startswith("north_wall_"):
@@ -120,26 +120,51 @@ def _slot_position(
     if slot == "table_center":
         return (0.0, y, 0.0), 0.0
 
+    if slot.startswith("dining_chair_"):
+        # Positioned around the table_center (0,0,0)
+        # Based on dining_table_4 (1.4m x 0.9m)
+        # We add 2cm gap + half chair depth (0.25m)
+        tx, tz = 0.0, 0.0
+        rot = 0.0
+        if slot == "dining_chair_N":
+            tz = -(0.45 + 0.25 + 0.02)
+            rot = 0.0  # face south (+Z)
+        elif slot == "dining_chair_S":
+            tz = (0.45 + 0.25 + 0.02)
+            rot = math.pi  # face north (-Z)
+        elif slot == "dining_chair_E":
+            tx = (0.7 + 0.25 + 0.02)
+            rot = -math.pi / 2  # face west (-X)
+        elif slot == "dining_chair_W":
+            tx = -(0.7 + 0.25 + 0.02)
+            rot = math.pi / 2  # face east (+X)
+        return (tx, y, tz), rot
+
     if slot == "desk_anchor":
-        # If it's a chair, redirect to desk_chair for the user's sanity
+        # If it's a chair, redirect to desk_chair position
         if "chair" in fp.tags or "seating" in fp.tags:
-            x = room_w / 6
-            z = -(room_l / 2 - 0.7)
+            # desk front face = -(room_l/2 - desk_d - 0.02) where desk_d=0.7
+            # chair center = desk_front + chair_d/2 + 2cm gap
+            desk_front = -(room_l / 2 - 0.7 - 0.02)
+            z = desk_front + fp.d / 2 + 0.02
+            x = 0.0
             return (x, y, z), math.pi
 
-        # Against north wall, offset toward east third
-        x = room_w / 6
+        # Against north wall, centered
+        x = 0.0
         z = -(room_l / 2 - fp.d / 2 - 0.02)
         return (x, y, z), 0.0
 
     if slot == "desk_chair":
-        # In front of the desk_anchor
-        x = room_w / 6
-        # Offset from north wall: desk depth (approx 0.7) + chair space (approx 0.4
-        # center-to-center). 1.1m ensures no collision with a 0.7m deep desk
-        # and 0.65m deep chair.
-        z = -(room_l / 2 - 1.1)
-        return (x, y, z), math.pi
+        # Positioned directly in front of the desk (desk_anchor slot).
+        # Desk: against north wall, depth=0.7m, back-wall gap=2cm.
+        # desk_front_z = -(room_l/2 - 0.7 - 0.02) = -(room_l/2 - 0.72)
+        # Chair center  = desk_front + chair_d/2 + 2cm clearance
+        # This guarantees 2cm of physical space between desk and chair.
+        x = 0.0
+        desk_front_z = -(room_l / 2 - 0.72)
+        z = desk_front_z + fp.d / 2 + 0.02
+        return (x, y, z), math.pi  # face north = look at desk
 
     raise ValueError(f"Unknown slot: {slot!r}")
 

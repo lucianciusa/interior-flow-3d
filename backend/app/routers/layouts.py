@@ -66,7 +66,26 @@ async def list_layouts(
             rows = await sb.list_layouts_for_room(room_id) if room_id else await sb.list_layouts()
     except SupabaseError as e:
         raise HTTPException(status_code=502, detail=str(e)) from e
-    return [LayoutSummary.model_validate(r) for r in rows]
+    
+    summaries: list[LayoutSummary] = []
+    for r in rows:
+        # Flatten the nested rooms/projects from Supabase
+        # PostgREST might return these as a list or a single dict depending on constraints
+        rooms_raw = r.get("rooms")
+        rooms = rooms_raw[0] if isinstance(rooms_raw, list) and rooms_raw else (rooms_raw or {})
+        
+        projects_raw = rooms.get("projects")
+        projects = projects_raw[0] if isinstance(projects_raw, list) and projects_raw else (projects_raw or {})
+        
+        flat = {
+            **r,
+            "project_id": rooms.get("project_id"),
+            "project_name": projects.get("name"),
+            "room_type": rooms.get("room_type"),
+        }
+        summaries.append(LayoutSummary.model_validate(flat))
+        
+    return summaries
 
 
 @router.get("/{layout_id}", response_model=LayoutRecord)

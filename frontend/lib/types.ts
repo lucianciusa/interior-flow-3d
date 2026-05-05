@@ -26,7 +26,12 @@ export type SlotId =
   | "entry"
   | "bed_center"
   | "table_center"
-  | "desk_anchor";
+  | "desk_anchor"
+  | "desk_chair"
+  | "dining_chair_N"
+  | "dining_chair_S"
+  | "dining_chair_E"
+  | "dining_chair_W";
 export type Facing = "auto" | "north" | "south" | "east" | "west" | "center";
 
 export type Palette = { name: string; hex: string };
@@ -138,6 +143,9 @@ export type LayoutSummary = {
   seed: number | null;
   thumbnail_url: string | null;
   created_at: string;
+  project_id?: string | null;
+  project_name?: string | null;
+  room_type?: string | null;
 };
 
 export type LayoutRecord = LayoutSummary & {
@@ -199,6 +207,7 @@ export type ConversionRequest = {
   length_m: number;
   height_m: number;
   layout: Layout;
+  name?: string | null;
   thumbnail_url?: string | null;
 };
 

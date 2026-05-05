@@ -24,9 +24,23 @@ export default function Room({ dims, palette, hideWalls = false }: RoomProps) {
         <planeGeometry args={[w, roomL]} />
         <meshStandardMaterial color={floorColor} roughness={0.85} metalness={0.05} envMapIntensity={0.6} />
       </mesh>
-      <gridHelper args={[Math.max(w, roomL), Math.ceil(Math.max(w, roomL)), 0x000000, 0x000000]} position={[0, 0.01, 0]}>
-        <meshBasicMaterial opacity={0.15} transparent />
-      </gridHelper>
+      {/* Rectangular Grid */}
+      <group position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        {/* Longitudinal lines */}
+        {Array.from({ length: Math.floor(w) + 1 }).map((_, i) => (
+          <mesh key={`lx-${i}`} position={[i - Math.floor(w) / 2, 0, 0]}>
+            <planeGeometry args={[0.01, roomL]} />
+            <meshBasicMaterial color="black" transparent opacity={0.1} />
+          </mesh>
+        ))}
+        {/* Transversal lines */}
+        {Array.from({ length: Math.floor(roomL) + 1 }).map((_, i) => (
+          <mesh key={`tz-${i}`} position={[0, i - Math.floor(roomL) / 2, 0]}>
+            <planeGeometry args={[w, 0.01]} />
+            <meshBasicMaterial color="black" transparent opacity={0.1} />
+          </mesh>
+        ))}
+      </group>
 
       {!hideWalls && (
         <>

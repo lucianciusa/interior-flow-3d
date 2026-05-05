@@ -13,7 +13,7 @@ type ResultSidebarProps = {
   mode?: ResultViewMode;
   onRegenerate?: () => void;
   onAdjust?: () => void;
-  onSave?: () => void;
+  onSave?: (name: string) => void;
   onShare?: () => void;
   onCompare?: () => void;
   saveState?: "idle" | "saving" | "saved";
@@ -54,6 +54,7 @@ export default function ResultSidebar({
   const showSave = mode === "live" && onSave;
   const showShare = mode === "saved" && onShare;
   const showCompare = mode === "saved" && onCompare;
+  const [layoutName, setLayoutName] = useState("");
 
   const [showWarnings, setShowWarnings] = useState(false);
 
@@ -69,30 +70,7 @@ export default function ResultSidebar({
               {label}
             </span>
           ))}
-          {layout.warnings.length > 0 && (
-            <button
-              onClick={() => setShowWarnings(!showWarnings)}
-              className="rounded-full border border-destructive/20 bg-destructive/5 px-3 py-1 text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors"
-            >
-              {layout.warnings.length} {layout.warnings.length > 1 ? t("warnings") : t("warnings").slice(0, -1)}
-            </button>
-          )}
         </div>
-
-        {showWarnings && layout.warnings.length > 0 && (
-          <div className="mt-2 space-y-1.5 rounded-lg border border-destructive/20 bg-destructive/5 p-3">
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-destructive">
-              {t("warnings")}
-            </h4>
-            <ul className="list-inside list-disc space-y-1">
-              {layout.warnings.map((w, i) => (
-                <li key={i} className="text-xs text-destructive/80 leading-tight">
-                  {w}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
 
       <div>
@@ -136,16 +114,32 @@ export default function ResultSidebar({
           </Button>
         )}
         {showSave && (
-          <Button
-            onClick={onSave}
-            disabled={saveState === "saving" || saveState === "saved"}
-          >
-            {saveState === "saving"
-              ? t("saving")
-              : saveState === "saved"
-                ? t("saved")
-                : t("save")}
-          </Button>
+          <div className="flex flex-col gap-2">
+            {saveState === "idle" && (
+              <input
+                type="text"
+                placeholder={t("enter_layout_name")}
+                value={layoutName}
+                onChange={(e) => setLayoutName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && layoutName.trim()) {
+                    onSave?.(layoutName);
+                  }
+                }}
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              />
+            )}
+            <Button
+              onClick={() => onSave?.(layoutName)}
+              disabled={saveState === "saving" || saveState === "saved"}
+            >
+              {saveState === "saving"
+                ? t("saving")
+                : saveState === "saved"
+                  ? t("saved")
+                  : t("save")}
+            </Button>
+          </div>
         )}
       </div>
     </aside>

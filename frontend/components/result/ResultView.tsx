@@ -27,7 +27,7 @@ type ResultViewProps = {
   layoutId?: string | null;
   onRegenerate?: () => void;
   onAdjust?: () => void;
-  onSave?: () => void;
+  onSave?: (name: string) => void;
   onShare?: () => void;
   onCompare?: () => void;
   saveState?: "idle" | "saving" | "saved";

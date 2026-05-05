@@ -111,6 +111,11 @@ SLOT_KINDS: dict[str, str] = {
             "bed_center",
             "table_center",
             "desk_anchor",
+            "desk_chair",
+            "dining_chair_N",
+            "dining_chair_S",
+            "dining_chair_E",
+            "dining_chair_W",
         ],
     }.items()
     for slot in slots
@@ -133,38 +138,63 @@ def _half_extents(item: ResolvedItem) -> tuple[float, float]:
         return fw / 2, fd / 2
     if cos_abs < 0.293:  # ±90° — quarter-turn
         return fd / 2, fw / 2
-    # ~45° corner items — conservative enclosing square
+    # ~45° corner items — use a slightly tighter fit than the full enclosing square
+    # as most furniture isn't a perfect cylinder. 0.85 factor is a good heuristic.
     r = math.sqrt((fw / 2) ** 2 + (fd / 2) ** 2)
-    return r, r
+    return r * 0.85, r * 0.85
 
 
 def _aabb_overlap(
-    a: ResolvedItem, b: ResolvedItem, a_cat: CatalogItem, b_cat: CatalogItem, margin: float = 0.05
+    a: ResolvedItem,
+    b: ResolvedItem,
+    a_cat: CatalogItem,
+    b_cat: CatalogItem,
+    margin: float = 0.05,
+    cooccupy_mode: bool = False,
 ) -> bool:
+    """Check if two items' AABBs overlap.
+
+    cooccupy_mode=True: strict physical overlap only (no dynamic buffer).
+    Used for co-occupancy pairs like desk+chair that are intentionally adjacent.
+    """
+    # Rugs are flat on the floor; everything sits on top of them — no collision.
+    if "rug" in a_cat.tags or "rug" in b_cat.tags:
+        return False
+
     ahx, ahz = _half_extents(a)
     bhx, bhz = _half_extents(b)
-    ax, _, az = a.position
-    bx, _, bz = b.position
+    ax, ay, az = a.position
+    bx, by, bz = b.position
 
-    # 1. Base buffer: prevent items from being within 10cm of each other
-    # For large items or seating, increase to 40cm to allow for "walking space"
-    dynamic_margin = 0.1
-    if ("large" in a_cat.tags or "seating" in a_cat.tags) and (
-        "large" in b_cat.tags or "seating" in b_cat.tags
-    ):
-        dynamic_margin = 0.4
+    if cooccupy_mode:
+        # Strict physical overlap only — no buffer. Allow intentional proximity.
+        effective_margin = -0.02  # allow up to 2cm of physical tuck-in
+    else:
+        # 1. Base buffer: prevent items from being within 10cm of each other
+        # For large items or seating, increase to 40cm to allow for "walking space"
+        effective_margin = 0.1
+        if ("large" in a_cat.tags or "seating" in a_cat.tags) and (
+            "large" in b_cat.tags or "seating" in b_cat.tags
+        ):
+            effective_margin = 0.4
 
-    # 2. Specific Sofa-Table separation
-    # If one is seating and other is surface (table), ensure they aren't touching
-    if ("seating" in a_cat.tags and "surface" in b_cat.tags) or (
-        "surface" in a_cat.tags and "seating" in b_cat.tags
-    ):
-        dynamic_margin = 0.35
+        # 2. Specific Sofa-Table separation
+        # If one is seating and other is surface (table), ensure they aren't touching
+        if ("seating" in a_cat.tags and "surface" in b_cat.tags) or (
+            "surface" in a_cat.tags and "seating" in b_cat.tags
+        ):
+            effective_margin = 0.35
 
-    overlap_x = abs(ax - bx) < (ahx + bhx + dynamic_margin)
-    overlap_z = abs(az - bz) < (ahz + bhz + dynamic_margin)
+    overlap_x = abs(ax - bx) < (ahx + bhx + effective_margin)
+    overlap_z = abs(az - bz) < (ahz + bhz + effective_margin)
 
-    return overlap_x and overlap_z
+    # 3. Y overlap: only if they are actually overlapping in vertical space.
+    # We use a small epsilon to allow items to sit exactly on top of each other.
+    ahy = a.footprint["h"] / 2
+    bhy = b.footprint["h"] / 2
+    overlap_y = abs(ay - by) < (ahy + bhy - 0.01)
+
+    return overlap_x and overlap_z and overlap_y
 
 
 def _wall_prefix(slot: str) -> str | None:
@@ -175,32 +205,104 @@ def _wall_prefix(slot: str) -> str | None:
     return None
 
 
+# Catalog IDs that should always be placed ON TOP of a nearby surface.
+# These are small decorative / desktop items that make no sense on the floor.
+_DESKTOP_ITEMS: set[str] = {
+    "desk_lamp",
+    "bedside_lamp",
+    "lamp_square_table",
+    "laptop",
+    "monitor",
+    "computerKeyboard",
+    "computerMouse",
+    "radio",
+    "speaker",
+    "speakerSmall",
+    "toaster",
+    "kitchenBlender",
+    "kitchenCoffeeMachine",
+    "kitchenMicrowave",
+    "small_plant",
+    "plant_small_2",
+    "plant_small_3",
+    "books_decor",
+    "tv_modern",
+    "televisionVintage",
+    "televisionAntenna",
+    "bear_toy",
+}
+
+# Tags on the *existing* item that make it a valid surface to stack onto.
+_STACKABLE_SURFACE_TAGS = {"desk", "surface", "nightstand", "storage"}
+
+
 def _apply_vertical_stack(
     candidate: ResolvedItem,
     placed: list[ResolvedItem],
     catalog_item: CatalogItem,
     catalog_map: dict[str, CatalogItem],
-) -> None:
-    """Apply vertical offset if the candidate should sit on top of an existing item."""
-    # But DO NOT stack rugs or floor lamps on tables.
-    c_tags = set(catalog_item.tags)
-    if "rug" in c_tags or "floor_lamp" in c_tags:
-        return
+    room_type: str = "living_room",
+) -> bool:
+    """Elevate desktop items so they sit on top of a nearby surface.
 
+    Only items in _DESKTOP_ITEMS are elevated. First checks same-slot items,
+    then searches all placed surfaces for the closest one in XZ.
+
+    In home_office, plants are NOT allowed on desks.
+
+    Returns True if the item was successfully stacked or didn't need stacking.
+    Returns False if the item is a 'desktop item' but no valid surface was found.
+    """
+    if candidate.catalogId not in _DESKTOP_ITEMS:
+        return True
+
+    cx, _, cz = candidate.position
+    is_plant = "plant" in catalog_item.tags or "small_plant" in candidate.catalogId
+
+    # 1. Try same-slot surface first (most common case: desk_lamp on desk_anchor)
     for existing in placed:
         if existing.slot == candidate.slot:
             existing_item = catalog_map.get(existing.catalogId)
-            if existing_item:
-                e_tags = set(existing_item.tags)
-                # Elevate if the existing item is a surface/desk/stand
-                if any(t in e_tags for t in ("desk", "surface", "media", "storage")):
-                    new_pos = (
-                        candidate.position[0],
-                        existing_item.footprint.h + (candidate.footprint["h"] / 2),
-                        candidate.position[2],
-                    )
-                    candidate.position = new_pos
-                    break
+            if existing_item and set(existing_item.tags) & _STACKABLE_SURFACE_TAGS:
+                # In office, don't put plants on desks
+                if room_type == "home_office" and is_plant and "desk" in existing_item.tags:
+                    continue
+
+                candidate.position = (cx, existing.position[1] + existing_item.footprint.h, cz)
+                return True
+
+    # 2. Fallback: find the closest placed surface within 1.5m in XZ
+    best_dist = 1.5
+    best_surface: tuple[ResolvedItem, CatalogItem] | None = None
+    for existing in placed:
+        existing_item = catalog_map.get(existing.catalogId)
+        if not existing_item:
+            continue
+        if not (set(existing_item.tags) & _STACKABLE_SURFACE_TAGS):
+            continue
+        
+        # In office, don't put plants on desks
+        if room_type == "home_office" and is_plant and "desk" in existing_item.tags:
+            continue
+
+        ex, _, ez = existing.position
+        dist = math.sqrt((cx - ex) ** 2 + (cz - ez) ** 2)
+        if dist < best_dist:
+            best_dist = dist
+            best_surface = (existing, existing_item)
+
+    if best_surface:
+        surf, surf_cat = best_surface
+        # Move candidate on top of the surface, centered on it
+        candidate.position = (
+            surf.position[0],
+            surf.position[1] + surf_cat.footprint.h,
+            surf.position[2],
+        )
+        return True
+
+    # If it's a desktop item but we found no surface to put it on, return False
+    return False
 
 
 def _try_place(
@@ -248,18 +350,21 @@ def _try_place(
         if candidate.catalogId == existing.catalogId and candidate.slot == existing.slot:
             return "DUPLICATE_ITEM"
 
-        # 2b. Redundant twins in same zone (e.g. two floor lamps)
-        # Allow multiples for chairs, stools, decor, and small items
-        if candidate.catalogId == existing.catalogId and candidate.zone == existing.zone:
+        # 2b. Redundant twins (same exact item)
+        # The user wants NO duplicates of the same furniture in the same space.
+        # We allow multiples ONLY for small items, chairs, and decor.
+        if candidate.catalogId == existing.catalogId:
             c_tags = set(catalog_item.tags)
-            allow_tags = {"chair", "stool", "lighting", "plant", "accent", "surface"}
+            # Narrowed down list of items that CAN be duplicated (e.g. set of 6 identical chairs)
+            allow_tags = {"chair", "stool", "lighting", "plant", "accent", "decor", "media"}
             is_allowed = bool(c_tags & allow_tags)
-            # Also allow non-large seating (like armchairs)
+
+            # Non-large seating (like armchairs) can be pairs
             if "seating" in c_tags and "large" not in c_tags:
                 is_allowed = True
 
             if not is_allowed:
-                return "REDUNDANT_ZONE_ITEM"
+                return "DUPLICATE_CATALOG_ITEM"
 
         # 3. Hero item exclusivity (e.g., only one bed per layout)
         hero_tags = {"bed", "seating", "dining"}
@@ -275,7 +380,7 @@ def _try_place(
                     return "HERO_COLLISION"
 
         # 4. Hardcoded co-occupancy rules (Tag based)
-        can_ignore = False
+        can_cooccupy = False
         c_tags = set(catalog_item.tags)
         e_tags = set(existing_item.tags)
         for allowed in COOCCUPY_ALLOW:
@@ -283,17 +388,30 @@ def _try_place(
             if len(allowed_list) == 2:
                 t1, t2 = allowed_list
                 if (t1 in c_tags and t2 in e_tags) or (t2 in c_tags and t1 in e_tags):
-                    can_ignore = True
+                    can_cooccupy = True
                     break
-        if can_ignore:
+
+        # 5. Tag-based co-occupancy (rugs)
+        if not can_cooccupy:
+            if (c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS):
+                can_cooccupy = True
+
+        # Desktop items that will be stacked can skip AABB entirely
+        if can_cooccupy and candidate.catalogId in _DESKTOP_ITEMS:
             continue
 
-        # 5. Tag-based co-occupancy
-        if (c_tags & COOCCUPY_ALLOW_TAGS) or (e_tags & COOCCUPY_ALLOW_TAGS):
-            continue
-
-        if _aabb_overlap(candidate, existing, catalog_item, existing_item, margin=margin):
-            return "AABB_COLLISION"
+        # For non-stacking co-occupants, still check AABB to prevent overlap
+        if not can_cooccupy:
+            if _aabb_overlap(candidate, existing, catalog_item, existing_item, margin=margin):
+                return "AABB_COLLISION"
+        else:
+            # Co-occupancy allowed but not a desktop item:
+            # use strict physical-only overlap (no buffer) so desk+chair and
+            # similar intentional pairings are never incorrectly rejected.
+            if _aabb_overlap(
+                candidate, existing, catalog_item, existing_item, cooccupy_mode=True
+            ):
+                return "AABB_COLLISION"
 
     return candidate
 
@@ -423,9 +541,10 @@ def resolve(
                             item, slot, t_alt, room, catalog_item, placed, catalog_map, margin
                         )
                         if isinstance(res, ResolvedItem):
-                            placed.append(res)
-                            nudged = True
-                            break
+                            if _apply_vertical_stack(res, placed, catalog_item, catalog_map, request.roomType):
+                                placed.append(res)
+                                nudged = True
+                                break
                 if not nudged:
                     # Drop lower-priority item between new and occupant
                     new_pri = DROP_PRIORITY.get(item.catalogId, 0)
@@ -447,9 +566,11 @@ def resolve(
         # Step 5–6: resolve + AABB check
         result = _try_place(item, slot, None, room, catalog_item, placed, catalog_map, margin)
         if isinstance(result, ResolvedItem):
-            _apply_vertical_stack(result, placed, catalog_item, catalog_map)
-            placed.append(result)
-            occupied[slot] = item.catalogId
+            if _apply_vertical_stack(result, placed, catalog_item, catalog_map, request.roomType):
+                placed.append(result)
+                occupied[slot] = item.catalogId
+            else:
+                warnings.append(f"Dropped {item.catalogId}: no suitable surface found for stacking.")
         else:
             # Try wall nudge
             prefix = _wall_prefix(slot)
@@ -460,13 +581,75 @@ def resolve(
                         item, slot, t_alt, room, catalog_item, placed, catalog_map, margin
                     )
                     if isinstance(res, ResolvedItem):
-                        _apply_vertical_stack(res, placed, catalog_item, catalog_map)
-                        placed.append(res)
-                        nudged = True
-                        break
+                        if _apply_vertical_stack(res, placed, catalog_item, catalog_map, request.roomType):
+                            placed.append(res)
+                            nudged = True
+                            break
             if not nudged:
                 reason = result if isinstance(result, str) else "UNKNOWN_COLLISION"
                 warnings.append(m["collision"].format(id=item.catalogId, reason=reason, slot=slot))
+    # Step 7: Final mandatory item check (Office Chair in Home Office)
+    if request.roomType == "home_office":
+        has_desk = any("desk" in catalog_map[p.catalogId].tags for p in placed)
+        # office_chair item only has tags ["chair", "seating"] — match by catalogId
+        has_chair = any(
+            p.catalogId == "office_chair" or "office_chair" in catalog_map[p.catalogId].tags
+            for p in placed
+        )
+
+        if has_desk and not has_chair:
+            # Force-inject an office chair if missing
+            office_chairs = [c for c in catalog if c.id == "office_chair" or "office_chair" in c.tags]
+            if office_chairs:
+                chair_cat = office_chairs[0]
+                # Create a mock LLM item for the chair
+                mock_item = LayoutItemLLM(
+                    catalogId=chair_cat.id,
+                    slot="desk_chair",
+                    facing="auto",
+                    zone="work_zone",
+                    rationale="Mandatory office chair for desk." if lang == "en" else "Silla de despacho obligatoria para el escritorio."
+                )
+                # Try to place it
+                result = _try_place(mock_item, "desk_chair", None, room, chair_cat, placed, catalog_map, margin)
+                if isinstance(result, ResolvedItem):
+                    placed.append(result)
+                else:
+                    warnings.append(f"Could not place mandatory office chair: {result}")
+
+    # Step 8: Ensure Laptop is on Desk if both exist
+    desks = [p for p in placed if "desk" in catalog_map[p.catalogId].tags]
+    if desks:
+        desk = desks[0]
+        for p in placed:
+            if p.catalogId == "laptop" and p.slot != desk.slot:
+                # Move laptop to the same slot as the desk
+                p.slot = desk.slot
+                # Position will be updated by _apply_vertical_stack in a previous step? 
+                # No, we need to re-run vertical stack or manually adjust.
+                p.position = (desk.position[0], desk.position[1] + catalog_map[desk.catalogId].footprint.h, desk.position[2])
+                warnings.append(f"Moved laptop to desk at {desk.slot}")
+
+    # Step 9: Ensure 4 Dining Chairs in Dining Room if table exists
+    if request.roomType == "dining_room":
+        tables = [p for p in placed if "dining" in catalog_map[p.catalogId].tags and "surface" in catalog_map[p.catalogId].tags]
+        if tables:
+            chair_cat = next((c for c in catalog if "dining_chair" in c.id or "dining" in c.tags and "chair" in c.tags), None)
+            if chair_cat:
+                for suffix in ["N", "S", "E", "W"]:
+                    slot_name = f"dining_chair_{suffix}"
+                    # Check if already placed in this slot
+                    if not any(p.slot == slot_name for p in placed):
+                        mock_chair = LayoutItemLLM(
+                            catalogId=chair_cat.id,
+                            slot=slot_name,
+                            facing="auto",
+                            zone="dining_zone",
+                            rationale="Mandatory dining chair." if lang == "en" else "Silla de comedor obligatoria."
+                        )
+                        result = _try_place(mock_chair, slot_name, None, room, chair_cat, placed, catalog_map, margin)
+                        if isinstance(result, ResolvedItem):
+                            placed.append(result)
 
     return Layout(
         style=llm.style,
