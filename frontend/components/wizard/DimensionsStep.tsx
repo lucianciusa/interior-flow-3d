@@ -29,8 +29,8 @@ export default function DimensionsStep({ roomType, initial, onNext, onBack }: Di
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RoomDims>({
-    resolver: zodResolver(schema),
+  } = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema) as any,
     defaultValues: initial,
   });
 
