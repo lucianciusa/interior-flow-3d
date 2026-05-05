@@ -265,7 +265,10 @@ def _apply_vertical_stack(
 
     cx, _, cz = candidate.position
     is_plant = "plant" in catalog_item.tags or candidate.catalogId in {
-        "small_plant", "plant_small_2", "plant_small_3", "plant_large",
+        "small_plant",
+        "plant_small_2",
+        "plant_small_3",
+        "plant_large",
     }
 
     # 1. Try same-slot surface first (most common case: desk_lamp on desk_anchor)
@@ -657,16 +660,16 @@ def resolve(
             if not p_cat:
                 continue
             is_plant_item = "plant" in p_cat.tags or p.catalogId in {
-                "small_plant", "plant_small_2", "plant_small_3",
+                "small_plant",
+                "plant_small_2",
+                "plant_small_3",
             }
             if is_plant_item and request.roomType == "home_office":
                 px, py, pz = p.position
                 # Check if plant is elevated (on a surface) and near the desk
                 if py > 0.1 and abs(px - desk_x) < 0.8 and abs(pz - desk_z) < 0.8:
                     to_remove.append(p)
-                    warnings.append(
-                        f"Removed {p.catalogId} from desk surface to avoid clutter."
-                    )
+                    warnings.append(f"Removed {p.catalogId} from desk surface to avoid clutter.")
         for item in to_remove:
             placed.remove(item)
 
@@ -685,7 +688,7 @@ def resolve(
             is_rotated = abs(math.cos(table.rotation_y)) < 0.707
             tw = table_cat.footprint.d if is_rotated else table_cat.footprint.w
             td = table_cat.footprint.w if is_rotated else table_cat.footprint.d
-            
+
             chair_cat = next(
                 (
                     c
@@ -699,8 +702,8 @@ def resolve(
                 # Offsets from table center to chair centers
                 # We add 2cm clearance
                 z_off = td / 2 + chd / 2 + 0.02
-                x_off = tw / 2 + chd / 2 + 0.02 # chairs on E/W are rotated 90deg, so depth is on X
-                
+                x_off = tw / 2 + chd / 2 + 0.02  # chairs on E/W are rotated 90deg, so depth is on X
+
                 # Positions and rotations for the 4 sides relative to table center
                 side_configs = {
                     "dining_chair_N": ((0, 0, -z_off), 0.0),
@@ -715,7 +718,7 @@ def resolve(
                         # World position = table center + relative position
                         wx = table.position[0] + rel_pos[0]
                         wz = table.position[2] + rel_pos[2]
-                        
+
                         mock_chair = ResolvedItem(
                             catalogId=chair_cat.id,
                             slot=slot_name,
@@ -731,7 +734,7 @@ def resolve(
                             footprint={"w": chw, "d": chd, "h": chair_cat.footprint.h},
                             model=chair_cat.model,
                         )
-                        
+
                         # Use a more lenient check for mandatory chairs — only check room bounds
                         hx, hz = _half_extents(mock_chair)
                         if (abs(wx) + hx <= room.width_m / 2 + 0.05) and (
@@ -742,11 +745,13 @@ def resolve(
     # Step 10: Snap office chairs to face the desk's actual position
     if request.roomType == "home_office":
         desk_items = [
-            p for p in placed
+            p
+            for p in placed
             if p.catalogId in catalog_map and "desk" in catalog_map[p.catalogId].tags
         ]
         chair_items = [
-            p for p in placed
+            p
+            for p in placed
             if p.catalogId == "office_chair"
             or (
                 p.slot == "desk_chair"
@@ -786,8 +791,7 @@ def resolve(
 
     # Step 11: Handle rug stacking to prevent z-fighting
     rug_items = [
-        p for p in placed
-        if p.catalogId in catalog_map and "rug" in catalog_map[p.catalogId].tags
+        p for p in placed if p.catalogId in catalog_map and "rug" in catalog_map[p.catalogId].tags
     ]
     if len(rug_items) > 1:
         # Sort rugs by footprint area (descending) so larger rugs stay at the bottom
@@ -795,13 +799,13 @@ def resolve(
             key=lambda r: (
                 catalog_map[r.catalogId].footprint.w * catalog_map[r.catalogId].footprint.d
             ),
-            reverse=True
+            reverse=True,
         )
-        
+
         for i, rug in enumerate(rug_items):
             if i == 0:
                 continue
-            
+
             # Check if this rug overlaps with any already processed (larger) rugs
             for j in range(i):
                 other = rug_items[j]

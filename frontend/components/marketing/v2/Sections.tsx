@@ -601,7 +601,7 @@ export function BlogStub({ t }: { t?: typeof marketingTranslations.en.sections.b
 }
 
 /* ============ FOOTER ============ */
-import type { marketingTranslations } from "@/lib/marketing-translations";
+
 
 export function MarketingFooter({ t }: { t?: typeof marketingTranslations.en.footer | typeof marketingTranslations.es.footer }) {
   if (!t) return null;
