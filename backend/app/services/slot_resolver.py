@@ -135,8 +135,8 @@ def _slot_position(
     if slot == "desk_chair":
         # In front of the desk_anchor
         x = room_w / 6
-        # Offset from north wall: desk depth (approx 0.7) + chair space (approx 0.4 
-        # center-to-center). 1.1m ensures no collision with a 0.7m deep desk 
+        # Offset from north wall: desk depth (approx 0.7) + chair space (approx 0.4
+        # center-to-center). 1.1m ensures no collision with a 0.7m deep desk
         # and 0.65m deep chair.
         z = -(room_l / 2 - 1.1)
         return (x, y, z), math.pi

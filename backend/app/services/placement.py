@@ -317,9 +317,7 @@ _MSGS = {
             "Las etiquetas de {id!r} ({tags!r}) no son aceptadas por {slot!r} — descartado"
         ),
         "occupied": "Descartado {id!r}: el espacio {slot!r} está ocupado por {other!r}",
-        "replaced": (
-            "Descartado {other!r}: reemplazado por {id!r} (prioridad mayor) en {slot!r}"
-        ),
+        "replaced": ("Descartado {other!r}: reemplazado por {id!r} (prioridad mayor) en {slot!r}"),
         "collision": "Descartado {id!r}: {reason} en {slot!r}",
         "placement_invalid": (
             "El mueble {id!r} no está permitido en un espacio de tipo {kind} — descartado"

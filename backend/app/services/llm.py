@@ -130,8 +130,7 @@ Output JSON matching this schema exactly:
 
     lang_name = "SPANISH" if req.language == "es" else "ENGLISH"
     system_prompt = (
-        _load_pass2_prompt()
-        + f"\n\nCRITICAL: All output text (rationale) MUST be in {lang_name}."
+        _load_pass2_prompt() + f"\n\nCRITICAL: All output text (rationale) MUST be in {lang_name}."
     )
 
     return [
