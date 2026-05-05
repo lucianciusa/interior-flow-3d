@@ -51,10 +51,24 @@ export default function ShareDialog({ open, onOpenChange, layoutId }: Props) {
     }
   };
 
+  const displayUrl = (() => {
+    if (!token) return "";
+    // If it's a relative path, prepend the current origin
+    if (token.url.startsWith("/")) {
+      return `${window.location.origin}${token.url}`;
+    }
+    // If it's localhost but we are on a real domain, fix it
+    if (token.url.includes("localhost") && !window.location.hostname.includes("localhost")) {
+      const path = token.url.split("/share/")[1];
+      return `${window.location.origin}/share/${path}`;
+    }
+    return token.url;
+  })();
+
   const copy = async () => {
-    if (!token) return;
+    if (!displayUrl) return;
     try {
-      await navigator.clipboard.writeText(token.url);
+      await navigator.clipboard.writeText(displayUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -71,7 +85,7 @@ export default function ShareDialog({ open, onOpenChange, layoutId }: Props) {
             Anyone with the link can view (read-only). You can revoke it any time.
           </DialogDescription>
         </DialogHeader>
-
+ 
         <div className="py-2">
           {!token && (
             <Button
@@ -82,13 +96,13 @@ export default function ShareDialog({ open, onOpenChange, layoutId }: Props) {
               {share.isPending ? "Generating…" : "Create share link"}
             </Button>
           )}
-
+ 
           {token && (
             <div className="space-y-3">
               <div className="flex gap-2">
                 <input
                   readOnly
-                  value={token.url}
+                  value={displayUrl}
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 />
                 <Button onClick={copy} variant="secondary">
