@@ -81,6 +81,7 @@ export type Layout = {
   zones?: Zone[];
   items: ResolvedItem[];
   designExplanation: string;
+  styleEmphasis?: string;
   seed?: number | null;
   warnings: string[];
   catalogVersion?: string | null;

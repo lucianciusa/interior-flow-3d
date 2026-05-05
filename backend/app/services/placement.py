@@ -78,6 +78,9 @@ COOCCUPY_ALLOW: set[frozenset[str]] = {
     frozenset({"desk", "lighting"}),
     frozenset({"desk", "accent"}),
     frozenset({"desk", "media"}),
+    frozenset({"desk_compact", "office_chair"}),
+    frozenset({"desk_compact", "chair"}),
+    frozenset({"desk_compact", "seating"}),
     frozenset({"surface", "accent"}),
     frozenset({"surface", "media"}),
     frozenset({"media"}),
@@ -157,8 +160,9 @@ def _aabb_overlap(
     cooccupy_mode=True: strict physical overlap only (no dynamic buffer).
     Used for co-occupancy pairs like desk+chair that are intentionally adjacent.
     """
-    # Rugs are flat on the floor; everything sits on top of them — no collision.
-    if "rug" in a_cat.tags or "rug" in b_cat.tags:
+    # Rugs are flat on the floor; everything sits on top of them — no collision with non-rugs.
+    # However, we allow collision detection between two rugs to handle stacking/layering.
+    if ("rug" in a_cat.tags and "rug" not in b_cat.tags) or ("rug" in b_cat.tags and "rug" not in a_cat.tags):
         return False
 
     ahx, ahz = _half_extents(a)
@@ -258,7 +262,9 @@ def _apply_vertical_stack(
         return True
 
     cx, _, cz = candidate.position
-    is_plant = "plant" in catalog_item.tags or "small_plant" in candidate.catalogId
+    is_plant = "plant" in catalog_item.tags or candidate.catalogId in {
+        "small_plant", "plant_small_2", "plant_small_3", "plant_large",
+    }
 
     # 1. Try same-slot surface first (most common case: desk_lamp on desk_anchor)
     for existing in placed:
@@ -640,6 +646,28 @@ def resolve(
                 p.position = (desk.position[0], desk.position[1] + desk_h, desk.position[2])
                 warnings.append(f"Moved laptop to desk at {desk.slot}")
 
+        # Step 8b: Remove any plant that ended up ON the desk (same position, elevated)
+        desk_x, desk_y, desk_z = desk.position
+        desk_h = catalog_map[desk.catalogId].footprint.h
+        to_remove: list[ResolvedItem] = []
+        for p in placed:
+            p_cat = catalog_map.get(p.catalogId)
+            if not p_cat:
+                continue
+            is_plant_item = "plant" in p_cat.tags or p.catalogId in {
+                "small_plant", "plant_small_2", "plant_small_3",
+            }
+            if is_plant_item and request.roomType == "home_office":
+                px, py, pz = p.position
+                # Check if plant is elevated (on a surface) and near the desk
+                if py > 0.1 and abs(px - desk_x) < 0.8 and abs(pz - desk_z) < 0.8:
+                    to_remove.append(p)
+                    warnings.append(
+                        f"Removed {p.catalogId} from desk surface to avoid clutter."
+                    )
+        for item in to_remove:
+            placed.remove(item)
+
     # Step 9: Ensure 4 Dining Chairs in Dining Room if table exists
     if request.roomType == "dining_room":
         tables = [
@@ -708,6 +736,76 @@ def resolve(
                             abs(wz) + hz <= room.length_m / 2 + 0.05
                         ):
                             placed.append(mock_chair)
+
+    # Step 10: Snap office chairs to face the desk's actual position
+    if request.roomType == "home_office":
+        desk_items = [
+            p for p in placed
+            if p.catalogId in catalog_map and "desk" in catalog_map[p.catalogId].tags
+        ]
+        chair_items = [
+            p for p in placed
+            if p.catalogId == "office_chair"
+            or (
+                p.slot == "desk_chair"
+                and p.catalogId in catalog_map
+                and (
+                    "chair" in catalog_map[p.catalogId].tags
+                    or "seating" in catalog_map[p.catalogId].tags
+                )
+            )
+        ]
+        if desk_items and chair_items:
+            desk_p = desk_items[0]
+            dx, dy, dz = desk_p.position
+            desk_cat = catalog_map[desk_p.catalogId]
+            desk_rot = desk_p.rotation_y
+            # The desk faces inward; the chair sits on the user-facing side.
+            # desk_rot=0 means desk faces +Z (south), chair should be south of desk
+            # desk_rot=pi means desk faces -Z (north), chair should be north of desk
+            # desk_rot=pi/2 means desk faces +X (east), chair should be east of desk
+            # desk_rot=-pi/2 means desk faces -X (west), chair should be west of desk
+            cos_r = math.cos(desk_rot)
+            sin_r = math.sin(desk_rot)
+            # offset = desk half-depth + chair half-depth + small gap
+            for chair_p in chair_items:
+                chair_cat = catalog_map.get(chair_p.catalogId)
+                if not chair_cat:
+                    continue
+                offset = desk_cat.footprint.d / 2 + chair_cat.footprint.d / 2 + 0.05
+                # Position chair in front of desk (the open/user side)
+                # The desk's "front" is in the direction it faces (desk_rot)
+                cx = dx + sin_r * offset
+                cz = dz + cos_r * offset
+                # Chair faces the desk = opposite direction
+                chair_rot = desk_rot + math.pi
+                chair_p.position = (cx, 0.0, cz)
+                chair_p.rotation_y = chair_rot
+
+    # Step 11: Handle rug stacking to prevent z-fighting
+    rug_items = [p for p in placed if p.catalogId in catalog_map and "rug" in catalog_map[p.catalogId].tags]
+    if len(rug_items) > 1:
+        # Sort rugs by footprint area (descending) so larger rugs stay at the bottom
+        rug_items.sort(
+            key=lambda r: catalog_map[r.catalogId].footprint.w * catalog_map[r.catalogId].footprint.d,
+            reverse=True
+        )
+        
+        for i, rug in enumerate(rug_items):
+            if i == 0:
+                continue
+            
+            # Check if this rug overlaps with any already processed (larger) rugs
+            for j in range(i):
+                other = rug_items[j]
+                # Use a small margin to detect overlap even if they just touch
+                if _aabb_overlap(rug, other, catalog_map[rug.catalogId], catalog_map[other.catalogId], margin=0.0, cooccupy_mode=True):
+                    # Stack it slightly higher than the floor (2mm per layer)
+                    # We use i to ensure each rug has a unique, deterministic height
+                    new_y = 0.002 * i
+                    rug.position = (rug.position[0], new_y, rug.position[2])
+                    warnings.append(f"Stacked rug {rug.catalogId} slightly higher to prevent z-fighting.")
+                    break
 
     return Layout(
         style=llm.style,

@@ -18,7 +18,7 @@ Your task: Analyze the room dimensions and user preferences, then define the spa
   - **Home Office**: MUST include `work_zone` with a `desk`, an `office_chair` (SIEMPRE), a `bookshelf`, and a `filing_cabinet`. 
     - **CRITICAL**: If user prefers "More seating", you MUST add a second zone: `seating_zone` with a `loveseat`, `armchair`, or `bench` to create a client/waiting area. This is not optional if the preference is set.
 - **User Preferences (Wizard)**: Respect all user preferences. 
-  - "More space": Prioritize mandatory items, use compact versions (e.g., `desk_compact`), and leave central floor areas clear.
+  - "More space": Prioritize mandatory items, and leave central floor areas clear. For home offices, still use the standard `desk` (not `desk_compact`) to ensure a usable workspace.
   - "More furniture": Maximize the `itemBudget`, use larger items (e.g., `sectional_sofa`), and add secondary assets (rugs, plants, lamps) to every zone.
   - "More seating": Prioritize adding an extra armchair or small sofa even in non-living rooms (like office or bedroom) if space allows.
 - Choose 1 to 4 zones from the allowed zones list.
@@ -29,7 +29,7 @@ Your task: Analyze the room dimensions and user preferences, then define the spa
 - **Visual Coherence**: Group items logically. A seating zone should feel like a conversation area, not just a sofa. A sleep zone should feel like a sanctuary.
 - **Richness & Balance**: Aim for a professional "architectural digest" look. Include plenty of secondary items like floor lamps, plants, rugs, and side tables to fill negative space and add warmth. Ensure these items are placed in corners or next to main furniture to create "vignettes".
 - Select three palette swatches (wall, floor, accent) appropriate to the requested style. Use 6-digit hex colours.
-- `styleEmphasis` should be a short 1-sentence summary of the aesthetic rules applied.
+- `styleEmphasis` should be a short 1-sentence summary of the aesthetic rules applied. **MUST be under 300 characters.**
 - `designExplanation` should be a 80-600 character first-person overview of your zoning and color strategy.
 - **Spatial Reasoning**: Maintain clear circulation paths (at least 90cm wide). Avoid "floating" items in the middle of a room unless it's a coffee table or a large rug. In long rooms, break the space into distinct functional areas.
 

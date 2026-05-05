@@ -92,7 +92,7 @@ class Pass1LLM(BaseModel):
     style: Style
     palette: PaletteMap
     zones: list[Zone] = Field(default_factory=list, max_length=4)
-    styleEmphasis: str = Field(min_length=10, max_length=140)
+    styleEmphasis: str = Field(min_length=10, max_length=300)
     designExplanation: str = Field(min_length=80, max_length=600)
 
 
@@ -111,6 +111,7 @@ class MergedLayoutLLM(BaseModel):
     palette: PaletteMap
     zones: list[Zone]
     items: list[LayoutItemLLM]
+    styleEmphasis: str
     designExplanation: str
 
 

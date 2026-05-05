@@ -56,9 +56,9 @@ Your task: Populate a specific zone with furniture pieces.
   - **TV**: Place the `tv_modern` (or `televisionVintage`) in the SAME slot as the `tv_stand`. The system will automatically place it ON TOP.
   - **Rug**: Place a `rug` in the `center` or under the main seating to anchor the vignette.
 - **Home Office "Work Vignette"**:
-  - **Desk & Chair**: The `desk` and `office_chair` MUST be treated as a single unit. YOU MUST ALWAYS INCLUDE AN OFFICE CHAIR IF YOU INCLUDE A DESK.
+  - **Desk & Chair**: The `desk` and `office_chair` MUST be treated as a single unit. YOU MUST ALWAYS INCLUDE AN OFFICE CHAIR IF YOU INCLUDE A DESK. ALWAYS prefer the standard `desk` over `desk_compact` for home offices.
     - Desk goes in `north_wall_center`, `north_wall_left`, or `east_wall_center`.
-    - Chair goes in `desk_chair` (facing the desk).
+    - Chair MUST go in `desk_chair` slot with `facing="auto"`. The system automatically positions and rotates the chair to face the desk.
   - **Lamp**: The `desk_lamp` or `floor_lamp` should be in `desk_anchor` (beside the desk).
   - **Tech**: If a desk is present, EXACTLY ONE tech item (`laptop` or `monitor`) MUST be placed in the `desk_anchor` slot. Never place two.
 - **Bedroom Vignette**:
@@ -77,5 +77,5 @@ Your task: Populate a specific zone with furniture pieces.
   - **Overlap**: Use co-occupancy! Put a rug under the main furniture. Put a lamp on a side table or desk.
   - **Breathing Room**: Do not block the main circulation paths. Ensure at least 1m of clear space in front of any seating.
   - **Decor**: 
-    - **Small Plants** (`small_plant`, `plant_small_2`): MUST be placed on a surface (bookshelf, nightstand, dresser, side table). If a desk has a laptop, try to place the plant on a DIFFERENT piece of furniture to avoid cluttering the workspace.
-    - **Floor Plants** (`plant_large`): Must be on the floor, ideally in corners.
+    - **Small Plants** (`small_plant`, `plant_small_2`): MUST be placed on a surface (bookshelf, nightstand, dresser, side table). NEVER place a plant on a desk — especially in home offices. If a desk has a laptop, the plant MUST go on a DIFFERENT piece of furniture (bookshelf, filing cabinet, credenza). If no other surface exists, do NOT place a small plant.
+    - **Floor Plants** (`plant_large`): Must be on the floor, ideally in corners. NEVER place a floor plant on a desk or in a slot that would cause it to overlap with desk items.

@@ -279,5 +279,6 @@ async def generate(
         palette=pass1_res.palette,
         zones=pass1_res.zones,
         items=all_items,
+        styleEmphasis=pass1_res.styleEmphasis,
         designExplanation=pass1_res.designExplanation,
     )

@@ -13,17 +13,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 import { User, LayoutDashboard, LogOut } from "lucide-react";
 import { LanguageToggle } from "@/components/shell/LanguageToggle";
 import type { marketingTranslations } from "@/lib/marketing-translations";
 
 export function Nav({ t }: { t: typeof marketingTranslations.en.nav | typeof marketingTranslations.es.nav }) {
+  const router = useRouter();
   const session = useAuthStore((s) => s.session);
   const ready = useAuthStore((s) => s.ready);
   const [loginOpen, setLoginOpen] = useState(false);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+    router.push("/");
   };
 
   return (

@@ -41,7 +41,7 @@ export default function LoginModal({ open, onOpenChange, message }: LoginModalPr
     setStatus({ kind: "sending" });
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.href },
+      options: { emailRedirectTo: `${window.location.origin}/app` },
     });
     if (error) setStatus({ kind: "error", message: error.message });
     else setStatus({ kind: "sent" });
@@ -51,7 +51,7 @@ export default function LoginModal({ open, onOpenChange, message }: LoginModalPr
     setStatus({ kind: "sending" });
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: window.location.href },
+      options: { redirectTo: `${window.location.origin}/app` },
     });
     if (error) setStatus({ kind: "error", message: error.message });
   }

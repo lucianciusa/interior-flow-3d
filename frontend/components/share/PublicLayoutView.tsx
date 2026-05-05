@@ -34,13 +34,15 @@ export default function PublicLayoutView({ token }: { token: string }) {
   }
 
   return (
-    <ResultView
-      mode="shared"
-      roomType={data.rooms.room_type}
-      layout={data.layout}
-      dims={data.rooms}
-      style={data.layout.style}
-      preferences={[]}
-    />
+    <div className="h-screen w-full overflow-hidden bg-background">
+      <ResultView
+        mode="shared"
+        roomType={data.rooms.room_type}
+        layout={data.layout}
+        dims={data.rooms}
+        style={data.layout.style}
+        preferences={[]}
+      />
+    </div>
   );
 }

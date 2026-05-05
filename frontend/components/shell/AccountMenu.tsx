@@ -16,15 +16,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { useRouter } from "next/navigation";
 import { useLanguage } from "@/lib/stores/useLanguage";
 
 export function AccountMenu() {
+  const router = useRouter();
   const { t } = useLanguage();
   const session = useAuthStore((s) => s.session);
   const [loginOpen, setLoginOpen] = useState(false);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+    router.push("/");
   };
 
   if (!session) {
