@@ -35,7 +35,7 @@ export default function Scene({ layout, dims, hideWalls = false, captureRef }: S
         <div className="flex h-full w-full flex-col items-center justify-center bg-muted/20 p-6 text-center text-muted-foreground">
           <h3 className="mb-2 text-lg font-semibold text-foreground">WebGL Not Supported</h3>
           <p className="max-w-md text-sm">
-            We couldn't initialize the 3D viewer. This usually means WebGL is disabled or not supported by your browser.
+            We couldn&apos;t initialize the 3D viewer. This usually means WebGL is disabled or not supported by your browser.
           </p>
         </div>
       }
