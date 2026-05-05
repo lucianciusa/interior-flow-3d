@@ -652,7 +652,10 @@ def resolve(
         ]
         if tables:
             chair_cat = next(
-                (c for c in catalog if "dining_chair" in c.id or "dining" in c.tags and "chair" in c.tags),
+                (
+                    c for c in catalog
+                    if "dining_chair" in c.id or ("dining" in c.tags and "chair" in c.tags)
+                ),
                 None
             )
             if chair_cat:
@@ -672,7 +675,8 @@ def resolve(
                             )
                         )
                         result = _try_place(
-                            mock_chair, slot_name, None, room, chair_cat, placed, catalog_map, margin
+                            mock_chair, slot_name, None, room,
+                            chair_cat, placed, catalog_map, margin
                         )
                         if isinstance(result, ResolvedItem):
                             placed.append(result)
