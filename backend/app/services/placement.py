@@ -284,7 +284,11 @@ def _apply_vertical_stack(
                 if room_type == "home_office" and is_plant and "desk" in existing_item.tags:
                     continue
 
-                candidate.position = (cx, existing.position[1] + existing_item.footprint.h, cz)
+                candidate.position = (
+                    existing.position[0],
+                    existing.position[1] + existing_item.footprint.h,
+                    existing.position[2],
+                )
                 return True
 
     # 2. Fallback: find the closest placed surface within 1.5m in XZ

@@ -4283,10 +4283,10 @@
     ],
     "placement": {
       "surfaces": [
-        "floor"
+        "wall"
       ],
       "against": [
-        "none"
+        "wall"
       ],
       "exclusive_with": []
     },
@@ -4315,11 +4315,10 @@
     ],
     "placement": {
       "surfaces": [
-        "floor",
         "wall"
       ],
       "against": [
-        "none"
+        "wall"
       ],
       "exclusive_with": []
     },
