@@ -39,10 +39,7 @@ export default function RoomPage() {
   const setPhase = useWizardStore((s) => s.setPhase);
   const reset = useWizardStore((s) => s.reset);
 
-  const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
-
-  // Selection state
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
   const [isDeletingBulk, setIsDeletingBulk] = useState(false);
@@ -116,14 +113,6 @@ export default function RoomPage() {
     );
   }
 
-  const toggleCompare = (id: string) => {
-    setCompareIds((prev) => {
-      if (prev.includes(id)) return prev.filter((x) => x !== id);
-      if (prev.length >= 2) return [prev[1], id];
-      return [...prev, id];
-    });
-  };
-
   const startNewLayout = () => {
     if (room) {
       setRoomType(room.room_type as any);
@@ -172,7 +161,7 @@ export default function RoomPage() {
               {t("delete_selected")} ({selectedIds.size})
             </Button>
           )}
-          {compareIds.length === 2 && (
+          {selectedIds.size === 2 && (
             <Button variant="outline" size="sm" onClick={() => setCompareOpen(true)}>
               {t("compare")} (2)
             </Button>
@@ -187,8 +176,6 @@ export default function RoomPage() {
         layouts={layouts.data ?? []}
         projectId={projectId}
         roomId={roomId}
-        compareIds={compareIds}
-        onToggleCompare={toggleCompare}
         selectedIds={selectedIds}
         onToggleSelection={toggleOne}
       />
@@ -202,10 +189,10 @@ export default function RoomPage() {
         isLoading={isDeletingBulk}
       />
 
-      {compareOpen && compareIds.length === 2 && room && (
+      {compareOpen && selectedIds.size === 2 && room && (
         <CompareOverlay
-          aId={compareIds[0]}
-          bId={compareIds[1]}
+          aId={Array.from(selectedIds)[0]}
+          bId={Array.from(selectedIds)[1]}
           dims={{
             width_m: room.width_m,
             length_m: room.length_m,

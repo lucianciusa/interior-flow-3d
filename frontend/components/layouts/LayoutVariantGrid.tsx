@@ -9,8 +9,6 @@ type Props = {
   layouts: LayoutSummary[];
   projectId: string;
   roomId: string;
-  compareIds: string[];
-  onToggleCompare: (id: string) => void;
   selectedIds: Set<string>;
   onToggleSelection: (id: string, val: boolean) => void;
 };
@@ -21,8 +19,6 @@ export default function LayoutVariantGrid({
   layouts,
   projectId,
   roomId,
-  compareIds,
-  onToggleCompare,
   selectedIds,
   onToggleSelection,
 }: Props) {
@@ -45,8 +41,6 @@ export default function LayoutVariantGrid({
           layout={l}
           projectId={projectId}
           roomId={roomId}
-          isCompareSelected={compareIds.includes(l.id)}
-          onToggleCompare={onToggleCompare}
           selected={selectedIds.has(l.id)}
           onSelect={(val) => onToggleSelection(l.id, val)}
         />

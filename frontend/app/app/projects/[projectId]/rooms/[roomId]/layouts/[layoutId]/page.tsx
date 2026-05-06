@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import ResultView from "@/components/result/ResultView";
@@ -24,6 +24,7 @@ export default function SavedLayoutPage() {
   const layoutId = params?.layoutId;
   const projectId = params?.projectId ?? "";
   const roomId = params?.roomId ?? "";
+  const router = useRouter();
   const session = useAuthStore((s) => s.session);
   const ready = useAuthStore((s) => s.ready);
 
@@ -94,6 +95,7 @@ export default function SavedLayoutPage() {
         preferences={[]}
         layoutId={layoutId ?? null}
         onShare={() => setShareOpen(true)}
+        onCompare={() => router.push(`/app/projects/${projectId}/rooms/${roomId}`)}
       />
       {layoutId && (
         <ShareDialog
