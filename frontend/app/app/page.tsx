@@ -191,7 +191,6 @@ export default function DashboardPage() {
           )}
           <Button variant="outline" size="sm" onClick={() => {
             useWizardStore.getState().reset();
-            useWizardStore.getState().setIsTemplateFlow(true);
             router.push("/app/new");
           }}>
             {t("quick_generate")}

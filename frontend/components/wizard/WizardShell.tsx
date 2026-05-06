@@ -322,6 +322,7 @@ export default function WizardShell() {
             onChange={(rt: RoomType) => setRoomType(rt)}
             onNext={() => setPhase("step1")}
             onBack={() => router.back()}
+            backLabel={t("back_to_dashboard")}
           />
         )}
         {phase === "step1" && (
@@ -357,6 +358,7 @@ export default function WizardShell() {
             onChange={(p: Preference[]) => setPreferences(p)}
             onGenerate={() => handleGenerate()}
             onBack={isTemplateFlow ? handleBackToDashboard : () => setPhase("step2")}
+            onBackToResult={layout ? () => setPhase("result") : undefined}
             isGenerating={isPending}
           />
         )}

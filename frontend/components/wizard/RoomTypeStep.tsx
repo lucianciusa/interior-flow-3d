@@ -16,9 +16,10 @@ type Props = {
   onChange: (v: RoomType) => void;
   onNext: () => void;
   onBack?: () => void;
+  backLabel?: string;
 };
 
-export default function RoomTypeStep({ value, onChange, onNext, onBack }: Props) {
+export default function RoomTypeStep({ value, onChange, onNext, onBack, backLabel }: Props) {
   const { t } = useLanguage();
   return (
     <div className="flex flex-col gap-6">
@@ -47,7 +48,7 @@ export default function RoomTypeStep({ value, onChange, onNext, onBack }: Props)
       <div className="flex justify-between items-center pt-4">
         {onBack ? (
           <Button variant="ghost" onClick={onBack}>
-            {t("back")}
+            {backLabel ?? t("back")}
           </Button>
         ) : (
           <div />

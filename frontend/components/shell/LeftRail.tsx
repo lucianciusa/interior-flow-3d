@@ -22,7 +22,6 @@ export function LeftRail() {
           title={mounted ? t("new_project") : "New project"}
           onClick={() => {
             reset();
-            useWizardStore.getState().setIsTemplateFlow(true);
           }}
           className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-all hover:ring-2 hover:ring-ring hover:ring-offset-2"
         >

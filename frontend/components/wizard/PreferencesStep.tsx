@@ -8,6 +8,7 @@ type PreferencesStepProps = {
   onChange: (prefs: Preference[]) => void;
   onGenerate: () => void;
   onBack: () => void;
+  onBackToResult?: () => void;
   isGenerating: boolean;
 };
 
@@ -24,6 +25,7 @@ export default function PreferencesStep({
   onChange,
   onGenerate,
   onBack,
+  onBackToResult,
   isGenerating,
 }: PreferencesStepProps) {
   const { t } = useLanguage();
@@ -71,13 +73,22 @@ export default function PreferencesStep({
           })}
         </div>
       </fieldset>
-      <div className="flex justify-between items-center mt-2">
-        <Button variant="ghost" onClick={onBack}>
-          {t("back")}
-        </Button>
-        <Button onClick={onGenerate} disabled={isGenerating}>
-          {isGenerating ? t("generating") : t("generate")}
-        </Button>
+      <div className="flex flex-col gap-2 mt-2">
+        <div className="flex justify-between items-center">
+          <Button variant="ghost" onClick={onBack}>
+            {t("back")}
+          </Button>
+          <Button onClick={onGenerate} disabled={isGenerating}>
+            {isGenerating ? t("generating") : t("generate")}
+          </Button>
+        </div>
+        {onBackToResult && (
+          <div className="flex justify-center">
+            <Button variant="link" size="sm" className="text-muted-foreground" onClick={onBackToResult}>
+              {t("back_to_result")}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
